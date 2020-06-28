@@ -1,8 +1,11 @@
-package se.ltu.kitting.model;
+package se.ltu.kitting.test;
 
 import java.util.*;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.api.solver.Solver;
+import se.ltu.kitting.model.Part;
+import se.ltu.kitting.model.Layout;
+import se.ltu.kitting.model.Surface;
 
 import static java.util.stream.Collectors.joining;
 
