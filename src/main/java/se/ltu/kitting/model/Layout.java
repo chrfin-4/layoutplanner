@@ -6,6 +6,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
+import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import ch.rfin.util.Pair;
 
@@ -74,6 +75,15 @@ public class Layout {
 
   public void setScore(HardSoftScore score) {
     throw new UnsupportedOperationException("Not implemented.");
+  }
+
+  @ProblemFactProperty
+  public Surface getSurface() {
+    return surface;
+  }
+
+  public void setSurface(Surface surface) {
+    this.surface = surface;
   }
 
   // --- END of OptaPlanner things ---
