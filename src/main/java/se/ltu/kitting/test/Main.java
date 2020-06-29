@@ -28,6 +28,7 @@ public class Main {
     System.out.println("Score: " + solvedLayout.getScore());
     System.out.println("Positions:");
     System.out.println(solvedLayout.getParts().stream().map(p -> p.toString() + ": " + String.valueOf(p.getPosition())).collect(joining(", ")));
+    Vis.draw(solvedLayout);
   }
 
 }
