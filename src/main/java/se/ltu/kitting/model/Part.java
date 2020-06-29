@@ -44,9 +44,14 @@ public class Part {
 
   /** Initializes all the problem facts. */
   public Part(int id, int partNumber, Dimensions size) {
+    this(id, partNumber, size, null);
+  }
+
+  public Part(int id, int partNumber, Dimensions size, Dimensions position) {
     this.id = id;
     this.partNumber = partNumber;
     this.size = size;
+    this.position = position;
   }
 
   // --- START of OptaPlanner facts and variables ---
@@ -111,6 +116,10 @@ public class Part {
     this.partNumber = pNr;
   }
 
+  /**
+   * Use {@link #currentDimensions()} or {@link #currentRegion()} to get the
+   * current dimensions (and position) taking the current rotation into account.
+   */
   @ProblemFactProperty
   public Dimensions getSize() {
     return size;
@@ -203,6 +212,10 @@ public class Part {
 	}
 	Pair<Dimensions,Dimensions> currentRegion = Pair.of(position, endPosition);
 	return currentRegion;
+  }
+
+  public Dimensions currentDimensions() {
+    return currentRegion()._2;
   }
 
   public int width() {
