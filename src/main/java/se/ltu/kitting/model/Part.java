@@ -195,23 +195,22 @@ public class Part {
    */
    // NOTE: Only implemented for 90 degrees in Z
   public Pair<Dimensions,Dimensions> currentRegion() {
-	Dimensions endPosition = null;
-	if(rotation == Rotation.Z90){
-		int x = position.getX() + size.getY() - 1;
-		int y = position.getY() + size.getX() - 1;
-		int z = position.getZ() + size.getZ() - 1;
-		endPosition = Dimensions.of(x,y,z);
-	} else if(rotation == Rotation.ZERO){
-		int x = position.getX() + size.getX() - 1;
-		int y = position.getY() + size.getY() - 1;
-		int z = position.getZ() + size.getZ() - 1;
-		endPosition = Dimensions.of(x,y,z);
-	} else {
-		System.out.println("No rotation found");
-		
-	}
-	Pair<Dimensions,Dimensions> currentRegion = Pair.of(position, endPosition);
-	return currentRegion;
+    Dimensions endPosition = null;
+    if(rotation == Rotation.Z90){
+      int x = position.getX() + size.getY() - 1;
+      int y = position.getY() + size.getX() - 1;
+      int z = position.getZ() + size.getZ() - 1;
+      endPosition = Dimensions.of(x,y,z);
+    } else if(rotation == Rotation.ZERO){
+      int x = position.getX() + size.getX() - 1;
+      int y = position.getY() + size.getY() - 1;
+      int z = position.getZ() + size.getZ() - 1;
+      endPosition = Dimensions.of(x,y,z);
+    } else {
+      System.out.println("No rotation found");
+    }
+    Pair<Dimensions,Dimensions> currentRegion = Pair.of(position, endPosition);
+    return currentRegion;
   }
 
   public Dimensions currentDimensions() {
