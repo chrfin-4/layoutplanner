@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class Surface {
 
   /** The (width,depth,height) of the surface. */
-  private final Dimensions size;
-  private final Dimensions origin;
+  public final Dimensions size;
+  public final Dimensions origin;
 
   private Surface(Dimensions size, Dimensions origin) {
     this.size = size;
@@ -48,6 +48,18 @@ public class Surface {
   /** Factory method. */
   public static Surface surface(Dimensions size, Dimensions origin) {
     return new Surface(size, origin);
+  }
+
+  public width() {
+    return size.getX();
+  }
+
+  public depth() {
+    return size.getY();
+  }
+
+  public height() {
+    return size.getZ();
   }
 
   /**
