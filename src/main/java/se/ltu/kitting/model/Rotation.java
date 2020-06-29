@@ -22,6 +22,7 @@ public final class Rotation implements UnaryOperator<Pair<Dimensions,Dimensions>
   public static final double deg90 = Math.PI/2;
 
   // XXX: Some predefined rotations. How should these be interpreted?
+  public static final Rotation ZERO = rotation(0.0, 0.0, 0.0);
   public static final Rotation X90 = rotation(deg90, 0.0, 0.0);
   public static final Rotation Y90 = rotation(0.0, deg90, 0.0);
   public static final Rotation Z90 = rotation(0.0, 0.0, deg90);
