@@ -17,7 +17,7 @@ public class Main {
     Solver<Layout> solver = solverFactory.buildSolver();
 
     List<Part> parts = new ArrayList<>();
-    Surface surface = new Surface();
+    Surface surface = Surface.of(100,100,50);
     Layout unsolvedLayout = new Layout(surface, parts);
     runSolver(solver, unsolvedLayout);
   }
