@@ -3,6 +3,10 @@ package se.ltu.kitting.score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 import se.ltu.kitting.model.Layout;
+import se.ltu.kitting.model.Surface;
+import se.ltu.kitting.model.Part;
+import se.ltu.kitting.model.Dimensions;
+import java.util.List;
 
 // FIXME: This is just a dummy place holder.
 public class ScoreCalculator implements EasyScoreCalculator<Layout> {
@@ -15,7 +19,7 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   // Return negative number of overlapping parts
   public int getHardScore(Layout layout) {
     
-	overlap = countOverlappingParts(layout);
+	int overlap = countOverlappingParts(layout);
 	
     return -overlap;
   }
@@ -55,14 +59,14 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   
   // Counts the number of parts outside surface
   public int countPartsOutside(Layout layout){
-	  list<Part> parts = layout.getParts();
+	  List<Part> parts = layout.getParts();
 	  Surface surface = layout.getSurface();
 	  int count = 0;
 	  for(Part part : parts) {
 		  if(part.getPosition() == null){
 			  continue;
 		  }
-		  if(partOutside()){
+		  if(partOutside(part, surface)){
 			  count++;
 		  }
 	  }
@@ -73,9 +77,9 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   public boolean partOutside(Part part, Surface surface){
     int partWidth = part.getWidth();
     int partDepth = part.getDepth();
-	int position = part.getPosition();
-    int xmax = surface.getX() - partWidth;
-    int ymax = surface.getY() - partHeight;
+	Dimensions position = part.getPosition();
+    int xmax = surface.width() - partWidth;
+    int ymax = surface.depth() - partDepth;
     return position.getX() <= xmax && position.getY() <= ymax;
   }
 
