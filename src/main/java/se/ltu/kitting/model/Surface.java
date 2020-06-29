@@ -50,15 +50,15 @@ public class Surface {
     return new Surface(size, origin);
   }
 
-  public width() {
+  public int width() {
     return size.getX();
   }
 
-  public depth() {
+  public int depth() {
     return size.getY();
   }
 
-  public height() {
+  public int height() {
     return size.getZ();
   }
 
