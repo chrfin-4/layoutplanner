@@ -9,6 +9,8 @@ import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import ch.rfin.util.Pair;
 
+import static java.util.stream.Collectors.toList;
+
 // TODO:
 //  - Add check that ensures parts have unique IDs.
 
@@ -44,22 +46,25 @@ public class Layout {
     this.parts = parts;
   }
 
+  // TODO: Use ValueRange instead of collection.
   // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "positionsAndRotationPairs")
   public Collection<Pair<Dimensions,Rotation>> getPositionsAndRotations() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return getPositions().stream()
+      .flatMap(p -> getRotations().stream().map(r -> Pair.of(p, r)))
+      .collect(toList());
   }
 
   // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "positions")
   public Collection<Dimensions> getPositions() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return surface.getSurfacePositions();
   }
 
   // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "rotations")
   public Collection<Rotation> getRotations() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return List.of(Rotation.ZERO, Rotation.Z90);
   }
 
   @PlanningScore
