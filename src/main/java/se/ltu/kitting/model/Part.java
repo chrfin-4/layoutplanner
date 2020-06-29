@@ -207,26 +207,26 @@ public class Part {
       int z = position.getZ() + size.getZ() - 1;
       endPosition = Dimensions.of(x,y,z);
     } else {
-      System.out.println("No rotation found");
+      throw new UnsupportedOperationException("Not implemented. Rotation: " + rotation);
     }
-    Pair<Dimensions,Dimensions> currentRegion = Pair.of(position, endPosition);
-    return currentRegion;
+    return Pair.of(position, endPosition);
   }
 
   public Dimensions currentDimensions() {
     return currentRegion()._2;
   }
 
+  // XXX: this is a silly amount of computation.
   public int width() {
-	  return size.getX();
+    return currentDimensions().x - position.x + 1;
   }
 
   public int depth() {
-	  return size.getY();
+    return currentDimensions().y - position.y + 1;
   }
 
   public int height() {
-	  return size.getZ();
+    return currentDimensions().z - position.z + 1;
   }
 
   @Deprecated
