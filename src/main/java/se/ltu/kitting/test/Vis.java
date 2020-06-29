@@ -16,7 +16,7 @@ public class Vis extends JPanel {
     Color.RED, Color.GREEN, Color.BLUE, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.PINK
   );
   private static final int margin = 100;
-  private static final int scale = 2;
+  private static final int scale = 10;
   private final int frameWidth;
   private final int frameHeight;
 
@@ -56,7 +56,7 @@ public class Vis extends JPanel {
       Dimensions pos = part.getPosition();
       if (pos == null) {
         g.setColor(Color.GRAY);
-        g.fillRect(offset+frameWidth/2 + 10, offset + lastUnplacedY, scale * part.getPosition().getX(), scale * part.getPosition().getY());
+        g.fillRect(offset+frameWidth/2 + 10, offset + lastUnplacedY, scale * part.getSize().getX(), scale * part.getSize().getY());
         lastUnplacedY += part.depth() * scale + 10;
       } else {
         g.setColor(colors.get(count % colors.size()));

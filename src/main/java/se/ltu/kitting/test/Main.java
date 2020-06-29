@@ -7,6 +7,7 @@ import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
 
+import static se.ltu.kitting.test.LayoutExamples.*;
 import static java.util.stream.Collectors.joining;
 
 // TODO: The different scenarios should be defined separately somewhere.
@@ -16,9 +17,13 @@ public class Main {
     SolverFactory<Layout> solverFactory = SolverFactory.createFromXmlResource("solverConf.xml");
     Solver<Layout> solver = solverFactory.buildSolver();
 
-    List<Part> parts = new ArrayList<>();
-    Surface surface = Surface.of(100,100,50);
-    Layout unsolvedLayout = new Layout(surface, parts);
+	
+	Layout unsolvedLayout = layout1();
+
+    // List<Part> parts = new ArrayList<>();
+    // Surface surface = Surface.of(100,100,50);
+    // Layout unsolvedLayout = new Layout(surface, parts);
+	
     runSolver(solver, unsolvedLayout);
   }
 

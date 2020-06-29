@@ -7,6 +7,7 @@ import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
 import java.util.List;
+import ch.rfin.util.Pair;
 
 // FIXME: This is just a dummy place holder.
 public class ScoreCalculator implements EasyScoreCalculator<Layout> {
@@ -18,13 +19,13 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   
   // Return negative number of overlapping parts
   public int getHardScore(Layout layout) {
-    
+    int outside = countPartsOutside(layout);
 	int overlap = countOverlappingParts(layout);
-	
-    return -overlap;
+    return -(overlap + outside);
   }
   
   // Counts the number of parts that overlap eachother
+  // NOTE: Counts same overlap multiple times
   public int countOverlappingParts(Layout layout) {
     List<Part> parts = layout.getParts();
     int count = 0;
@@ -45,16 +46,32 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   
   // Check if two parts overlap
   public static boolean partsOverlap(Part p1, Part p2) {
-    int rect1xLeft = p1.getPosition().getX();
-    int rect1xRight = p1.getPosition().getX() + p1.getWidth();
-    int rect1yLeft = p1.getPosition().getY();
-    int rect1yRight = p1.getPosition().getY() + p1.getDepth();
-    int rect2xLeft = p2.getPosition().getX();
-    int rect2xRight = p2.getPosition().getX() + p1.getWidth();
-    int rect2yLeft = p2.getPosition().getY();
-    int rect2yRight = p2.getPosition().getY() + p1.getDepth();
-    return rect1xLeft < rect2xRight && rect1xRight > rect2xLeft &&
-        rect1yLeft < rect2yRight && rect1yRight > rect2yLeft;
+	Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
+	Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
+	Dimensions startPositionP1 = currentRegionP1._1;
+	Dimensions endPositionP1 = currentRegionP1._2;
+	Dimensions startPositionP2 = currentRegionP2._1;
+	Dimensions endPositionP2 = currentRegionP2._2;
+	  
+	int rect1xLeft = startPositionP1.getX();
+    int rect1xRight = endPositionP1.getX();
+    int rect1yBack = startPositionP1.getY();
+    int rect1yFront = endPositionP1.getY();
+    int rect2xLeft = startPositionP2.getX();
+    int rect2xRight = endPositionP2.getX();
+    int rect2yBack = startPositionP2.getY();
+    int rect2yFront = endPositionP2.getY();  
+	  
+    // int rect1xLeft = p1.getPosition().getX();
+    // int rect1xRight = p1.getPosition().getX() + p1.getWidth() - 1;
+    // int rect1yBack = p1.getPosition().getY();
+    // int rect1yFront = p1.getPosition().getY() + p1.getDepth() - 1;
+    // int rect2xLeft = p2.getPosition().getX();
+    // int rect2xRight = p2.getPosition().getX() + p1.getWidth() - 1;
+    // int rect2yBack = p2.getPosition().getY();
+    // int rect2yFront = p2.getPosition().getY() + p1.getDepth() - 1;
+    return rect1xLeft <= rect2xRight && rect1xRight >= rect2xLeft &&
+        rect1yBack <= rect2yFront && rect1yFront >= rect2yBack;
   }
   
   // Counts the number of parts outside surface
@@ -75,12 +92,17 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   
   // Checks if part is outside of surface
   public boolean partOutside(Part part, Surface surface){
-    int partWidth = part.getWidth();
-    int partDepth = part.getDepth();
-	Dimensions position = part.getPosition();
-    int xmax = surface.width() - partWidth;
-    int ymax = surface.depth() - partDepth;
-    return position.getX() <= xmax && position.getY() <= ymax;
+	Pair<Dimensions,Dimensions> currentRegion = part.currentRegion();
+	// int partWidth = currentRegion._2.getX() - currentRegion._1.getX();
+	// int partDepth = currentRegion._2.getY() - currentRegion._1.getY();
+	
+    // int partWidth = part.width();
+    // int partDepth = part.depth();
+	// Dimensions position = part.getPosition();
+    // int xmax = surface.width() - partWidth;
+    // int ymax = surface.depth() - partDepth;
+    //return position.getX() > xmax || position.getY() > ymax;
+	return currentRegion._2.getX() > surface.width() || currentRegion._2.getY() > surface.depth();
   }
 
 }

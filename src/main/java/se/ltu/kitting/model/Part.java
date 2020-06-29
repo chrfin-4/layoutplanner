@@ -61,7 +61,7 @@ public class Part {
    * Allows the two real planning variables to be combined and treated like a
    * single variable.
    */
-  @PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
+  //@PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
   public Pair<Dimensions,Rotation> getPositionAndRotation() {
     return Pair.of(position, rotation);
   }
@@ -72,7 +72,7 @@ public class Part {
     setRotation(posRot._2);
   }
 
-  //@PlanningVariable(valueRangeProviderRefs = {"positions"})
+  @PlanningVariable(valueRangeProviderRefs = {"positions"})
   public Dimensions getPosition() {
     return position;
   }
@@ -81,7 +81,7 @@ public class Part {
     this.position = pos;
   }
 
-  //@PlanningVariable(valueRangeProviderRefs = {"rotations"})
+  @PlanningVariable(valueRangeProviderRefs = {"rotations"})
   public Rotation getRotation() {
     return rotation;
   }
@@ -184,8 +184,25 @@ public class Part {
    * Note that this changes both depending on the current position and the
    * current rotation.
    */
+   // NOTE: Only implemented for 90 degrees in Z
   public Pair<Dimensions,Dimensions> currentRegion() {
-    throw new UnsupportedOperationException("Not implemented.");
+	Dimensions endPosition = null;
+	if(rotation == Rotation.Z90){
+		int x = position.getX() + size.getY() - 1;
+		int y = position.getY() + size.getX() - 1;
+		int z = position.getZ() + size.getZ() - 1;
+		endPosition = Dimensions.of(x,y,z);
+	} else if(rotation == Rotation.ZERO){
+		int x = position.getX() + size.getX() - 1;
+		int y = position.getY() + size.getY() - 1;
+		int z = position.getZ() + size.getZ() - 1;
+		endPosition = Dimensions.of(x,y,z);
+	} else {
+		System.out.println("No rotation found");
+		
+	}
+	Pair<Dimensions,Dimensions> currentRegion = Pair.of(position, endPosition);
+	return currentRegion;
   }
 
   public int width() {
