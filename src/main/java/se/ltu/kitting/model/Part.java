@@ -189,15 +189,15 @@ public class Part {
   }
 
   public int getWidth(){
-	  return dimensions.getX();
+	  return size.getX();
   }
   
   public int getDepth(){
-	  return dimensions.getY();
+	  return size.getY();
   }
   
   public int getHeight(){
-	  return dimensions.getZ();
+	  return size.getZ();
   }
   
   /**
