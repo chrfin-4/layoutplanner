@@ -27,6 +27,7 @@ public class Layout {
   private Surface surface;
   /** The parts that will be placed on the surface(s) - planning entities. */
   private List<Part> parts;
+  private HardSoftScore score;
 
   /** A no-arg constructor is required by OptaPlanner. */
   public Layout() { }
@@ -70,11 +71,11 @@ public class Layout {
 
   @PlanningScore
   public HardSoftScore getScore() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return score;
   }
 
   public void setScore(HardSoftScore score) {
-    throw new UnsupportedOperationException("Not implemented.");
+    this.score = score;
   }
 
   @ProblemFactProperty
