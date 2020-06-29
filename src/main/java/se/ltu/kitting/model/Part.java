@@ -188,18 +188,33 @@ public class Part {
     throw new UnsupportedOperationException("Not implemented.");
   }
 
+  public int width() {
+	  return size.getX();
+  }
+
+  public int depth() {
+	  return size.getY();
+  }
+
+  public int height() {
+	  return size.getZ();
+  }
+
+  @Deprecated
   public int getWidth(){
 	  return size.getX();
   }
-  
+
+  @Deprecated
   public int getDepth(){
 	  return size.getY();
   }
-  
+
+  @Deprecated
   public int getHeight(){
 	  return size.getZ();
   }
-  
+
   /**
    * The total volume taken up by the part (as a cuboid).
    * Note that the volume never changes, since it is based on the size.
