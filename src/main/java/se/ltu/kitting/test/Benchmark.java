@@ -19,7 +19,7 @@ import se.ltu.kitting.model.Layout;
  */
 public class Benchmark {
 
-  public Result runTest(Test test) {
+  public static Result runTest(Test test) {
     Solver<Layout> solver = SolverFactory.<Layout>create(test.config()).buildSolver();
     final long start = System.currentTimeMillis();
     Layout solved = solver.solve(test.problem());
@@ -28,18 +28,14 @@ public class Benchmark {
     return new Result(test, time, solved);
   }
 
-  public Stream<Result> runAllTests(Stream<Test> tests) {
-    return tests.map(this::runTest);
-  }
-
   public static class Test {
 
-    public final Layout problem;
     public final SolverConfig config;
+    public final Layout problem;
 
-    public Test(Layout problem, SolverConfig config) {
-      this.problem = problem;
+    public Test(SolverConfig config, Layout problem) {
       this.config = config;
+      this.problem = problem;
     }
 
     public Layout problem() {
@@ -110,7 +106,7 @@ public class Benchmark {
       return stats(results.stream().map(Result::score), HardSoftLongScore::getSoftScore);
     }
 
-    public static <T> LongSummaryStatistics stats(Stream<T> results, ToLongFunction<T> accessor) {
+    private static <T> LongSummaryStatistics stats(Stream<T> results, ToLongFunction<T> accessor) {
       return results.mapToLong(accessor).summaryStatistics();
     }
 
