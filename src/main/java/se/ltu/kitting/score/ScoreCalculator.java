@@ -45,6 +45,7 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   }
   
   // Check if two parts overlap
+  // FIXME: Need check Z when multiple surfaces
   public static boolean partsOverlap(Part p1, Part p2) {
 	Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
 	Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
@@ -62,14 +63,6 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
     int rect2yBack = startPositionP2.getY();
     int rect2yFront = endPositionP2.getY();  
 	  
-    // int rect1xLeft = p1.getPosition().getX();
-    // int rect1xRight = p1.getPosition().getX() + p1.getWidth() - 1;
-    // int rect1yBack = p1.getPosition().getY();
-    // int rect1yFront = p1.getPosition().getY() + p1.getDepth() - 1;
-    // int rect2xLeft = p2.getPosition().getX();
-    // int rect2xRight = p2.getPosition().getX() + p1.getWidth() - 1;
-    // int rect2yBack = p2.getPosition().getY();
-    // int rect2yFront = p2.getPosition().getY() + p1.getDepth() - 1;
     return rect1xLeft <= rect2xRight && rect1xRight >= rect2xLeft &&
         rect1yBack <= rect2yFront && rect1yFront >= rect2yBack;
   }
@@ -93,16 +86,10 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   // Checks if part is outside of surface
   public boolean partOutside(Part part, Surface surface){
 	Pair<Dimensions,Dimensions> currentRegion = part.currentRegion();
-	// int partWidth = currentRegion._2.getX() - currentRegion._1.getX();
-	// int partDepth = currentRegion._2.getY() - currentRegion._1.getY();
-	
-    // int partWidth = part.width();
-    // int partDepth = part.depth();
-	// Dimensions position = part.getPosition();
-    // int xmax = surface.width() - partWidth;
-    // int ymax = surface.depth() - partDepth;
-    //return position.getX() > xmax || position.getY() > ymax;
-	return currentRegion._2.getX() > surface.width() || currentRegion._2.getY() > surface.depth();
+	boolean height = currentRegion._2.getZ() >= surface.height();
+	boolean depth = currentRegion._2.getY() >= surface.depth();
+	boolean width = currentRegion._2.getX() >= surface.width();
+	return height || depth || width;
   }
 
 }

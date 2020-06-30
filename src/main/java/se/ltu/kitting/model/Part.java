@@ -193,23 +193,36 @@ public class Part {
    * Note that this changes both depending on the current position and the
    * current rotation.
    */
-   // NOTE: Only implemented for 90 degrees in Z
+   // NOTE: Only implemented for 90 degrees in Z and zero rotation
   public Pair<Dimensions,Dimensions> currentRegion() {
     Dimensions endPosition = null;
-    if(rotation == Rotation.Z90){
-      int x = position.getX() + size.getY() - 1;
-      int y = position.getY() + size.getX() - 1;
-      int z = position.getZ() + size.getZ() - 1;
-      endPosition = Dimensions.of(x,y,z);
-    } else if(rotation == Rotation.ZERO){
-      int x = position.getX() + size.getX() - 1;
-      int y = position.getY() + size.getY() - 1;
-      int z = position.getZ() + size.getZ() - 1;
-      endPosition = Dimensions.of(x,y,z);
-    } else {
-      throw new UnsupportedOperationException("Not implemented. Rotation: " + rotation);
-    }
-    return Pair.of(position, endPosition);
+	if(rotation == Rotation.Z90){
+		int x = position.getX() + size.getY() - 1;
+		int y = position.getY() + size.getX() - 1;
+		int z = position.getZ() + size.getZ() - 1;
+		endPosition = Dimensions.of(x,y,z);
+	} else if(rotation == Rotation.Y90){
+		int x = position.getX() + size.getZ() - 1;
+		int y = position.getY() + size.getY() - 1;
+		int z = position.getZ() + size.getX() - 1;
+		endPosition = Dimensions.of(x,y,z);
+		// orientation = Left;
+	} else if(rotation == Rotation.X90){
+		int x = position.getX() + size.getX() - 1;
+		int y = position.getY() + size.getZ() - 1;
+		int z = position.getZ() + size.getY() - 1;
+		endPosition = Dimensions.of(x,y,z);
+		// orientation = Back;
+	} else if(rotation == Rotation.ZERO || rotation == null){
+		int x = position.getX() + size.getX() - 1;
+		int y = position.getY() + size.getY() - 1;
+		int z = position.getZ() + size.getZ() - 1;
+		endPosition = Dimensions.of(x,y,z);
+	} else {
+		throw new UnsupportedOperationException("Not implemented. Rotation: " + rotation);
+		
+	}
+	return Pair.of(position, endPosition);
   }
 
   public Dimensions currentDimensions() {

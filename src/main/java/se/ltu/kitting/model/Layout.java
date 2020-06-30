@@ -66,7 +66,7 @@ public class Layout {
   // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "rotations")
   public Collection<Rotation> getRotations() {
-    return List.of(Rotation.ZERO, Rotation.Z90);
+    return List.of(Rotation.ZERO, Rotation.Z90, Rotation.Y90, Rotation.X90);
   }
 
   @PlanningScore
