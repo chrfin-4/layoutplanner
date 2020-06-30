@@ -26,7 +26,9 @@ public final class Rotation implements UnaryOperator<Pair<Dimensions,Dimensions>
   public static final Rotation X90 = rotation(deg90, 0.0, 0.0);
   public static final Rotation Y90 = rotation(0.0, deg90, 0.0);
   public static final Rotation Z90 = rotation(0.0, 0.0, deg90);
-
+  public static final Rotation Z90X90 = rotation(deg90, 0.0, deg90);
+  public static final Rotation Z90Y90 = rotation(0.0, deg90, deg90);
+  
   private final double x,y,z;
 
   private Rotation(double x, double y, double z) {

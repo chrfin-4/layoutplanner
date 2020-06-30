@@ -48,9 +48,9 @@ public class LayoutExamples {
 	public static Layout layout4(){
 		List<Part> parts = new ArrayList<>();
 		for(int i = 0; i < 100; i++){
-			parts.add(new Part(1,1,new Dimensions(10,10,10)));
+			parts.add(new Part(1,1,new Dimensions(10,10,1)));
 		}
-		Surface surface = Surface.of(100,100,10);
+		Surface surface = Surface.of(100,100,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
 	}
@@ -110,33 +110,24 @@ public class LayoutExamples {
 	
 	/* For all rotations */
 	
-	// Need rotation in Y90
-	public static Layout layout9(){
-		List<Part> parts = new ArrayList<>();
-		parts.add(new Part(1,1,new Dimensions(5,10,10)));
-		parts.add(new Part(1,1,new Dimensions(10,10,5)));
-		Surface surface = Surface.of(10,10,10);
-		Layout layout = new Layout(surface, parts);
-		return layout;
-	}
-	
-	// Need rotation in X90
-	public static Layout layout10(){
-		List<Part> parts = new ArrayList<>();
-		parts.add(new Part(1,1,new Dimensions(10,5,10)));
-		parts.add(new Part(1,1,new Dimensions(10,10,5)));
-		Surface surface = Surface.of(10,10,10);
-		Layout layout = new Layout(surface, parts);
-		return layout;
-	}
-	
 	// Need rotation in both X90 and Y90
-	public static Layout layout11(){
+	public static Layout layout9(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(10,5,10)));
 		parts.add(new Part(1,1,new Dimensions(10,10,3)));
 		parts.add(new Part(1,1,new Dimensions(2,10,10)));
 		Surface surface = Surface.of(10,10,10);
+		Layout layout = new Layout(surface, parts);
+		return layout;
+	}
+	
+	// Need rotation in double directions Z90Y90 and Z90X90
+	public static Layout layout10(){
+		List<Part> parts = new ArrayList<>();
+		parts.add(new Part(1,1,new Dimensions(10,5,20)));
+		parts.add(new Part(1,1,new Dimensions(5,30,3)));
+		//parts.add(new Part(1,1,new Dimensions(2,10,10)));
+		Surface surface = Surface.of(30,13,5);
 		Layout layout = new Layout(surface, parts);
 		return layout;
 	}
