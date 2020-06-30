@@ -44,9 +44,14 @@ public class Part {
 
   /** Initializes all the problem facts. */
   public Part(int id, int partNumber, Dimensions size) {
+    this(id, partNumber, size, null);
+  }
+
+  public Part(int id, int partNumber, Dimensions size, Dimensions position) {
     this.id = id;
     this.partNumber = partNumber;
     this.size = size;
+    this.position = position;
   }
 
   // --- START of OptaPlanner facts and variables ---
@@ -61,7 +66,7 @@ public class Part {
    * Allows the two real planning variables to be combined and treated like a
    * single variable.
    */
-  @PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
+  //@PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
   public Pair<Dimensions,Rotation> getPositionAndRotation() {
     return Pair.of(position, rotation);
   }
@@ -72,7 +77,7 @@ public class Part {
     setRotation(posRot._2);
   }
 
-  //@PlanningVariable(valueRangeProviderRefs = {"positions"})
+  @PlanningVariable(valueRangeProviderRefs = {"positions"})
   public Dimensions getPosition() {
     return position;
   }
@@ -81,7 +86,7 @@ public class Part {
     this.position = pos;
   }
 
-  //@PlanningVariable(valueRangeProviderRefs = {"rotations"})
+  @PlanningVariable(valueRangeProviderRefs = {"rotations"})
   public Rotation getRotation() {
     return rotation;
   }
@@ -111,6 +116,10 @@ public class Part {
     this.partNumber = pNr;
   }
 
+  /**
+   * Use {@link #currentDimensions()} or {@link #currentRegion()} to get the
+   * current dimensions (and position) taking the current rotation into account.
+   */
   @ProblemFactProperty
   public Dimensions getSize() {
     return size;
@@ -184,20 +193,40 @@ public class Part {
    * Note that this changes both depending on the current position and the
    * current rotation.
    */
+   // NOTE: Only implemented for 90 degrees in Z
   public Pair<Dimensions,Dimensions> currentRegion() {
-    throw new UnsupportedOperationException("Not implemented.");
+    Dimensions endPosition = null;
+    if(rotation == Rotation.Z90){
+      int x = position.getX() + size.getY() - 1;
+      int y = position.getY() + size.getX() - 1;
+      int z = position.getZ() + size.getZ() - 1;
+      endPosition = Dimensions.of(x,y,z);
+    } else if(rotation == Rotation.ZERO){
+      int x = position.getX() + size.getX() - 1;
+      int y = position.getY() + size.getY() - 1;
+      int z = position.getZ() + size.getZ() - 1;
+      endPosition = Dimensions.of(x,y,z);
+    } else {
+      throw new UnsupportedOperationException("Not implemented. Rotation: " + rotation);
+    }
+    return Pair.of(position, endPosition);
   }
 
+  public Dimensions currentDimensions() {
+    return currentRegion()._2;
+  }
+
+  // XXX: this is a silly amount of computation.
   public int width() {
-	  return size.getX();
+    return currentDimensions().x - position.x + 1;
   }
 
   public int depth() {
-	  return size.getY();
+    return currentDimensions().y - position.y + 1;
   }
 
   public int height() {
-	  return size.getZ();
+    return currentDimensions().z - position.z + 1;
   }
 
   @Deprecated
