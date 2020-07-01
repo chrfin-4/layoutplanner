@@ -81,7 +81,7 @@ public class Vis extends JPanel {
       if (pos == null) {
         g.setColor(Color.GRAY);
         g.fillRect(offset + scale * layout.getSurface().width() + margin + 10, offset + lastUnplacedY, originalPartWidth, originalPartDepth);
-        lastUnplacedY += part.depth() * scale + 10;
+        lastUnplacedY += part.getSize().getY() * scale + 10;
       } else {
 		int startPosX = offset + scale * pos.getX();
 	    int startPosY = offset + scale * pos.getY();
