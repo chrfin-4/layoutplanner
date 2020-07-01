@@ -23,18 +23,6 @@
     <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
     -->
     <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
-      <termination>
-        <secondsSpentLimit>30</secondsSpentLimit>
-      </termination>
   </constructionHeuristic>
-
-  <localSearch>
-    <localSearchType>HILL_CLIMBING</localSearchType>
-    <termination>
-      <minutesSpentLimit>5</minutesSpentLimit>
-      <unimprovedSecondsSpentLimit>30</unimprovedSecondsSpentLimit>
-      <unimprovedScoreDifferenceThreshold>1hard/*soft</unimprovedScoreDifferenceThreshold>
-    </termination>
-  </localSearch>
 
 </solver>
