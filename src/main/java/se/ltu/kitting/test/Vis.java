@@ -72,15 +72,15 @@ public class Vis extends JPanel {
     g.drawRect(offset-1,offset-1, scale * sw+1, scale * sh+1);
   }
 
-  /*
-  public static void main(String[] args) throws Exception {
-    Surface s = new Surface(100, 200, 0);
-    List<Part> parts = Arrays.asList(new Part(10,10,10), new Part(20,10,10));
-    parts.get(0).setPosition(new Pos(0,0));
-    parts.get(1).setPosition(new Pos(10,0));
-    Layout layout = new Layout(s, parts);
-    Vis.draw(layout);
+  private String rotationName(Rotation r) {
+    if (r == null) { return "null"; }
+    if (r == Rotation.ZERO) { return "ZERO"; }
+    if (r == Rotation.X90) { return "X90"; }
+    if (r == Rotation.Y90) { return "Y90"; }
+    if (r == Rotation.Z90) { return "Z90"; }
+    if (r == Rotation.Z90X90) { return "Z90X90"; }
+    if (r == Rotation.Z90Y90) { return "Z90Y90"; }
+    return String.format("(%.1f,%.1f,%.1f)", r.x, r.y, r.z);
   }
-  */
 
 }
