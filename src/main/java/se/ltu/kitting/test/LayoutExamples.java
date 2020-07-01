@@ -16,7 +16,7 @@ public class LayoutExamples {
 	public static Layout layout1(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(5,10,1)));
-		parts.add(new Part(1,1,new Dimensions(10,5,1)));
+		parts.add(new Part(2,1,new Dimensions(10,5,1)));
 		Surface surface = Surface.of(10,10,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -26,8 +26,8 @@ public class LayoutExamples {
 	public static Layout layout2(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(20,10,1)));
-		parts.add(new Part(1,1,new Dimensions(30,5,1)));
-		parts.add(new Part(1,1,new Dimensions(10,15,1)));
+		parts.add(new Part(2,1,new Dimensions(30,5,1)));
+		parts.add(new Part(3,1,new Dimensions(10,15,1)));
 		Surface surface = Surface.of(30,20,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -37,8 +37,8 @@ public class LayoutExamples {
 	public static Layout layout3(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(15,10,1)));
-		parts.add(new Part(1,1,new Dimensions(10,10,1)));
-		parts.add(new Part(1,1,new Dimensions(20,5,1)));
+		parts.add(new Part(2,1,new Dimensions(10,10,1)));
+		parts.add(new Part(3,1,new Dimensions(20,5,1)));
 		Surface surface = Surface.of(30,20,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -48,7 +48,7 @@ public class LayoutExamples {
 	public static Layout layout4(){
 		List<Part> parts = new ArrayList<>();
 		for(int i = 0; i < 100; i++){
-			parts.add(new Part(1,1,new Dimensions(10,10,1)));
+			parts.add(new Part(i+1,1,new Dimensions(10,10,1)));
 		}
 		Surface surface = Surface.of(100,100,1);
 		Layout layout = new Layout(surface, parts);
@@ -59,12 +59,12 @@ public class LayoutExamples {
 	public static Layout layout5(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(35,30,1)));
-		parts.add(new Part(1,1,new Dimensions(20,45,1)));
-		parts.add(new Part(1,1,new Dimensions(45,45,1)));
-		parts.add(new Part(1,1,new Dimensions(35,60,1)));
-		parts.add(new Part(1,1,new Dimensions(50,45,1)));
-		parts.add(new Part(1,1,new Dimensions(15,55,1)));
-		parts.add(new Part(1,1,new Dimensions(85,10,1)));
+		parts.add(new Part(2,1,new Dimensions(20,45,1)));
+		parts.add(new Part(3,1,new Dimensions(45,45,1)));
+		parts.add(new Part(4,1,new Dimensions(35,60,1)));
+		parts.add(new Part(5,1,new Dimensions(50,45,1)));
+		parts.add(new Part(6,1,new Dimensions(15,55,1)));
+		parts.add(new Part(7,1,new Dimensions(85,10,1)));
 		Surface surface = Surface.of(100,100,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -74,12 +74,12 @@ public class LayoutExamples {
 	public static Layout layout6(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(35,30,1)));
-		parts.add(new Part(1,1,new Dimensions(20,45,1)));
+		parts.add(new Part(2,1,new Dimensions(20,45,1)));
 		//parts.add(new Part(1,1,new Dimensions(45,45,1)));
-		parts.add(new Part(1,1,new Dimensions(35,60,1)));
-		parts.add(new Part(1,1,new Dimensions(50,45,1)));
-		parts.add(new Part(1,1,new Dimensions(15,55,1)));
-		parts.add(new Part(1,1,new Dimensions(85,10,1)));
+		parts.add(new Part(3,1,new Dimensions(35,60,1)));
+		parts.add(new Part(4,1,new Dimensions(50,45,1)));
+		parts.add(new Part(5,1,new Dimensions(15,55,1)));
+		parts.add(new Part(6,1,new Dimensions(85,10,1)));
 		Surface surface = Surface.of(100,100,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -89,9 +89,9 @@ public class LayoutExamples {
 	public static Layout layout7(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(25,100,1)));
-		parts.add(new Part(1,1,new Dimensions(75,50,1)));
-		parts.add(new Part(1,1,new Dimensions(25,75,1)));
-		parts.add(new Part(1,1,new Dimensions(75,25,1)));
+		parts.add(new Part(2,1,new Dimensions(75,50,1)));
+		parts.add(new Part(3,1,new Dimensions(25,75,1)));
+		parts.add(new Part(4,1,new Dimensions(75,25,1)));
 		Surface surface = Surface.of(100,100,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -101,8 +101,8 @@ public class LayoutExamples {
 	public static Layout layout8(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(5,5,1)));
-		parts.add(new Part(1,1,new Dimensions(2,10,1)));
-		parts.add(new Part(1,1,new Dimensions(8,5,1)));
+		parts.add(new Part(2,1,new Dimensions(2,10,1)));
+		parts.add(new Part(3,1,new Dimensions(8,5,1)));
 		Surface surface = Surface.of(10,10,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -114,8 +114,8 @@ public class LayoutExamples {
 	public static Layout layout9(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(10,5,10)));
-		parts.add(new Part(1,1,new Dimensions(10,10,3)));
-		parts.add(new Part(1,1,new Dimensions(2,10,10)));
+		parts.add(new Part(2,1,new Dimensions(10,10,3)));
+		parts.add(new Part(3,1,new Dimensions(2,10,10)));
 		Surface surface = Surface.of(10,10,10);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -125,7 +125,7 @@ public class LayoutExamples {
 	public static Layout layout10(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(10,5,20)));
-		parts.add(new Part(1,1,new Dimensions(5,30,3)));
+		parts.add(new Part(2,1,new Dimensions(5,30,3)));
 		//parts.add(new Part(1,1,new Dimensions(2,10,10)));
 		Surface surface = Surface.of(30,13,5);
 		Layout layout = new Layout(surface, parts);
@@ -138,7 +138,7 @@ public class LayoutExamples {
 	public static Layout unsolvableLayout1(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(10,10,1)));
-		parts.add(new Part(1,1,new Dimensions(10,10,1)));
+		parts.add(new Part(2,1,new Dimensions(10,10,1)));
 		Surface surface = Surface.of(10,10,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
@@ -148,7 +148,7 @@ public class LayoutExamples {
 	public static Layout unsolvableLayout2(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(15,5,1)));
-		parts.add(new Part(1,1,new Dimensions(5,5,1)));
+		parts.add(new Part(2,1,new Dimensions(5,5,1)));
 		Surface surface = Surface.of(10,10,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;

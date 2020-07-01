@@ -13,12 +13,14 @@ public class Vis extends JPanel {
 
   private final Layout layout;
   private static final List<Color> colors = Arrays.asList(
-    Color.RED, Color.GREEN, Color.BLUE, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.PINK
+    Color.RED, Color.ORANGE, Color.PINK, Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN
   );
   private static final int margin = 100;
-  private static final int scale = 10;
+  private static final int offset = margin/3;
+  private static int scale;
   private final int frameWidth;
   private final int frameHeight;
+
 
   private Vis(Layout layout, int width, int height) {
     this.layout = layout;
@@ -27,49 +29,76 @@ public class Vis extends JPanel {
   }
 
   public static void draw(Layout layout) {
-    JFrame frame = new JFrame("Layout");
-    int width = 2 * (scale * layout.getSurface().width() + margin);
+    draw(layout, "Layout");
+  }
+  
+  public static void draw(Layout layout, String layoutDescription){
+	JFrame frame = new JFrame(layoutDescription);
+	scale = 300/layout.getSurface().depth();
+    int width = (scale * layout.getSurface().width() + margin) + (scale * layout.getSurface().depth() + margin);
     int height = scale * layout.getSurface().depth() + margin;
     Vis v = new Vis(layout, width, height);
     frame.add(v);
     frame.setSize(width, height);
-    //frame.setSize(100, 100);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setVisible(true);
+    frame.setVisible(true);	
   }
 
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponents(g);
-    int sw = layout.getSurface().width();
-    int sh = layout.getSurface().depth();
+	paintBackground(g);
+	paintSurface(g);
+	paintParts(g);
+  }
 
-    g.setColor(Color.BLACK);
+  public void paintBackground(Graphics g) {
+    g.setColor(Color.LIGHT_GRAY);
     g.fillRect(0, 0, frameWidth, frameHeight);
-    g.setColor(Color.WHITE);
-    int offset = margin/2;
-    g.fillRect(offset,offset, scale * sw, scale * sh);
-    g.fillRect(offset+frameWidth/2, offset, scale * sw, scale * sh);
+  }
+  
+  public void paintSurface(Graphics g) {
+	int sw = scale * layout.getSurface().width();
+    int sh = scale * layout.getSurface().depth();
+	//int offset = margin/3;
+	g.setColor(Color.GRAY);
+	g.fillRect(offset - 1,offset - 1, sw + 2, sh + 2);
+	g.drawString("Solved Layout", offset + sw/3, 2* offset/3);
+	g.drawString("Uninitialized parts", offset + sw + margin + sh/3, 2 * offset/3);
+	g.setColor(Color.WHITE);
+    g.fillRect(offset, offset, sw, sh);
+    g.fillRect(offset + sw + margin, offset, sh, sh);
+  }
+  
+  public void paintParts(Graphics g) {
     int count = 0;
     int lastUnplacedY = 0;
+	//int offset = margin/3;
     for (Part part : layout.getParts()) {
       Dimensions pos = part.getPosition();
+	  int originalPartWidth = scale * part.getSize().getX();
+	  int originalPartDepth = scale * part.getSize().getY();
       if (pos == null) {
         g.setColor(Color.GRAY);
-        g.fillRect(offset+frameWidth/2 + 10, offset + lastUnplacedY, scale * part.getSize().getX(), scale * part.getSize().getY());
+        g.fillRect(offset + scale * layout.getSurface().width() + margin + 10, offset + lastUnplacedY, originalPartWidth, originalPartDepth);
         lastUnplacedY += part.depth() * scale + 10;
       } else {
+		int startPosX = offset + scale * pos.getX();
+	    int startPosY = offset + scale * pos.getY();
+	    int partWidth = scale * part.width();
+	    int partDepth = scale * part.depth();
         g.setColor(colors.get(count % colors.size()));
-        g.fillRect(offset + scale * pos.getX(), offset + scale * pos.getY(), scale * part.width(), scale * part.depth());
+        g.fillRect(startPosX, startPosY, partWidth, partDepth);
+		g.setColor(Color.black);
+		g.drawString(String.valueOf(part.getId()), startPosX + partWidth/2 - 5, startPosY + partDepth/2 + 12);
         if (part.getRotation() != null && part.getRotation() != Rotation.ZERO) {
-          g.setColor(Color.GRAY);
-          g.drawRect(offset + scale * pos.getX(), offset + scale * pos.getY(), scale * part.width(), scale * part.depth());
+          g.setColor(Color.BLACK);
+          //g.drawRect(startPosX, startPosY, partWidth - 1, partDepth - 1);
+		  g.drawString(rotationName(part.getRotation()), startPosX + partWidth/2 - 10, startPosY + partDepth/2);
         }
         count++;
       }
     }
-    g.setColor(Color.WHITE);
-    g.drawRect(offset-1,offset-1, scale * sw+1, scale * sh+1);
   }
 
   private String rotationName(Rotation r) {
