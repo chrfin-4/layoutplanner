@@ -50,14 +50,13 @@ public class Layout {
 
   // TODO: Use ValueRange instead of collection.
   // Does not necessarily have to be defined on this class.
-  @ValueRangeProvider(id = "positionsAndRotationPairs")
+  //@ValueRangeProvider(id = "positionsAndRotationPairs")
   public Collection<Pair<Dimensions,Rotation>> getPositionsAndRotations() {
     return getPositions().stream()
       .flatMap(p -> getRotations().stream().map(r -> Pair.of(p, r)))
       .collect(toList());
   }
 
-  // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "positions")
   public Collection<Dimensions> getPositions() {
     return surface.getSurfacePositions();
@@ -66,7 +65,7 @@ public class Layout {
   // Does not necessarily have to be defined on this class.
   @ValueRangeProvider(id = "rotations")
   public Collection<Rotation> getRotations() {
-    return List.of(Rotation.ZERO, Rotation.Z90, Rotation.Y90, Rotation.X90, Rotation.Z90X90, Rotation.Z90Y90);
+    return List.of(Rotation.ZERO, Rotation.Z90);  // Rely on side + Z.
   }
 
   @PlanningScore

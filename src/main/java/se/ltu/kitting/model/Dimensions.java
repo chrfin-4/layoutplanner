@@ -10,6 +10,7 @@ public final class Dimensions {
 
   public static final Dimensions ZERO = Dimensions.of(0,0,0);
   public static final Dimensions UNIT = Dimensions.of(1,1,1);
+  public static final Dimensions MINUS = Dimensions.of(-1,-1,-1);
 
   public final int x,y,z;
 
@@ -53,16 +54,30 @@ public final class Dimensions {
 
   /**
    * Creates new dimensions by adding the other dimensions to these dimensions:
-   * (x1,y1,z1).add((x2,y2,z2)) = (x3,y3,z3).
+   * (x1,y1,z1).plus((x2,y2,z2)) = (x3,y3,z3).
    */
-  public Dimensions add(Dimensions other) {
-    return add(this, other);
+  public Dimensions plus(Dimensions other) {
+    return plus(this, other);
   }
 
   /** Adds two dimensions objects: (x1,y1,z1) + (x2,y2,z2) = (x3,y3,z3). */
-  public static Dimensions add(Dimensions p1, Dimensions p2) {
+  public static Dimensions plus(Dimensions p1, Dimensions p2) {
     // TODO: optimize for (0,0,0)
     return Dimensions.of(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z);
+  }
+
+  /**
+   * Creates new dimensions by subtracting the other dimensions from these
+   * dimensions: (x1,y1,z1).minus((x2,y2,z2)) = (x3,y3,z3).
+   */
+  public Dimensions minus(Dimensions other) {
+    return minus(this, other);
+  }
+
+  /** Subtracts two dimensions objects: (x1,y1,z1) - (x2,y2,z2) = (x3,y3,z3). */
+  public static Dimensions minus(Dimensions p1, Dimensions p2) {
+    // TODO: optimize for (0,0,0)
+    return Dimensions.of(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z);
   }
 
   /**

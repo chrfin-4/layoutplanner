@@ -3,7 +3,11 @@ package se.ltu.kitting.model;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import ch.rfin.util.Pair;
+import java.util.Set;
+
+import static se.ltu.kitting.model.Rotation.rotation;
 
 /**
  * A part in the kit, must be assigned a position and a rotation.
@@ -22,13 +26,19 @@ public class Part {
   /** Identifies a specific object. */
   private int id = -1;
   /** Identifies a kind of part. */
-  private int partNumber = -1;
+  private String partNumber = "?";
   /**
    * The size of the part when in its original, non-rotated position.
    * This never changes. To get the current dimensions, including rotation,
    * use {@link #currentRegion()}.
    */
   private Dimensions size;
+  /** The part may be placed on these sides. */
+  private Set<Side> allowedDown = Set.of(Side.bottom, Side.left, Side.back);
+  /** The part should preferentially be placed on this side. */
+  private Side preferredDown;
+  /** Minimum free margin around all sides. */
+  private int minMargin;
 
   // Planning variables.
   // Should probably remain uninitialized, or OptaPlanner can get confused and
@@ -38,16 +48,27 @@ public class Part {
   private Dimensions position;
   /** The current rotation. */
   private Rotation rotation;
+  /** The side that is currently down. */
+  private Side sideDown;
+
+  // Derived. TODO: need to use some OptaPlanner annotation? (Maybe Shadow?)
+
+  private Pair<Dimensions,Dimensions> currentRegion;
 
   /** A no-arg constructor is required by OptaPlanner. */
   public Part() { }
 
-  /** Initializes all the problem facts. */
+  @Deprecated
   public Part(int id, int partNumber, Dimensions size) {
+    this(id, "" + partNumber, size);
+  }
+
+  /** Initializes all the problem facts. */
+  public Part(int id, String partNumber, Dimensions size) {
     this(id, partNumber, size, null);
   }
 
-  public Part(int id, int partNumber, Dimensions size, Dimensions position) {
+  public Part(int id, String partNumber, Dimensions size, Dimensions position) {
     this.id = id;
     this.partNumber = partNumber;
     this.size = size;
@@ -91,8 +112,23 @@ public class Part {
     return rotation;
   }
 
-  public void setRotation(Rotation rot) {
-    this.rotation = rot;
+  public void setRotation(Rotation rotation) {
+    if (rotation != null && rotation != this.rotation) {
+      currentRegion = computeCurrentRegion(sideDown, rotation);
+    }
+    this.rotation = rotation;
+  }
+
+  @PlanningVariable(valueRangeProviderRefs = {"sides"})
+  public Side getSideDown() {
+    return sideDown;
+  }
+
+  public void setSideDown(Side sideDown) {
+    if (sideDown != null && sideDown != this.sideDown) {
+      currentRegion = computeCurrentRegion(sideDown, rotation);
+    }
+    this.sideDown = sideDown;
   }
 
   // These setters and getters are required by OptaPlanner (even though they
@@ -108,11 +144,11 @@ public class Part {
   }
 
   @ProblemFactProperty
-  public int getPartNumber() {
+  public String getPartNumber() {
     return partNumber;
   }
 
-  public void setPartNumber(int pNr) {
+  public void setPartNumber(String pNr) {
     this.partNumber = pNr;
   }
 
@@ -127,6 +163,32 @@ public class Part {
 
   public void setSize(Dimensions size) {
     this.size = size;
+  }
+
+  @ProblemFactProperty
+  public Set<Side> getAllowedDown() {
+    return allowedDown;
+  }
+
+  public void setAllowedDown(Set<Side> sides) {
+    allowedDown = sides;
+  }
+
+  @ProblemFactProperty
+  public Side getPreferredDown() {
+    return preferredDown;
+  }
+
+  public void setPreferredDown(Side side) {
+    if (sideDown == null) {
+      sideDown = preferredDown;
+    }
+    preferredDown = side;
+  }
+
+  @ValueRangeProvider(id = "sides")
+  public Set<Side> getAllowedSidesDown() {
+    return allowedDown;
   }
 
   // --- END of OptaPlanner facts and variables ---
@@ -192,79 +254,62 @@ public class Part {
    * up by the part, taking rotation into account.
    * Note that this changes both depending on the current position and the
    * current rotation.
+   * Should only be called if a position has been assigned.
+   * Returns null otherwise.
    */
   public Pair<Dimensions,Dimensions> currentRegion() {
-    Dimensions endPosition = null;
-    if(rotation == Rotation.Z90){
-      int x = position.getX() + size.getY() - 1;
-      int y = position.getY() + size.getX() - 1;
-      int z = position.getZ() + size.getZ() - 1;
-      endPosition = Dimensions.of(x,y,z);
-    } else if(rotation == Rotation.Y90){
-      int x = position.getX() + size.getZ() - 1;
-      int y = position.getY() + size.getY() - 1;
-      int z = position.getZ() + size.getX() - 1;
-      endPosition = Dimensions.of(x,y,z);
-      // orientation = Left;
-    } else if(rotation == Rotation.X90){
-      int x = position.getX() + size.getX() - 1;
-      int y = position.getY() + size.getZ() - 1;
-      int z = position.getZ() + size.getY() - 1;
-      endPosition = Dimensions.of(x,y,z);
-      // orientation = Back;
-    }  else if(rotation == Rotation.Z90X90){
-      int x = position.getX() + size.getY() - 1;
-      int y = position.getY() + size.getZ() - 1;
-      int z = position.getZ() + size.getX() - 1;
-      endPosition = Dimensions.of(x,y,z);
-      // orientation = Right;
-    } else if(rotation == Rotation.Z90Y90){
-      int x = position.getX() + size.getZ() - 1;
-      int y = position.getY() + size.getX() - 1;
-      int z = position.getZ() + size.getY() - 1;
-      endPosition = Dimensions.of(x,y,z);
-      // orientation = Back;
-	} else if(rotation == Rotation.ZERO || rotation == null){
-      int x = position.getX() + size.getX() - 1;
-      int y = position.getY() + size.getY() - 1;
-      int z = position.getZ() + size.getZ() - 1;
-      endPosition = Dimensions.of(x,y,z);
-    } else {
-      throw new UnsupportedOperationException("Not implemented. Rotation: " + rotation);
+    if (currentRegion == null) {
+      currentRegion = computeCurrentRegion(sideDown, rotation);
     }
-    return Pair.of(position, endPosition);
+    return currentRegion;
+  }
+
+  // Uses side + rotationZ.
+  private Pair<Dimensions,Dimensions> computeCurrentRegion(Side side, Rotation rot) {
+    if (position == null) {
+      return currentRegion; // Undefined when there is no position.
+    }
+    // default to bottom side.
+    if (side == null) {
+      side = Side.bottom;
+    }
+    // default to zero rotation.
+    if (rot == null) {
+      rot = Rotation.ZERO;
+    }
+    // XXX: Transitional, for backward compatibility.
+    // If we aren't using side+z, convert the x,y,z rotation to the equivalent side+z.
+    if (rot != Rotation.ZERO && rot != Rotation.Z90) {
+      var pair = Rotation.toSideAndZ(rot);
+      side = pair._1;
+      rot = pair._2;
+    }
+    return Pair.of(position, position.plus(rotation(side, rot).apply(size)).minus(Dimensions.UNIT));
   }
 
   public Dimensions currentDimensions() {
-    return currentRegion()._2;
+    return currentRegion()._2.plus(Dimensions.UNIT);
   }
 
-  // XXX: this is a silly amount of computation.
+  /** Warning: Subject to rounding errors! */
+  public Dimensions currentCenter() {
+    var region = currentRegion();
+    var origin = region._1;
+    var size = region._2;
+    var center = Dimensions.of(size.x/2, size.y/2, size.z/2);
+    return origin.plus(center);
+  }
+
   public int width() {
-    return currentDimensions().x - position.x + 1;
+    return currentDimensions().x - position.x;
   }
 
   public int depth() {
-    return currentDimensions().y - position.y + 1;
+    return currentDimensions().y - position.y;
   }
 
   public int height() {
-    return currentDimensions().z - position.z + 1;
-  }
-
-  @Deprecated
-  public int getWidth(){
-	  return size.getX();
-  }
-
-  @Deprecated
-  public int getDepth(){
-	  return size.getY();
-  }
-
-  @Deprecated
-  public int getHeight(){
-	  return size.getZ();
+    return currentDimensions().z - position.z;
   }
 
   /**
