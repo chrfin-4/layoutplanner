@@ -12,17 +12,17 @@ import java.util.ArrayList;
 public class Surface {
 
   /** The (width,depth,height) of the surface. */
-  public final Dimensions size;
+  public final Dimensions dimensions;
   public final Dimensions origin;
 
-  private Surface(Dimensions size, Dimensions origin) {
-    this.size = size;
+  private Surface(Dimensions dimensions, Dimensions origin) {
+    this.dimensions = dimensions;
     this.origin = origin;
   }
 
   /** Factory method. Origin defaults to (0,0). */
-  public static Surface of(Dimensions size) {
-    return surface(size, Dimensions.ZERO);
+  public static Surface of(Dimensions dimensions) {
+    return surface(dimensions, Dimensions.ZERO);
   }
 
   /** Factory method. Origin defaults to (0,0). */
@@ -31,13 +31,13 @@ public class Surface {
   }
 
   /** Factory method. */
-  public static Surface of(Dimensions size, Dimensions origin) {
-    return surface(size, origin);
+  public static Surface of(Dimensions dimensions, Dimensions origin) {
+    return surface(dimensions, origin);
   }
 
   /** Factory method. Origin defaults to (0,0). */
-  public static Surface surface(Dimensions size) {
-    return surface(size, Dimensions.ZERO);
+  public static Surface surface(Dimensions dimensions) {
+    return surface(dimensions, Dimensions.ZERO);
   }
 
   /** Factory method. Origin defaults to (0,0). */
@@ -46,20 +46,20 @@ public class Surface {
   }
 
   /** Factory method. */
-  public static Surface surface(Dimensions size, Dimensions origin) {
-    return new Surface(size, origin);
+  public static Surface surface(Dimensions dimensions, Dimensions origin) {
+    return new Surface(dimensions, origin);
   }
 
   public int width() {
-    return size.getX();
+    return dimensions.getX();
   }
 
   public int depth() {
-    return size.getY();
+    return dimensions.getY();
   }
 
   public int height() {
-    return size.getZ();
+    return dimensions.getZ();
   }
 
   /**
@@ -68,11 +68,11 @@ public class Surface {
    */
   public Collection<Dimensions> getSurfacePositions() {
     final Collection<Dimensions> positions = new ArrayList<>();
-    final int x = origin.getX() + size.getX();
-    final int y = origin.getY() + size.getY();
+    final int x = origin.getX() + dimensions.getX();
+    final int y = origin.getY() + dimensions.getY();
     final int z = origin.getZ();
-    for (int i = 0; i < x; i+=1) {
-      for (int j = 0; j < y; j+=1) {
+    for (int i = 0; i < x; i+=10) {
+      for (int j = 0; j < y; j+=10) {
         positions.add(Dimensions.of(i,j,z));
       }
     }
