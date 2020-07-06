@@ -6,10 +6,26 @@ import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
 import se.ltu.kitting.model.Side;
+import ch.rfin.util.Pair;
 
 public class LayoutExamples {
 	
-	/* ---- Possible soltions --- */
+	public static List<Pair<String, Layout>> getAll() {
+		return List.of(Pair.of("Layout 1: Easy w. rotation", layout1()),
+					Pair.of("Layout 2: Easy spec. order", layout2()),
+					Pair.of("Layout 3: Easy w. free space", layout3()),
+					Pair.of("Layout 4: 100 squares", layout4()),
+					Pair.of("Layput 5: Hard, no free space", layout5()),
+					Pair.of("Layout 6: Layout 5 w. one piece removed", layout6()),
+					Pair.of("Layout 7: Medium, rotation needed", layout7()),
+					Pair.of("Layout 8: Easy, small surface", layout8()),
+					Pair.of("Layout 9: Easy, rotation multiple directions", layout9()),
+					Pair.of("Layout 10: Easy, rotation multiple directions", layout10()),
+					Pair.of("Layout 11: 'Real example'", layout11()),
+					Pair.of("Layout 12: Layout 11 w. less free space", layout12()));
+	}
+	
+	/* ---- Possible solutions ---- */
 	
 	/* NOTE: Only for Z90 rotation */
 	
@@ -156,7 +172,7 @@ public class LayoutExamples {
 		return layout;
 	}
 
-	// "Real" example
+	// "Real" example, less free space than layout 11
 	public static Layout layout12(){
 		List<Part> parts = new ArrayList<>();
 		parts.add(new Part(1,1,new Dimensions(200,400,400)));
