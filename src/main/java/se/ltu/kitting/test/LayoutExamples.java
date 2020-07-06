@@ -5,6 +5,7 @@ import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
+import se.ltu.kitting.model.Side;
 
 public class LayoutExamples {
 	
@@ -131,7 +132,7 @@ public class LayoutExamples {
 		Layout layout = new Layout(surface, parts);
 		return layout;
 	}
-	
+
 	// "Real" example
 	public static Layout layout11(){
 		List<Part> parts = new ArrayList<>();
@@ -154,7 +155,57 @@ public class LayoutExamples {
 		Layout layout = new Layout(surface, parts);
 		return layout;
 	}
-	
+
+	// "Real" example
+	public static Layout layout12(){
+		List<Part> parts = new ArrayList<>();
+		parts.add(new Part(1,1,new Dimensions(200,400,400)));
+		parts.add(new Part(2,1,new Dimensions(400,400,400)));
+		parts.add(new Part(3,1,new Dimensions(1000,100,1000)));
+		parts.add(new Part(4,1,new Dimensions(200,200,200)));
+		parts.add(new Part(5,1,new Dimensions(200,300,300)));
+		parts.add(new Part(6,1,new Dimensions(100,500,500)));
+		parts.add(new Part(7,1,new Dimensions(100,250,250)));
+		parts.add(new Part(8,1,new Dimensions(100,250,250)));
+		parts.add(new Part(9,1,new Dimensions(250,150,250)));
+		parts.add(new Part(10,1,new Dimensions(350,150,350)));
+		parts.add(new Part(11,1,new Dimensions(150,200,200)));
+		parts.add(new Part(12,1,new Dimensions(150,200,200)));
+		parts.add(new Part(13,1,new Dimensions(100,250,250)));
+		parts.add(new Part(14,1,new Dimensions(200,150,200)));
+		parts.add(new Part(15,1,new Dimensions(350,100,350)));
+		Surface surface = Surface.of(1200,800,1000);
+		Layout layout = new Layout(surface, parts);
+		return layout;
+	}
+
+  public static Layout apiExample1() {
+    Surface surface = Surface.of(1000,600,500);
+    List<Part> parts = new ArrayList<>();
+    Part part;
+    // "TOWING BRACE", func = "8922-01", weight = 5.0, req.cap = [cap1, cap2], hint = {(300,0,0), (45,0,0), 10}
+    part = new Part(1, "21313876", Dimensions.of(200,500,700));
+    part.setAllowedDown(Set.of(Side.top, Side.bottom, Side.left, Side.right));
+    part.setPreferredDown(Side.top);
+    parts.add(part);
+    // "WARNING TRIANGLE", func = "8962-01", weight = 0.5, req.cap = [cap1], quantity = 2
+    part = new Part(2, "23374865", Dimensions.of(200,500,700));
+    part.setAllowedDown(Set.of(Side.left, Side.right));
+    part.setPreferredDown(Side.left);
+    parts.add(part);
+    // XXX: id=2 ???
+    part = new Part(2, "23374865", Dimensions.of(200,500,700));
+    part.setAllowedDown(Set.of(Side.left, Side.right));
+    part.setPreferredDown(Side.left);
+    parts.add(part);
+    // "INTERIOR LAMP", func = "354-01", weight = 0.3
+    part = new Part(3, "84814790", Dimensions.of(100,300,20));
+    part.setAllowedDown(Set.of(Side.top));
+    part.setPreferredDown(Side.top);
+    parts.add(part);
+    return new Layout(surface, parts);
+  }
+
 	/* ----  Impossible solutions ---- */ 
 	
 	// Overlap completely
