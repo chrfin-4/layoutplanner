@@ -1,15 +1,23 @@
+plugins {
+  id 'org.gretty' version '3.0.3'
+}
+
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'war'
 
 repositories {
+  jcenter()
   mavenCentral()
 }
 
 dependencies {
-  compile 'org.optaplanner:optaplanner-core:7.38.0.Final'
+  implementation 'com.google.code.gson:gson:2.8.6'
+  implementation 'org.optaplanner:optaplanner-core:7.38.0.Final'
   compile files('lib/pair.jar', 'lib/fun.jar')
   testCompile group: 'junit', name: 'junit', version: '4.12'
   testCompile 'org.spockframework:spock-core:1.2-groovy-2.4'
+  providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
 }
 
 task run(type: JavaExec) {
