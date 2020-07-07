@@ -15,6 +15,10 @@ import static java.util.stream.Collectors.toList;
  */
 public class LayoutPlanningResponse {
 
+  private static final Gson gson = new GsonBuilder()
+    .registerTypeAdapter(Rotation.class, new RotationSerializer())
+    .create();
+
   // Required.
   private String version;
   private Kit kit;
@@ -28,13 +32,12 @@ public class LayoutPlanningResponse {
     this.parts = parts;
   }
 
-  public static LayoutPlanningResponse fromLayout(se.ltu.kitting.model.Layout layout) {
+  public static LayoutPlanningResponse fromLayout(Layout layout) {
     List<PartOut> parts = layout.getParts().stream().map(PartOut::new).collect(toList());
     return new LayoutPlanningResponse(parts);
   }
 
   public String toJson() {
-    Gson gson = new GsonBuilder().registerTypeAdapter(Rotation.class, new RotationSerializer()).create();
     return gson.toJson(this);
   }
 
