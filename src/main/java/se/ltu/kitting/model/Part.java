@@ -6,6 +6,8 @@ import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import ch.rfin.util.Pair;
 import java.util.Set;
+import java.util.List;
+import java.util.Collection;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
@@ -106,6 +108,7 @@ public class Part {
 
   public void setPosition(Dimensions pos) {
     this.position = pos;
+    currentRegion = computeCurrentRegion(sideDown, rotation);
   }
 
   @PlanningVariable(valueRangeProviderRefs = {"rotations"})
@@ -193,9 +196,9 @@ public class Part {
   }
 
   @ValueRangeProvider(id = "sides")
-  public Set<Side> getAllowedSidesDown() {
-    // Reduce number of variables.
-    return Side.normalize(allowedDown);
+  public Collection<Side> getAllowedSidesDown() {
+    //return Side.normalize(allowedDown); // Reduce number of variables.
+    return List.of(Side.bottom, Side.top, Side.back, Side.left);  // Optimal for demo.
   }
 
   // --- END of OptaPlanner facts and variables ---
@@ -284,13 +287,6 @@ public class Part {
     if (rot == null) {
       rot = Rotation.ZERO;
     }
-    // XXX: Transitional, for backward compatibility.
-    // If we aren't using side+z, convert the x,y,z rotation to the equivalent side+z.
-    if (rot != Rotation.ZERO && rot != Rotation.Z90) {
-      var pair = Rotation.toSideAndZ(rot);
-      side = pair._1;
-      rot = pair._2;
-    }
     return Pair.of(position, position.plus(rotation(side, rot).apply(size)).minus(Dimensions.UNIT));
   }
 
@@ -378,6 +374,9 @@ public class Part {
    * like 2D rectangles.
    */
   @Deprecated // TODO: Is this actually useful?
+  // Yes, one way it could be useful is if parts are guaranteed to fit within
+  // the surface (in 3D) on which they are placed, and we only want to make sure
+  // that parts on the same surface don't overlap.
   public boolean intersectsIgnoringZ(Part part) {
     throw new UnsupportedOperationException("Not implemented.");
   }
