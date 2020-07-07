@@ -44,17 +44,17 @@ public final class Rotation {
     sideZtoRotation.put(pair(Side.front, ZERO), X90);
     sideZtoRotation.put(pair(Side.bottom, Z90), Z90);
     sideZtoRotation.put(pair(Side.top, Z90), Z90);
-    sideZtoRotation.put(pair(Side.left, Z90), Z90Y90);
-    sideZtoRotation.put(pair(Side.right, Z90), Z90Y90);
-    sideZtoRotation.put(pair(Side.back, Z90), Z90X90);
-    sideZtoRotation.put(pair(Side.front, Z90), Z90X90);
+    sideZtoRotation.put(pair(Side.back, Z90), Z90Y90);
+    sideZtoRotation.put(pair(Side.front, Z90), Z90Y90);
+    sideZtoRotation.put(pair(Side.left, Z90), Z90X90);
+    sideZtoRotation.put(pair(Side.right, Z90), Z90X90);
 
     rotationToSideZ.put(ZERO, pair(Side.bottom, ZERO));
     rotationToSideZ.put(Y90, pair(Side.left, ZERO));
     rotationToSideZ.put(X90, pair(Side.back, ZERO));
     rotationToSideZ.put(Z90, pair(Side.bottom, Z90));
-    rotationToSideZ.put(Z90Y90, pair(Side.left, Z90));
-    rotationToSideZ.put(Z90X90, pair(Side.back, Z90));
+    rotationToSideZ.put(Z90Y90, pair(Side.back, Z90));
+    rotationToSideZ.put(Z90X90, pair(Side.left, Z90));
   }
 
   public final int x,y,z;
