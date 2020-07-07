@@ -24,3 +24,8 @@ task run(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   main = 'se.ltu.kitting.test.Main'
 }
+
+task demo(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'se.ltu.kitting.test.FirstDemo'
+}
