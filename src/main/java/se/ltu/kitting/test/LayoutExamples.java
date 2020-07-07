@@ -6,7 +6,10 @@ import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
 import se.ltu.kitting.model.Side;
+import se.ltu.kitting.model.Wagon;
 import ch.rfin.util.Pair;
+
+import static se.ltu.kitting.model.Dimensions.dimensions;
 
 public class LayoutExamples {
 	
@@ -196,7 +199,11 @@ public class LayoutExamples {
 	}
 
   public static Layout apiExample1() {
-    Surface surface = Surface.of(1000,600,500);
+    List<Surface> surfaces = List.of(
+        Surface.of(dimensions(1000,600,500), dimensions(0,0,100)),
+        Surface.of(dimensions(1000,600,600), dimensions(0,0,600)),
+        Surface.of(dimensions(1000,600,0), dimensions(0,0,1200))    // XXX: eh, 0 thickness? or infinite?
+      );
     List<Part> parts = new ArrayList<>();
     Part part;
     // "TOWING BRACE", func = "8922-01", weight = 5.0, req.cap = [cap1, cap2], hint = {(300,0,0), (45,0,0), 10}
@@ -219,7 +226,7 @@ public class LayoutExamples {
     part.setAllowedDown(Set.of(Side.top));
     part.setPreferredDown(Side.top);
     parts.add(part);
-    return new Layout(surface, parts);
+    return new Layout(Wagon.of(surfaces), parts);
   }
 
 	/* ----  Impossible solutions ---- */ 
