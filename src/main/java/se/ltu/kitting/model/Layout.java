@@ -22,9 +22,8 @@ import static java.util.stream.Collectors.toList;
 @PlanningSolution
 public class Layout {
 
-  // TODO: should possibly take a wagon (containing several surfaces) instead.
-  /** The surface on which the parts will be placed. */
-  private Surface surface;
+  /** Holds the surfaces on which the parts will be placed. */
+  private Wagon wagon;
   /** The parts that will be placed on the surface(s) - planning entities. */
   private List<Part> parts;
   private HardSoftScore score;
@@ -32,8 +31,14 @@ public class Layout {
   /** A no-arg constructor is required by OptaPlanner. */
   public Layout() { }
 
+  /** @deprecated because there will be multiple surfaces in the future */
+  @Deprecated(forRemoval = true)
   public Layout(Surface surface, List<Part> parts) {
-    this.surface = surface;
+    this(Wagon.of(surface), parts);
+  }
+
+  public Layout(Wagon wagon, List<Part> parts) {
+    this.wagon = wagon;
     this.parts = parts;
   }
 
@@ -59,7 +64,7 @@ public class Layout {
 
   @ValueRangeProvider(id = "positions")
   public Collection<Dimensions> getPositions() {
-    return surface.getSurfacePositions();
+    return wagon.allPositions();
   }
 
   // Does not necessarily have to be defined on this class.
@@ -78,15 +83,32 @@ public class Layout {
   }
 
   @ProblemFactProperty
-  public Surface getSurface() {
-    return surface;
+  public Wagon getWagon() {
+    return wagon;
   }
 
-  public void setSurface(Surface surface) {
-    this.surface = surface;
+  public void setWagon(Wagon wagon) {
+    this.wagon = wagon;
   }
+
+  /** @deprecated because there will be multiple surfaces in the future */
+  @Deprecated(forRemoval = true)
+  public Surface getSurface() {
+    return wagon.surfaces().get(0);
+  }
+
+  //** @deprecated because there will be multiple surfaces in the future */
+  /*
+  @Deprecated(forRemoval = true)
+  public void setSurface(Surface surface) {
+  }
+  */
 
   // --- END of OptaPlanner things ---
+
+  public Surface surfaceOf(Part part) {
+    return wagon.surfaceOf(part.getPosition());
+  }
 
   /** Total volume required to fit all parts. */
   public int totalVolume() {

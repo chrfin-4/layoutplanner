@@ -10,6 +10,7 @@ import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Kit;
 import se.ltu.kitting.model.Wagon;
 import se.ltu.kitting.model.Rotation;
+import se.ltu.kitting.model.Surface;
 import java.lang.reflect.Type;
 
 import static java.util.stream.Collectors.toList;
@@ -44,13 +45,9 @@ public class LayoutPlanningRequest {
   }
 
   public Layout getLayout() {
-    // Just use a single surface for now.
-    se.ltu.kitting.model.Surface surface = wagonHint()
-      .flatMap(WagonHint::wagon)
-      .map(Wagon::surfaces)
-      .map(l -> l.get(0))
-      .get();
-    return new Layout(surface, parts.stream().map(Part_::toPart).collect(toList()));
+    // XXX: cannot rely on there being a hint in the future.
+    Wagon wagon = wagonHint().flatMap(WagonHint::wagon).get();
+    return new Layout(wagon, parts.stream().map(Part_::toPart).collect(toList()));
   }
 
   public static class WagonHint {
@@ -91,6 +88,8 @@ public class LayoutPlanningRequest {
       part.setAllowedDown(orientation.allowedDown);
       part.setPreferredDown(orientation.preferredDown);
       PartInfo info = new PartInfo(partDesc, functionGroup, requiredCapabilities, layoutHint);
+      // Initialize planning variables using available hints.
+      // TODO: whether/when to do this should be configurable.
       info.layoutHint().map(LayoutHint::origin).ifPresent(part::setPosition);
       info.layoutHint().flatMap(LayoutHint::rotation).ifPresent(part::setRotation);
       // TODO: add part info to Part;
