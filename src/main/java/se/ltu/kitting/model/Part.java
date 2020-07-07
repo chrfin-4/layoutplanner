@@ -7,6 +7,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import ch.rfin.util.Pair;
 import java.util.Set;
 
+import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
 
 /**
@@ -180,6 +181,11 @@ public class Part {
   }
 
   public void setPreferredDown(Side side) {
+    // XXX: is this really a good idea?
+    // It seems to make sense to use the preferred side by default. You gotta
+    // start somewhere, might as well take advantage of the hint.
+    // But what if a different side turns out to overall be much better?
+    // A construction heuristic would refuse to try.
     if (sideDown == null) {
       sideDown = preferredDown;
     }
@@ -188,7 +194,8 @@ public class Part {
 
   @ValueRangeProvider(id = "sides")
   public Set<Side> getAllowedSidesDown() {
-    return allowedDown;
+    // Reduce number of variables.
+    return Side.normalize(allowedDown);
   }
 
   // --- END of OptaPlanner facts and variables ---
@@ -329,14 +336,23 @@ public class Part {
     throw new UnsupportedOperationException("Not implemented.");
   }
 
+  // XXX: minArea and maxArea do not take allowed sides into consideration!
+  // Change this behavior or add both versions?
+
   /** Minimum possible area. Never changes. */
   public int minArea() {
-    throw new UnsupportedOperationException("Not implemented.");
+    final int xy = size.x * size.y;
+    final int xz = size.x * size.z;
+    final int yz = size.y * size.z;
+    return Math.min(xy, Math.min(xz, yz));
   }
 
   /** Maximum possible area. Never changes. */
   public int maxArea() {
-    throw new UnsupportedOperationException("Not implemented.");
+    final int xy = size.x * size.y;
+    final int xz = size.x * size.z;
+    final int yz = size.y * size.z;
+    return Math.max(xy, Math.max(xz, yz));
   }
 
   /** The smallest side. Never changes. */
@@ -364,6 +380,42 @@ public class Part {
   @Deprecated // TODO: Is this actually useful?
   public boolean intersectsIgnoringZ(Part part) {
     throw new UnsupportedOperationException("Not implemented.");
+  }
+
+  /** Returns the area of this side of the part. */
+  public int areaOf(Side side) {
+    switch (side) {
+      case bottom: case top: return size.x * size.y;
+      case back: case front: return size.x * size.z;
+      case left: case right: return size.y * size.z;
+      default: throw new IllegalArgumentException("Unexpected side: " + side);
+    }
+  }
+
+  /**
+   * Returns an allowed side for which the part has the minimum area.
+   * In other words, out of all the sides that are allowed, which has the
+   * smallest area?
+   * Favors the preferred side if equivalent to the minimum.
+   * If the preferred side is not equivalent to the minimum, the preferred
+   * side is ignored.
+   * All else being equal, defaults to the canonical side.
+   */
+  public Side minAreaSide() {
+    assert !allowedDown.isEmpty();
+    Side min = allowedDown.stream().min(comparing(this::areaOf)).get();
+    if (min == preferredDown) {
+      return min;
+    }
+    Side opposite = min.opposite();
+    if (opposite == preferredDown) {
+      return opposite;
+    }
+    Side canonical = min.toCanonical();
+    if (allowedDown.contains(canonical)) {
+      return canonical;
+    }
+    return min;
   }
 
 }
