@@ -90,7 +90,7 @@ public class Part {
    * Allows the two real planning variables to be combined and treated like a
    * single variable.
    */
-  //@PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
+  @Deprecated(forRemoval = true)
   public Pair<Dimensions,Rotation> getPositionAndRotation() {
     return Pair.of(position, rotation);
   }
@@ -117,6 +117,7 @@ public class Part {
   }
 
   public void setRotation(Rotation rotation) {
+    // XXX: need to consider what to do when rotation == null.
     if (rotation != null && rotation != this.rotation) {
       currentRegion = computeCurrentRegion(sideDown, rotation);
     }
@@ -129,6 +130,7 @@ public class Part {
   }
 
   public void setSideDown(Side sideDown) {
+    // XXX: need to consider what to do when sideDown == null.
     if (sideDown != null && sideDown != this.sideDown) {
       currentRegion = computeCurrentRegion(sideDown, rotation);
     }
