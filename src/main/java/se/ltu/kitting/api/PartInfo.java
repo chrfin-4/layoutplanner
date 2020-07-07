@@ -18,22 +18,18 @@ public class PartInfo {
   }
 
   public Optional<String> partDesc() {
-    //return Optional.ofNullable(partDesc);
     return partDesc;
   }
 
   public Optional<String> functionGroup() {
-    //return Optional.ofNullable(functionGroup);
     return functionGroup;
   }
 
   public Optional<LayoutHint> layoutHint() {
-    //return Optional.ofNullable(layoutHint);
     return layoutHint;
   }
 
   public Collection<String> requiredCapabilities() {
-    //return Collections.unmodifiableCollection(requiredCapabilities);
     return requiredCapabilities;
   }
 
