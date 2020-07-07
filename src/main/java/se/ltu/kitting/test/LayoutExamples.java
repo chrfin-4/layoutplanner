@@ -12,13 +12,13 @@ import ch.rfin.util.Pair;
 import static se.ltu.kitting.model.Dimensions.dimensions;
 
 public class LayoutExamples {
-	
-	public static List<Pair<String, Layout>> getAll() {
-		return List.of(Pair.of("Layout 1: Easy w. rotation", layout1()),
+
+	private static List<Pair<String,Layout>> layouts = List.of(Pair.of("Layout 0: Easy", layout0()),
+					Pair.of("Layout 1: Easy w. rotation", layout1()),
 					Pair.of("Layout 2: Easy spec. order", layout2()),
 					Pair.of("Layout 3: Easy w. free space", layout3()),
 					Pair.of("Layout 4: 100 squares", layout4()),
-					Pair.of("Layput 5: Hard, no free space", layout5()),
+					Pair.of("Layout 5: Hard, no free space", layout5()),
 					Pair.of("Layout 6: Layout 5 w. one piece removed", layout6()),
 					Pair.of("Layout 7: Medium, rotation needed", layout7()),
 					Pair.of("Layout 8: Easy, small surface", layout8()),
@@ -26,9 +26,51 @@ public class LayoutExamples {
 					Pair.of("Layout 10: Easy, rotation multiple directions", layout10()),
 					Pair.of("Layout 11: 'Real example'", layout11()),
 					Pair.of("Layout 12: Layout 11 w. less free space", layout12()));
+
+	public static List<Pair<String,Layout>> getAll() {
+		return layouts;
 	}
 	
+	public static String layoutDescription(int index){
+		if(index >= layouts.size()){
+			throw new IndexOutOfBoundsException("Layout " + index + " does not exist");
+		}
+		return layouts.get(index)._1;
+	}
+	
+	public static Layout layout(int index){
+		if(index >= layouts.size()){
+			throw new IndexOutOfBoundsException("Layout " + index + " does not exist");
+		}
+		return layouts.get(index)._2;
+	}
+	
+	// public static List<Pair<String, Layout>> getAll() {
+		// return List.of(Pair.of("Layout 0: Easy", layout0()),
+					// Pair.of("Layout 1: Easy w. rotation", layout1()),
+					// Pair.of("Layout 2: Easy spec. order", layout2()),
+					// Pair.of("Layout 3: Easy w. free space", layout3()),
+					// Pair.of("Layout 4: 100 squares", layout4()),
+					// Pair.of("Layout 5: Hard, no free space", layout5()),
+					// Pair.of("Layout 6: Layout 5 w. one piece removed", layout6()),
+					// Pair.of("Layout 7: Medium, rotation needed", layout7()),
+					// Pair.of("Layout 8: Easy, small surface", layout8()),
+					// Pair.of("Layout 9: Easy, rotation multiple directions", layout9()),
+					// Pair.of("Layout 10: Easy, rotation multiple directions", layout10()),
+					// Pair.of("Layout 11: 'Real example'", layout11()),
+					// Pair.of("Layout 12: Layout 11 w. less free space", layout12()));
+	// }
+	
 	/* ---- Possible solutions ---- */
+	
+	public static Layout layout0(){
+		List<Part> parts = new ArrayList<>();
+		parts.add(new Part(1,1,new Dimensions(5,10,1)));
+		parts.add(new Part(2,1,new Dimensions(10,5,1)));
+		Surface surface = Surface.of(10,10,1);
+		Layout layout = new Layout(surface, parts);
+		return layout;
+	}
 	
 	/* NOTE: Only for Z90 rotation */
 	

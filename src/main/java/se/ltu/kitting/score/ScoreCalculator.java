@@ -45,7 +45,6 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
   }
   
   // Check if two parts overlap
-  // FIXME: Need check Z when multiple surfaces
   public static boolean partsOverlap(Part p1, Part p2) {
 	Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
 	Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
@@ -53,7 +52,12 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
 	Dimensions endPositionP1 = currentRegionP1._2;
 	Dimensions startPositionP2 = currentRegionP2._1;
 	Dimensions endPositionP2 = currentRegionP2._2;
-	  
+	
+	// Parts do not overlap if they are on different surfaces
+	if(startPositionP1.getZ() != startPositionP2.getZ()){
+	  return false;
+	}
+	
 	int rect1xLeft = startPositionP1.getX();
     int rect1xRight = endPositionP1.getX();
     int rect1yBack = startPositionP1.getY();
@@ -64,7 +68,7 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
     int rect2yFront = endPositionP2.getY();  
 	  
     return rect1xLeft <= rect2xRight && rect1xRight >= rect2xLeft &&
-        rect1yBack <= rect2yFront && rect1yFront >= rect2yBack;
+      rect1yBack <= rect2yFront && rect1yFront >= rect2yBack;
   }
   
   // Counts the number of parts outside surface
