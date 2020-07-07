@@ -60,4 +60,22 @@ public class StreamUtil {
     return stream(seconds).map(s -> Pair.of(first, s));
   }
 
+  public static <T,S> Iterator<Pair<T,S>> zip(Iterator<T> ts, Iterator<S> ss) {
+    return new Iterator<>() {
+      @Override
+      public boolean hasNext() {
+        return ts.hasNext() && ss.hasNext();
+      }
+
+      @Override
+      public Pair<T,S> next() {
+        return Pair.of(ts.next(), ss.next());
+      }
+    };
+  }
+
+  public static <T,S> Iterable<Pair<T,S>> zip(Iterable<T> ts, Iterable<S> ss) {
+    return () -> zip(ts.iterator(), ss.iterator());
+  }
+
 }
