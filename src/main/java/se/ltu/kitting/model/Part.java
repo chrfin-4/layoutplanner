@@ -8,7 +8,6 @@ import ch.rfin.util.Pair;
 import java.util.Set;
 import java.util.List;
 import java.util.Collection;
-import java.util.Comparator;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
@@ -91,7 +90,7 @@ public class Part {
    * Allows the two real planning variables to be combined and treated like a
    * single variable.
    */
-  //@PlanningVariable(valueRangeProviderRefs = {"positionsAndRotationPairs"})
+  @Deprecated(forRemoval = true)
   public Pair<Dimensions,Rotation> getPositionAndRotation() {
     return Pair.of(position, rotation);
   }
@@ -118,6 +117,7 @@ public class Part {
   }
 
   public void setRotation(Rotation rotation) {
+    // XXX: need to consider what to do when rotation == null.
     if (rotation != null && rotation != this.rotation) {
       currentRegion = computeCurrentRegion(sideDown, rotation);
     }
@@ -130,6 +130,7 @@ public class Part {
   }
 
   public void setSideDown(Side sideDown) {
+    // XXX: need to consider what to do when sideDown == null.
     if (sideDown != null && sideDown != this.sideDown) {
       currentRegion = computeCurrentRegion(sideDown, rotation);
     }
@@ -269,6 +270,7 @@ public class Part {
    * Returns null otherwise.
    */
   public Pair<Dimensions,Dimensions> currentRegion() {
+    // TODO: throw an illegal state exception when there is no position set?
     if (currentRegion == null) {
       currentRegion = computeCurrentRegion(sideDown, rotation);
     }
@@ -282,11 +284,11 @@ public class Part {
     }
     // default to bottom side.
     if (side == null) {
-      side = Side.bottom;
+      side = Side.bottom; // XXX: hmm, maybe rather default to preferred side? If anything, that is.
     }
     // default to zero rotation.
     if (rot == null) {
-      rot = Rotation.ZERO;
+      rot = Rotation.ZERO;  // XXX: default to layout hint, if available?
     }
     return Pair.of(position, position.plus(rotation(side, rot).apply(size)).minus(Dimensions.UNIT));
   }
@@ -299,9 +301,18 @@ public class Part {
   public Dimensions currentCenter() {
     var region = currentRegion();
     var origin = region._1;
-    var size = region._2;
-    var center = Dimensions.of(size.x/2, size.y/2, size.z/2);
-    return origin.plus(center);
+    var size = region._2.plus(Dimensions.UNIT);
+    return cornerToCenter(origin, size);
+  }
+
+  // TODO: Move to separate util class.
+  public static Dimensions cornerToCenter(Dimensions corner, Dimensions dimensions) {
+    return corner.plus(dimensions.divide(2));
+  }
+
+  // TODO: Move to separate util class.
+  public static Dimensions centerToCorner(Dimensions center, Dimensions dimensions) {
+    return center.minus(dimensions.divide(2));
   }
 
   public int width() {
@@ -314,6 +325,18 @@ public class Part {
 
   public int height() {
     return currentDimensions().z - position.z;
+  }
+  
+  public int originalWidth() {
+    return size.x;
+  }
+
+  public int originalDepth() {
+    return size.y;
+  }
+
+  public int originalHeight() {
+    return size.z;
   }
 
   /**
@@ -336,7 +359,7 @@ public class Part {
   // XXX: minArea and maxArea do not take allowed sides into consideration!
   // Change this behavior or add both versions?
 
-  /** Minimum possible area. Never changes. */
+  /** Minimum theoretically possible area. Never changes. */
   public int minArea() {
     final int xy = size.x * size.y;
     final int xz = size.x * size.z;
@@ -344,7 +367,7 @@ public class Part {
     return Math.min(xy, Math.min(xz, yz));
   }
 
-  /** Maximum possible area. Never changes. */
+  /** Maximum theoretically possible area. Never changes. */
   public int maxArea() {
     final int xy = size.x * size.y;
     final int xz = size.x * size.z;
@@ -352,16 +375,26 @@ public class Part {
     return Math.max(xy, Math.max(xz, yz));
   }
 
+  /** Minimum actually possible area. Never changes. */
+  public int minAllowedArea() {
+    return allowedDown.stream().mapToInt(this::areaOf).min().getAsInt();
+  }
+
+  /** Maximum actually possible area. Never changes. */
+  public int maxAllowedArea() {
+    return allowedDown.stream().mapToInt(this::areaOf).max().getAsInt();
+  }
+
   /** The smallest side. Never changes. */
   public int minLength() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return Math.min(size.x, Math.min(size.y, size.z));
   }
 
   /** The largest side. Never changes. */
   public int maxLength() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return Math.max(size.x, Math.max(size.y, size.z));
   }
-
+  
   /**
    * Check whether this part intersects with the other part.
    * Depends on the current region of both parts.
@@ -391,6 +424,16 @@ public class Part {
       default: throw new IllegalArgumentException("Unexpected side: " + side);
     }
   }
+  
+  /** Returns width and depth of part on specified side */
+  public Pair<Integer,Integer> dimensionsOf(Side side) {
+    switch (side) {
+      case bottom: case top: return Pair.of(size.x, size.y);
+      case back: case front: return Pair.of(size.x, size.z);
+      case left: case right: return Pair.of(size.z, size.y);
+      default: throw new IllegalArgumentException("Unexpected side: " + side);
+    }
+  }
 
   /**
    * Returns an allowed side for which the part has the minimum area.
@@ -416,13 +459,6 @@ public class Part {
       return canonical;
     }
     return min;
-  }
-  
-  public static class CompareHeight implements Comparator<Part> {
-    @Override
-    public int compare(Part arg0, Part arg1) {
-      return arg1.getSize().getY() - arg0.getSize().getY();
-    }
   }
 
 }

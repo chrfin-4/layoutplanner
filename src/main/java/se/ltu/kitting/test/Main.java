@@ -2,22 +2,30 @@ package se.ltu.kitting.test;
 
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.function.UnaryOperator;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
+import ch.rfin.util.Pair;
 
+import se.ltu.kitting.ConstructionHeuristics;
+
+import static se.ltu.kitting.ConstructionHeuristics.*;
 import static se.ltu.kitting.test.LayoutExamples.*;
 import static java.util.stream.Collectors.joining;
+import static se.ltu.kitting.util.StreamUtil.stream;
 
 public class Main {
 
   public static void main(String[] args) throws Exception {
-    //runAndVisualize(layout2());
-    //runBenchmark("solverConf.xml", layout1(), layout2(), layout3());//, layout4(), layout5(), layout6(), layout7());
-    runExampleBenchmarkMulti1();
+    //runAndVisualize(layout1());
+    //runBenchmark("solverConf.xml", layout1(), layout2(), layout3(), layout4(), layout5(), layout6(), layout7(), layout8(), layout9(), layout10(), layout11());
+    //runExampleBenchmarkMulti1();
+	List<Pair<String,Layout>> layouts = getAll();
+	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::minArea, layouts);
   }
 
   @Deprecated
@@ -36,7 +44,7 @@ public class Main {
   }
 
   public static void runAndVisualize(Layout layout) {
-    runAndVisualize("solverConf.xml", layout);
+    runAndVisualize("noConstructionHeuristic.xml", layout);
   }
 
   public static void runAndVisualize(String xmlConfig, Layout unsolvedLayout) {
@@ -143,6 +151,16 @@ public class Main {
       .configs("firstFit.xml", "firstFitDecreasing.xml")
       .layouts(layout1(), layout2(), layout3())
       .buildMultipleByConfig().forEach(Main::runExampleBenchmark);
+  }
+
+  // Feeds layouts through a custom construction heuristic before passing them to the benchmark.
+  public static void runCustomHeuristic(String xml, UnaryOperator<Layout> heuristic, Iterable<Pair<String,Layout>> layouts) {
+    Benchmark benchmark = Benchmark.builder()
+      .name("Benchmark with custom heuristic")
+      .config(xml)
+      .testLayouts(() -> stream(layouts).map(p -> p.map_2(heuristic)).iterator())
+      .build();
+    runExampleBenchmark(benchmark);
   }
 
   // XXX: A lot of this complexity will be hidden in the future.
