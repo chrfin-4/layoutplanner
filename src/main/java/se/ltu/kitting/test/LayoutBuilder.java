@@ -49,7 +49,7 @@ public class LayoutBuilder {
   }
 
   public LayoutBuilder surface(Dimensions size) {
-    return surface(Surface.of(nextSurfaceOrigin(), size));
+    return surface(Surface.of(size, nextSurfaceOrigin()));
   }
 
   public LayoutBuilder surface(Surface surface) {
