@@ -294,15 +294,12 @@ public class Part {
   }
 
   public Dimensions currentDimensions() {
-    return currentRegion()._2.plus(Dimensions.UNIT);
+    return rotation(sideDown, rotation).apply(size);
   }
 
   /** Warning: Subject to rounding errors! */
   public Dimensions currentCenter() {
-    var region = currentRegion();
-    var origin = region._1;
-    var size = region._2.plus(Dimensions.UNIT);
-    return cornerToCenter(origin, size);
+    return cornerToCenter(position, currentDimensions());
   }
 
   // TODO: Move to separate util class.
@@ -316,15 +313,15 @@ public class Part {
   }
 
   public int width() {
-    return currentDimensions().x - position.x;
+    return currentDimensions().x;
   }
 
   public int depth() {
-    return currentDimensions().y - position.y;
+    return currentDimensions().y;
   }
 
   public int height() {
-    return currentDimensions().z - position.z;
+    return currentDimensions().z;
   }
 
   /**
