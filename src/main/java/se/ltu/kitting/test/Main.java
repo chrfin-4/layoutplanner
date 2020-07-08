@@ -2,15 +2,18 @@ package se.ltu.kitting.test;
 
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.function.UnaryOperator;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.config.solver.SolverConfig;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
+import ch.rfin.util.Pair;
 
 import static se.ltu.kitting.test.LayoutExamples.*;
 import static java.util.stream.Collectors.joining;
+import static se.ltu.kitting.util.StreamUtil.stream;
 
 public class Main {
 
@@ -143,6 +146,16 @@ public class Main {
       .configs("firstFit.xml", "firstFitDecreasing.xml")
       .layouts(layout1(), layout2(), layout3())
       .buildMultipleByConfig().forEach(Main::runExampleBenchmark);
+  }
+
+  // Feeds layouts through a custom construction heuristic before passing them to the benchmark.
+  public static void runCustomHeuristic(String xml, UnaryOperator<Layout> heuristic, Iterable<Pair<String,Layout>> layouts) {
+    Benchmark benchmark = Benchmark.builder()
+      .name("Benchmark with custom heuristic")
+      .config(xml)
+      .testLayouts(() -> stream(layouts).map(p -> p.map_2(heuristic)).iterator())
+      .build();
+    runExampleBenchmark(benchmark);
   }
 
   // XXX: A lot of this complexity will be hidden in the future.
