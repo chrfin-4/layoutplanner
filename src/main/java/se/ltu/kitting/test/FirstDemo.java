@@ -7,9 +7,9 @@ public class FirstDemo {
   public static void main(String[] args) throws Exception {
     Benchmark benchmark = Benchmark.builder()
       .config("firstDemo.xml")
-      .test(demoLayout3(), "slowest, few pieces that fit exactly")
+      .test(demoLayout3(), "easy, many pieces but lots of space")
       .test(demoLayout2(), "fast")
-      .test(demoLayout1(), "easy, many pieces but lots of space")
+      .test(demoLayout1(), "slowest, few pieces that fit exactly")
       .build();
     System.out.println("Running benchmark " + benchmark.name() + " ...");
     Benchmark.ResultStats stats = benchmark.run()
