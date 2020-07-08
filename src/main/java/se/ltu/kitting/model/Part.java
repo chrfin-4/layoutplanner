@@ -8,6 +8,7 @@ import ch.rfin.util.Pair;
 import java.util.Set;
 import java.util.List;
 import java.util.Collection;
+import java.util.Comparator;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
@@ -415,6 +416,13 @@ public class Part {
       return canonical;
     }
     return min;
+  }
+  
+  public static class CompareHeight implements Comparator<Part> {
+    @Override
+    public int compare(Part arg0, Part arg1) {
+      return arg1.getSize().getY() - arg0.getSize().getY();
+    }
   }
 
 }
