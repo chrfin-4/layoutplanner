@@ -20,16 +20,16 @@ import static ch.rfin.util.Pair.pair;
  */
 public final class Rotation {
 
-  public static final Rotation ZERO = rotation(0, 0, 0);
+  public static final Rotation ZERO = new Rotation(0, 0, 0);
   @Deprecated
-  public static final Rotation X90 = rotation(90, 0, 0);
+  public static final Rotation X90 = new Rotation(90, 0, 0);
   @Deprecated
-  public static final Rotation Y90 = rotation(0, 90, 0);
-  public static final Rotation Z90 = rotation(0, 0, 90);
+  public static final Rotation Y90 = new Rotation(0, 90, 0);
+  public static final Rotation Z90 = new Rotation(0, 0, 90);
   @Deprecated
-  public static final Rotation Z90X90 = rotation(90, 0, 90);
+  public static final Rotation Z90X90 = new Rotation(90, 0, 90);
   @Deprecated
-  public static final Rotation Z90Y90 = rotation(0, 90, 90);
+  public static final Rotation Z90Y90 = new Rotation(0, 90, 90);
 
   // For conversion between the (now deprecated) x,y,z representation and the
   // newer side,z representation.
@@ -65,7 +65,6 @@ public final class Rotation {
     this.z = z;
   }
 
-  /*
   public static Rotation rotation(int z) {
     if (z == 0) {
       return ZERO;
@@ -75,14 +74,11 @@ public final class Rotation {
       throw new IllegalArgumentException("Illegal argument: z not 0 or 90: " + z);
     }
   }
-  */
 
-  //** Factory method. */
-  /*
+  /** Factory method. */
   public static Rotation of(int z) {
     return rotation(z);
   }
-  */
 
   @Deprecated
   public static Rotation rotation(int x, int y, int z) {
@@ -91,16 +87,25 @@ public final class Rotation {
 
   @Deprecated
   public static Rotation of(int x, int y, int z) {
-    if (x != 0 && x != 90) {
+    if (z == 0 && x == 0 && y == 0) {
       return ZERO;
     }
-    if (y != 0 && y != 90) {
-      return ZERO;
+    if (z == 90 && x == 0 && y == 0) {
+      return Z90;
     }
-    if (z != 0 && z != 90) {
-      return ZERO;
+    if (z == 90 && x == 90 && y == 0) {
+      return Z90X90;
     }
-    return new Rotation(x, y, z);
+    if (z == 90 && x == 0 && y == 90) {
+      return Z90Y90;
+    }
+    if (z == 0 && x == 90 && y == 0) {
+      return X90;
+    }
+    if (z == 0 && x == 0 && y == 90) {
+      return Y90;
+    }
+    return ZERO;
   }
 
   @Override
