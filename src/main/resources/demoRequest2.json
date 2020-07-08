@@ -1,0 +1,146 @@
+{
+    "$schema": "./schema/LayoutPlanningRequest.schema.json",
+    "version": "1.0",
+    "kit": {
+        "kitId": "Demo 2",
+        "chassisId": "A550421",
+        "side": "left"
+    },
+    "parts": [
+        {
+          	"id": 1,
+            "partNumber": "21313876",
+            "partDesc": "TOWING BRACE",
+            "functionGroup": "8922-01",
+            "dimensions": {
+                "x": 25,
+                "y": 100,
+                "z": 100
+            },
+            "orientation": {
+                "allowedDown": [
+                    "top",
+                    "bottom",
+                    "left",
+                    "right",
+                    "back",
+                    "front"
+                ],
+                "preferredDown": "bottom"
+            },
+            "weight": 5.0,
+            "requiredCapabilities": [
+                "cap1",
+                "cap2"
+            ],
+            "layoutHint": null
+        },
+        {
+          	"id": 2,
+            "partNumber": "23374865",
+            "partDesc": "WARNING TRIANGLE",
+            "functionGroup": "8962-01",
+            "dimensions": {
+                "x": 75,
+                "y": 50,
+                "z": 100
+            },
+            "orientation": {
+                "allowedDown": [
+                    "top",
+                    "bottom",
+                    "left",
+                    "right",
+                    "back",
+                    "front"
+                ],
+                "preferredDown": "bottom"
+            },
+            "weight": 0.5,
+            "requiredCapabilities": [
+                "cap1"
+            ],
+            "layoutHint": null
+        },
+        {
+          	"id": 3,
+            "partNumber": "84814790",
+            "partDesc": "INTERIOR LAMP",
+            "functionGroup": "354-01",
+            "dimensions": {
+                "x": 25,
+                "y": 75,
+                "z": 100
+            },
+            "orientation": {
+                "allowedDown": [
+                    "top",
+                    "bottom",
+                    "left",
+                    "right",
+                    "back",
+                    "front"
+                ],
+                "preferredDown": "bottom"
+            },
+            "weight": 0.3,
+            "requiredCapabilities": null,
+            "layoutHint": null
+        },
+        {
+          	"id": 4,
+            "partNumber": "84814790",
+            "partDesc": "INTERIOR LAMP",
+            "functionGroup": "354-01",
+            "dimensions": {
+                "x": 75,
+                "y": 25,
+                "z": 100
+            },
+            "orientation": {
+                "allowedDown": [
+                    "top",
+                    "bottom",
+                    "left",
+                    "right",
+                    "back",
+                    "front"
+                ],
+                "preferredDown": "bottom"
+            },
+            "weight": 0.3,
+            "requiredCapabilities": null,
+            "layoutHint": null
+        }
+    ],
+    "wagonHint": {
+        "weightFactor": 10,
+        "wagon": {
+            "wagonId": "W002",
+            "dimensions": {
+                "x": 1000,
+                "y": 600,
+                "z": 1200
+            },
+            "surfaces": [
+                {
+                    "origin": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "dimensions": {
+                        "x": 100,
+                        "y": 100,
+                        "z": 100
+                    }
+                }
+            ],
+            "capabilities": [
+                "ThreeLevel",
+                "cap1",
+                "cap2"
+            ]
+        }
+    }
+}
