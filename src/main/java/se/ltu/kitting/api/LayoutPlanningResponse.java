@@ -1,6 +1,7 @@
 package se.ltu.kitting.api;
 
 import java.util.List;
+import java.util.Optional;
 import java.lang.reflect.Type;
 import com.google.gson.*;
 import se.ltu.kitting.model.*;
@@ -17,6 +18,7 @@ public class LayoutPlanningResponse {
 
   private static final Gson gson = new GsonBuilder()
     .registerTypeAdapter(Rotation.class, new RotationSerializer())
+    .registerTypeAdapter(Rotation.class, new RotationDeserializer())
     .create();
 
   // Required.
@@ -32,13 +34,34 @@ public class LayoutPlanningResponse {
     this.parts = parts;
   }
 
+  // XXX: include more than just the parts.
   public static LayoutPlanningResponse fromLayout(Layout layout) {
     List<PartOut> parts = layout.getParts().stream().map(PartOut::new).collect(toList());
     return new LayoutPlanningResponse(parts);
   }
 
+  public static LayoutPlanningResponse fromJson(String json) {
+    return gson.fromJson(json, LayoutPlanningResponse.class);
+  }
+
   public String toJson() {
     return gson.toJson(this);
+  }
+
+  public Optional<Dimensions> getCenterPosition(int partId) {
+    return getPartLayout(partId).map(l -> l.origin);
+  }
+
+  public Optional<Rotation> getRotation(int partId) {
+    return getPartLayout(partId).map(l -> l.rotation);
+  }
+
+  public Optional<Side> getSide(int partId) {
+    return getPartLayout(partId).map(l -> l.orientation);
+  }
+
+  private Optional<Layout_> getPartLayout(int partId) {
+    return parts.stream().filter(p -> p.id == partId).findAny().map(p -> p.layout);
   }
 
   private static class Layout_ {
