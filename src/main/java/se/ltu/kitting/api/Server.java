@@ -22,21 +22,21 @@ public class Server extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    LayoutPlanningRequest planningRequest = getPlanningRequest(request);
-    LayoutPlanningResponse planningResponse = LayoutPlanner.requestLayout(planningRequest);
-    sendPlanningResponse(planningResponse, response);
+    sendJson(jsonResponse(jsonRequest(request)), response);
   }
 
-  public static LayoutPlanningRequest getPlanningRequest(ServletRequest request) throws IOException {
-    return LayoutPlanningRequest.fromJson(getJson(request));
+  public static void sendJson(String json, ServletResponse response) throws IOException {
+    response.getWriter().print(json);
   }
 
-  public static void sendPlanningResponse(LayoutPlanningResponse planningResponse, ServletResponse servletResponse) throws IOException {
-    servletResponse.getWriter().print(planningResponse.toJson());
-  }
-
-  public static String getJson(ServletRequest request) throws IOException {
+  public static String jsonRequest(ServletRequest request) throws IOException {
     return request.getReader().lines().collect(joining());
+  }
+
+  public static String jsonResponse(String jsonRequest) {
+    LayoutPlanningRequest planningRequest = LayoutPlanningRequest.fromJson(jsonRequest);
+    LayoutPlanningResponse planningResponse = LayoutPlanner.requestLayout(planningRequest);
+    return planningResponse.toJson();
   }
 
 }
