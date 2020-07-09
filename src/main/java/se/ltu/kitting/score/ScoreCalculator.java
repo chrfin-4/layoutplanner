@@ -88,9 +88,11 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
 
   // Checks if part is outside of surface
   public boolean partOutside(Part part, Surface surface){
-    boolean height = part.height() > surface.height();
-    boolean depth = part.depth() > surface.depth();
-    boolean width = part.width() > surface.width();
+    Dimensions partEnd = part.getPosition().plus(part.currentDimensions());
+    Dimensions surfaceEnd = surface.origin.plus(surface.dimensions);
+    boolean height = partEnd.z > surfaceEnd.z;
+    boolean depth = partEnd.y > surfaceEnd.y;
+    boolean width = partEnd.x > surfaceEnd.x;
     return height || depth || width;
   }
 
