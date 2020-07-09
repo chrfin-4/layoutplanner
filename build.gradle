@@ -29,3 +29,8 @@ task demo(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   main = 'se.ltu.kitting.test.FirstDemo'
 }
+
+task restClient(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'se.ltu.kitting.test.RestClient'
+}
