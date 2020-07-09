@@ -17,12 +17,13 @@ import static java.util.stream.Collectors.joining;
  * This is a quick and dirty firt version.
  * @author Christoffer Fink
  */
+@SuppressWarnings("serial")
 @WebServlet(name = "LayoutPlanning", urlPatterns = {"/requestLayout"}, loadOnStartup = 1)
 public class Server extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    sendJson(jsonResponse(jsonRequest(request)), response);
+    sendJson(LayoutPlanner.jsonResponse(jsonRequest(request)), response);
   }
 
   public static void sendJson(String json, ServletResponse response) throws IOException {
@@ -31,12 +32,6 @@ public class Server extends HttpServlet {
 
   public static String jsonRequest(ServletRequest request) throws IOException {
     return request.getReader().lines().collect(joining());
-  }
-
-  public static String jsonResponse(String jsonRequest) {
-    LayoutPlanningRequest planningRequest = LayoutPlanningRequest.fromJson(jsonRequest);
-    LayoutPlanningResponse planningResponse = LayoutPlanner.requestLayout(planningRequest);
-    return planningResponse.toJson();
   }
 
 }

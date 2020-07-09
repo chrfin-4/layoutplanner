@@ -13,16 +13,19 @@ public class LayoutPlanner {
 
   public static LayoutPlanningResponse requestLayout(LayoutPlanningRequest request) {
     Layout solved = solve(request.getLayout());
-    LayoutPlanningResponse response = LayoutPlanningResponse.fromLayout(solved);
-    return response;
+    return LayoutPlanningResponse.fromLayout(solved);
   }
 
   public static Layout solve(Layout unsolved) {
-    Layout solved = SolverFactory
+    return SolverFactory
       .<Layout>createFromXmlResource("solverConf.xml")
       .buildSolver()
       .solve(unsolved);
-    return solved;
+  }
+
+  public static String jsonResponse(String jsonRequest) {
+    LayoutPlanningRequest planningRequest = LayoutPlanningRequest.fromJson(jsonRequest);
+    return requestLayout(planningRequest).toJson();
   }
 
 }

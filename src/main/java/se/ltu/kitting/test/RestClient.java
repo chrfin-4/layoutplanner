@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.file.*;
 import se.ltu.kitting.api.*;
 import se.ltu.kitting.model.*;
+import se.ltu.kitting.LayoutPlanner;
 
 import static java.util.stream.Collectors.joining;
 
@@ -26,7 +27,8 @@ public class RestClient {
   }
 
   private static String sendRequestToServer(String jsonRequest) throws Exception {
-    //return Server.jsonResponse(jsonRequest);  // Fake. Bypass the network.
+    return LayoutPlanner.jsonResponse(jsonRequest);  // Fake. Bypass the network.
+    /*
     byte[] jsonBytes = jsonRequest.getBytes();
     URL url = new URL(serviceUrl);
     HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -39,6 +41,7 @@ public class RestClient {
     os.write(jsonBytes);
     return new BufferedReader(new InputStreamReader(con.getInputStream()))
       .lines().collect(joining());
+      */
   }
 
   private static String getJsonString(String file) throws Exception {
