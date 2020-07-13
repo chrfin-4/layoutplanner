@@ -18,20 +18,21 @@
 
   <!-- Algorithms / phases -->
 
-  <!-- <constructionHeuristic> -->
-    <!-- <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType> -->
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
       <!-- <termination> -->
-        <!-- <secondsSpentLimit>300</secondsSpentLimit> -->
+        <!-- <secondsSpentLimit>30</secondsSpentLimit> -->
       <!-- </termination> -->
-  <!-- </constructionHeuristic> -->
+  </constructionHeuristic>
 
-  <!-- <localSearch> -->
-    <!-- <localSearchType>TABU_SEARCH</localSearchType> -->
-    <!-- <termination> -->
-      <!-- <minutesSpentLimit>5</minutesSpentLimit> -->
-      <!-- <unimprovedSecondsSpentLimit>30</unimprovedSecondsSpentLimit> -->
+  <localSearch>
+    <localSearchType>TABU_SEARCH</localSearchType>
+    <termination>
+      <minutesSpentLimit>0</minutesSpentLimit>
+	  <secondsSpentLimit>0</secondsSpentLimit>
+      <!-- <unimprovedSecondsSpentLimit>0</unimprovedSecondsSpentLimit> -->
       <!-- <unimprovedScoreDifferenceThreshold>1hard/*soft</unimprovedScoreDifferenceThreshold> -->
-    <!-- </termination> -->
-  <!-- </localSearch> -->
+    </termination>
+  </localSearch>
 
 </solver>

@@ -23,13 +23,13 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
     //runAndVisualize(layout1());
-    runBenchmark("solverConf.xml", layout0(), layout1(), layout2(), layout3(), layout4(), layout5(), layout6(), layout7(), layout8(), layout9(), layout10(), layout11());
+    //runBenchmark("solverConf.xml", layout0(), layout1(), layout2(), layout3(), layout4(), layout5(), layout6(), layout7(), layout8(), layout9(), layout10(), layout11());
     //runExampleBenchmarkMulti1();
 	List<Pair<String,Layout>> layouts = getAll();
-	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::FFDH, layouts);
-	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::zero, layouts);
-	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::random, layouts);
-	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::minArea, layouts);
+	//runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::FFDH, layouts);
+	//runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::zero, layouts);
+	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::areaAndHeight, layouts);
+	//runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::minArea, layouts);
   }
 
   @Deprecated
