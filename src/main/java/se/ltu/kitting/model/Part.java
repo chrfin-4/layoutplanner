@@ -361,6 +361,26 @@ public class Part {
   }
 
   /** Minimum actually possible area. Never changes. */
+  public int minAllowedAreaWithZ(int z) {
+    return allowedDown.stream()
+      .filter(side -> {
+        Dimensions newSize = Rotation.rotateOntoSide(side, size);
+        return newSize.z <= z;
+      })
+      .mapToInt(this::areaOf).min().getAsInt();
+  }
+
+  /** Minimum actually possible area. Never changes. */
+  public int maxAllowedAreaWithZ(int z) {
+    return allowedDown.stream()
+      .filter(side -> {
+        Dimensions newSize = Rotation.rotateOntoSide(side, size);
+        return newSize.z <= z;
+      })
+      .mapToInt(this::areaOf).max().getAsInt();
+  }
+
+  /** Minimum actually possible area. Never changes. */
   public int minAllowedArea() {
     return allowedDown.stream().mapToInt(this::areaOf).min().getAsInt();
   }
