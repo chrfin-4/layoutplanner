@@ -8,9 +8,12 @@ import ch.rfin.util.Pair;
 import java.util.Set;
 import java.util.List;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A part in the kit, must be assigned a position and a rotation.
@@ -279,7 +282,7 @@ public class Part {
 
   // Uses side + rotationZ.
   private Pair<Dimensions,Dimensions> computeCurrentRegion(Side side, Rotation rot) {
-    if (position == null) {
+    if (position == null || size == null) {
       return currentRegion; // Undefined when there is no position.
     }
     // default to bottom side.
@@ -290,7 +293,8 @@ public class Part {
     if (rot == null) {
       rot = Rotation.ZERO;  // XXX: default to layout hint, if available?
     }
-    return Pair.of(position, position.plus(rotation(side, rot).apply(size)).minus(Dimensions.UNIT));
+    Dimensions newSize = rotation(side, rot).apply(size);
+    return Pair.of(position, position.plus(newSize).minus(Dimensions.UNIT));
   }
 
   public Dimensions currentDimensions() {
@@ -341,9 +345,6 @@ public class Part {
     throw new UnsupportedOperationException("Not implemented.");
   }
 
-  // XXX: minArea and maxArea do not take allowed sides into consideration!
-  // Change this behavior or add both versions?
-
   /** Minimum theoretically possible area. Never changes. */
   public int minArea() {
     final int xy = size.x * size.y;
@@ -360,32 +361,28 @@ public class Part {
     return Math.max(xy, Math.max(xz, yz));
   }
 
-  /** Minimum actually possible area. Never changes. */
-  public int minAllowedAreaWithZ(int z) {
-    return allowedDown.stream()
-      .filter(side -> {
-        Dimensions newSize = Rotation.rotateOntoSide(side, size);
-        return newSize.z <= z;
-      })
-      .mapToInt(this::areaOf).min().getAsInt();
+  // XXX: should probably check the surface's xy area as well.
+  /** Minimum possible area. Never changes. */
+  public OptionalInt minAllowedArea(Surface surface) {
+    return allowedAndPossibleSides(surface).stream()
+      .mapToInt(this::areaOf)
+      .min();
   }
 
-  /** Minimum actually possible area. Never changes. */
-  public int maxAllowedAreaWithZ(int z) {
-    return allowedDown.stream()
-      .filter(side -> {
-        Dimensions newSize = Rotation.rotateOntoSide(side, size);
-        return newSize.z <= z;
-      })
-      .mapToInt(this::areaOf).max().getAsInt();
+  // XXX: should probably check the surface's xy area as well.
+  /** Minimum possible area. Never changes. */
+  public OptionalInt maxAllowedArea(Surface surface) {
+    return allowedAndPossibleSides(surface).stream()
+      .mapToInt(this::areaOf)
+      .max();
   }
 
-  /** Minimum actually possible area. Never changes. */
+  /** Minimum possible area. Never changes. */
   public int minAllowedArea() {
     return allowedDown.stream().mapToInt(this::areaOf).min().getAsInt();
   }
 
-  /** Maximum actually possible area. Never changes. */
+  /** Maximum possible area. Never changes. */
   public int maxAllowedArea() {
     return allowedDown.stream().mapToInt(this::areaOf).max().getAsInt();
   }
@@ -430,6 +427,13 @@ public class Part {
     }
   }
 
+  // XXX: should probably check the surface's xy area as well.
+  public Set<Side> allowedAndPossibleSides(Surface surface) {
+    return allowedDown.stream()
+      .filter(side -> Rotation.rotateOntoSide(side, size).z <= surface.height())
+      .collect(toSet());
+  }
+
   /**
    * Returns an allowed side for which the part has the minimum area.
    * In other words, out of all the sides that are allowed, which has the
@@ -454,6 +458,28 @@ public class Part {
       return canonical;
     }
     return min;
+  }
+
+  // TODO: refactor
+  public Optional<Side> minAreaSide(Surface surface) {
+    assert !allowedDown.isEmpty();
+    Optional<Side> minSide = allowedAndPossibleSides(surface).stream().min(comparing(this::areaOf));
+    if (!minSide.isPresent()) {
+      return minSide;
+    }
+    Side min = minSide.get();
+    if (min == preferredDown) {
+      return Optional.of(min);
+    }
+    Side opposite = min.opposite();
+    if (opposite == preferredDown) {
+      return Optional.of(opposite);
+    }
+    Side canonical = min.toCanonical();
+    if (allowedDown.contains(canonical)) {
+      return Optional.of(canonical);
+    }
+    return minSide;
   }
 
 }
