@@ -9,12 +9,13 @@ import se.ltu.kitting.model.Side;
 import se.ltu.kitting.model.Wagon;
 import ch.rfin.util.Pair;
 
+import static se.ltu.kitting.model.Side.*;
 import static se.ltu.kitting.model.Dimensions.dimensions;
 import static java.util.stream.Collectors.toList;
 
 public class LayoutExamples {
 
-	private static List<Pair<String,Layout>> layouts = List.of(Pair.of("Layout 0: Easy", layout0()),
+	private static List<Pair<String,Layout>> layouts = List.of(Pair.of("Layout 0: Trivial", layout0()),
 					Pair.of("Layout 1: Easy w. rotation", layout1()),
 					Pair.of("Layout 2: Easy spec. order", layout2()),
 					Pair.of("Layout 3: Easy w. free space", layout3()),
@@ -27,9 +28,18 @@ public class LayoutExamples {
 					Pair.of("Layout 10: Easy, rotation multiple directions", layout10()),
 					Pair.of("Layout 11: 'Real example'", layout11()),
 					Pair.of("Layout 12: Layout 11 w. less free space", layout12()));
+					
+	private static List<Pair<String,Layout>> realisticLayouts = List.of(Pair.of("Layout 1: 8 items, lots of space", realisticLayout1()),
+					Pair.of("Layout 2: 8 items, half space", realisticLayout2()),
+					Pair.of("Layout 3: 8 items, low height", realisticLayout3()),
+					Pair.of("Layout 4: 16 items, full space", realisticLayout4()));				
 
 	public static List<Pair<String,Layout>> getAll() {
 		return layouts;
+	}
+	
+	public static List<Pair<String,Layout>> realisticLayouts() {
+		return realisticLayouts;
 	}
 
 	public static String layoutDescription(int index) {
@@ -54,9 +64,8 @@ public class LayoutExamples {
 
   public static Layout layout0() {
     return LayoutBuilder.builder()
-      .surface(10,10,1)
-      .part(5,10,1)
-      .part(10,5,1)
+      .surface(1,1,1)
+      .part(1,1,1)
       .build();
   }
 
@@ -211,6 +220,71 @@ public class LayoutExamples {
       .part(350,100,350)
       .build();
 	}
+
+  /* --- Realistic examples based on objects placed on a table --- */
+  public static Layout realisticLayout1() {
+    return LayoutBuilder.builder()
+      .surface(1500,780,1000)
+      .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
+      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(150,60,110).partNumber("Screws").add() // All
+      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
+      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .build();
+  }
+  
+  public static Layout realisticLayout2() {
+    return LayoutBuilder.builder()
+      .surface(750,780,1000)
+      .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
+      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(150,60,110).partNumber("Screws").add() // All
+      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
+      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .build();
+  }
+  
+  public static Layout realisticLayout3() {
+    return LayoutBuilder.builder()
+      .surface(1500,780,200)
+      .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
+      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(150,60,110).partNumber("Screws").add() // All
+      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
+      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .build();
+  }
+  
+  public static Layout realisticLayout4() {
+    return LayoutBuilder.builder()
+      .surface(1500,780,1000)
+      .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
+      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(150,60,110).partNumber("Screws").add() // All
+      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
+      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+	  .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
+      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(150,60,110).partNumber("Screws").add() // All
+      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
+      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .build();
+  }
 
   public static Layout apiExample1() {
     List<Surface> surfaces = List.of(
