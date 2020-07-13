@@ -19,9 +19,9 @@
   <!-- Algorithms / phases -->
 
   <localSearch>
-    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <localSearchType>TABU_SEARCH</localSearchType>
     <termination>
-      <minutesSpentLimit>0</minutesSpentLimit>
+      <minutesSpentLimit>5</minutesSpentLimit>
 	  <secondsSpentLimit>0</secondsSpentLimit>
     </termination>
   </localSearch>

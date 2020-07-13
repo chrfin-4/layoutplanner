@@ -12,47 +12,52 @@ public class ConstructionHeuristics {
 
   public static Layout areaAndHeight(Layout layout){
     List<Part> parts = layout.getParts();
-	Collections.sort(parts, Comparator.comparing((Part p) -> p.minAllowedAreaWithZ(layout.getSurface().height())).reversed());
+	Surface surface = layout.getSurface();
+	Collections.sort(parts, Comparator.comparing((Part p) -> p.minAllowedArea(surface).getAsInt()).reversed());
 	int x = 0;
 	int y = 0;
-	int z = layout.getSurface().origin.getZ();
+	int z = surface.origin.getZ();
 	int nextRow = 0;
+	boolean newRow = true;
 	for(Part part : parts){
 	  // wrong side
-	  Side side = part.minAreaSide();//.get();
+	  Side side = part.minAreaSide(surface).get();
 	  part.setSideDown(side);
 	  int width = part.dimensionsOf(side)._1;
 	  int height = part.dimensionsOf(side)._2;
 	  // Set nextRow when starting on a new row
-	  if(x == 0){
+	  if(newRow){
 	    nextRow += Math.max(width, height);
+		newRow = false;
 	  }
 	  // Rotate so greatest side becomes the height as long as it's not greater than the first on row
 	  if(width <= height && height <= nextRow){
 		part.setRotation(Rotation.ZERO);
-		part.setPosition(Dimensions.of(x,y,z));
-		x += width;
+		// part.setPosition(Dimensions.of(x,y,z));
+		// x += width;
 	  } else {
 		part.setRotation(Rotation.Z90);
-		part.setPosition(Dimensions.of(x,y,z));
-		x += height;
-		int tmp = width;
-		width = height;
-		height = tmp;
+		// part.setPosition(Dimensions.of(x,y,z));
+		// x += height;
+		// int tmp = width;
+		// width = height;
+		// height = tmp;
 	  } 
 	  // If part goes outside surface begin new row
-	  if(x > layout.getSurface().width()){ 
+	  if(x + part.width()> surface.width()){ 
 	    y = nextRow; 
 		x = 0;
-		part.setPosition(Dimensions.of(x,y,z));
+		newRow = true;
+		// part.setPosition(Dimensions.of(x,y,z));
       }
 	  // If part goes outside surface considering height place it at (0,0)
-	  if(y + height > layout.getSurface().depth()){
+	  if(y + part.depth() > surface.depth()){
 	    x = 0;
 		y = 0;
-		part.setPosition(Dimensions.of(x,y,z));
+		// part.setPosition(Dimensions.of(x,y,z));
 	  }
-	  //part.setPosition(Dimensions.of(x,y,z));
+	  part.setPosition(Dimensions.of(x,y,z));
+	  x += width;
 	}
 	return layout;	
   }
@@ -72,7 +77,8 @@ public class ConstructionHeuristics {
   // Not completed
   public static Layout minArea(Layout layout){
 	List<Part> parts = layout.getParts();
-    Collections.sort(parts, Comparator.comparing(Part::minAllowedArea).reversed());
+    Surface surface = layout.getSurface();
+	Collections.sort(parts, Comparator.comparing((Part p) -> p.minAllowedArea(surface).getAsInt()).reversed());
 	int x = 0;
 	int y = 0;
 	int nextRow = 0;
@@ -145,7 +151,8 @@ public class ConstructionHeuristics {
   // XXX: Fix z for different surfaces
   public static Layout random(Layout layout) {
     List<Part> parts = layout.getParts();
-	Collections.sort(parts, Comparator.comparing(Part::minAllowedArea).reversed());
+	Surface surface = layout.getSurface();
+	Collections.sort(parts, Comparator.comparing((Part p) -> p.minAllowedArea(surface).getAsInt()).reversed());
 	// List<Part> initializedParts = new ArrayList<Part>();
     for(Part part : parts) {
 	  Random rn = new Random();
