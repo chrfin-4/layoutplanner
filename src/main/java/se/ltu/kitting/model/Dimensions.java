@@ -94,6 +94,20 @@ public final class Dimensions {
     return Dimensions.of(factor * p1.x, factor * p1.y, factor * p1.z);
   }
 
+  /**
+   * Creates new dimensions by scaling these dimensions:
+   * (x,y,z).divide(a) = (x/a,y/a,z/a).
+   */
+  public Dimensions divide(int divisor) {
+    return divide(this, divisor);
+  }
+
+  /** Scale dimensions objects: (x,y,z) / a = (x/a,y/a,z/a). */
+  public static Dimensions divide(Dimensions p1, int divisor) {
+    // TODO: optimize for 0 and 1.
+    return Dimensions.of(p1.x/divisor, p1.y/divisor, p1.z/divisor);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == this) {

@@ -15,6 +15,7 @@ import se.ltu.kitting.ConstructionHeuristics;
 
 import static se.ltu.kitting.ConstructionHeuristics.*;
 import static se.ltu.kitting.test.LayoutExamples.*;
+import static se.ltu.kitting.test.FirstDemoLayouts.*;
 import static java.util.stream.Collectors.joining;
 import static se.ltu.kitting.util.StreamUtil.stream;
 
@@ -22,9 +23,12 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
     //runAndVisualize(layout1());
-    //runBenchmark("solverConf.xml", layout1(), layout2(), layout3(), layout4(), layout5(), layout6(), layout7(), layout8(), layout9(), layout10(), layout11());
+    runBenchmark("solverConf.xml", layout0(), layout1(), layout2(), layout3(), layout4(), layout5(), layout6(), layout7(), layout8(), layout9(), layout10(), layout11());
     //runExampleBenchmarkMulti1();
 	List<Pair<String,Layout>> layouts = getAll();
+	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::FFDH, layouts);
+	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::zero, layouts);
+	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::random, layouts);
 	runCustomHeuristic("noConstructionHeuristic.xml", ConstructionHeuristics::minArea, layouts);
   }
 
@@ -57,6 +61,18 @@ public class Main {
     System.out.println(solvedLayout.getParts().stream().map(p -> p.toString() + ": " + String.valueOf(p.getPosition())).collect(joining(", ")));
     Vis.draw(solvedLayout);
   }
+  
+  // Benchmark for the first demonstration, shows that layouts that need specific order and rotation can be solved.
+  public static void runFirstDemoBenchmark() {
+    Benchmark benchmark = Benchmark.builder()
+    .name("First Demo Benchmark")
+    .config("firstDemo.xml")
+    .test(demoLayout1(), "3 parts, specific order")
+    .test(demoLayout2(), "4 parts, rotation, full packed")
+    .test(demoLayout3(), "15 parts")
+    .build();
+    runExampleBenchmark(benchmark);
+  }
 
   // Some examples of how to create and run benchmarks.
 
@@ -75,6 +91,26 @@ public class Main {
       .test(layout1(), "easy")
       .test(layout2(), "easy, requires rotation")
       .test(layout9(), "difficult, tightly packed")
+      .build();
+    runExampleBenchmark(benchmark);
+  }
+  
+  public static void runExampleBenchmarkEx() {
+    // Let's see how this solver config handles this set of layouts.
+    Benchmark benchmark = Benchmark.builder()
+      .name("Example benchmark")
+      .config("solverConf.xml")
+      .test(layout1(), "Layout1")
+      .test(layout2(), "Layout2")
+      .test(layout3(), "Layout3")
+	  .test(layout4(), "Layout4")
+	  .test(layout5(), "Layout5")
+	  .test(layout6(), "Layout6")
+	  .test(layout7(), "Layout7")
+	  .test(layout8(), "Layout8")
+	  .test(layout9(), "Layout9")
+	  .test(layout10(), "Layout10")
+	  .test(layout11(), "Layout11")
       .build();
     runExampleBenchmark(benchmark);
   }

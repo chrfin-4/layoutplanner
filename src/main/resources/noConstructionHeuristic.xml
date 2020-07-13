@@ -18,11 +18,11 @@
 
   <!-- Algorithms / phases -->
 
-  <localSearch>
-    <localSearchType>LATE_ACCEPTANCE</localSearchType>
-    <termination>
-      <minutesSpentLimit>5</minutesSpentLimit>
-    </termination>
-  </localSearch>
+  <!-- <localSearch> -->
+    <!-- <localSearchType>LATE_ACCEPTANCE</localSearchType> -->
+    <!-- <termination> -->
+      <!-- <minutesSpentLimit>5</minutesSpentLimit> -->
+    <!-- </termination> -->
+  <!-- </localSearch> -->
 
 </solver>

@@ -197,21 +197,21 @@ public class LayoutExamples {
 	// "Real" example
 	public static Layout layout11(){
 		List<Part> parts = new ArrayList<>();
-		parts.add(new Part(1,1,new Dimensions(200,400,100)));
+		parts.add(new Part(1,1,new Dimensions(200,400,400)));
 		parts.add(new Part(2,1,new Dimensions(400,400,400)));
 		parts.add(new Part(3,1,new Dimensions(1000,100,100)));
 		parts.add(new Part(4,1,new Dimensions(200,200,200)));
-		parts.add(new Part(5,1,new Dimensions(200,300,200)));
-		parts.add(new Part(6,1,new Dimensions(100,500,300)));
-		parts.add(new Part(7,1,new Dimensions(100,250,100)));
-		parts.add(new Part(8,1,new Dimensions(100,250,100)));
-		parts.add(new Part(9,1,new Dimensions(250,150,200)));
-		parts.add(new Part(10,1,new Dimensions(350,150,200)));
+		parts.add(new Part(5,1,new Dimensions(200,300,300)));
+		parts.add(new Part(6,1,new Dimensions(100,500,500)));
+		parts.add(new Part(7,1,new Dimensions(100,250,250)));
+		parts.add(new Part(8,1,new Dimensions(100,250,250)));
+		parts.add(new Part(9,1,new Dimensions(250,150,250)));
+		parts.add(new Part(10,1,new Dimensions(350,150,350)));
 		parts.add(new Part(11,1,new Dimensions(150,200,200)));
 		parts.add(new Part(12,1,new Dimensions(150,200,200)));
-		parts.add(new Part(13,1,new Dimensions(100,250,200)));
-		parts.add(new Part(14,1,new Dimensions(200,150,100)));
-		parts.add(new Part(15,1,new Dimensions(350,100,100)));
+		parts.add(new Part(13,1,new Dimensions(100,250,250)));
+		parts.add(new Part(14,1,new Dimensions(200,150,200)));
+		parts.add(new Part(15,1,new Dimensions(350,100,350)));
 		Surface surface = Surface.of(1200,800,1000);
 		Layout layout = new Layout(surface, parts);
 		return layout;

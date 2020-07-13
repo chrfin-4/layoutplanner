@@ -21,7 +21,7 @@ import static se.ltu.kitting.model.Rotation.rotation;
  * @author Christoffer Fink
  */
 // TODO: add comparison
-@PlanningEntity
+@PlanningEntity(difficultyComparatorClass = DefaultAreaComparator.class)
 public class Part {
 
   // Problem facts.
