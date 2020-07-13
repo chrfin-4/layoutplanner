@@ -46,7 +46,7 @@ public class LayoutExamples {
 	}
 	
 	// public static List<Pair<String, Layout>> getAll() {
-		// return List.of(Pair.of("Layout 0: Easy", layout0()),
+		// return List.of(Pair.of("Layout 0: Trivial", layout0()),
 					// Pair.of("Layout 1: Easy w. rotation", layout1()),
 					// Pair.of("Layout 2: Easy spec. order", layout2()),
 					// Pair.of("Layout 3: Easy w. free space", layout3()),
@@ -65,9 +65,8 @@ public class LayoutExamples {
 	
 	public static Layout layout0(){
 		List<Part> parts = new ArrayList<>();
-		parts.add(new Part(1,1,new Dimensions(5,10,1)));
-		parts.add(new Part(2,1,new Dimensions(10,5,1)));
-		Surface surface = Surface.of(10,10,1);
+		parts.add(new Part(1,1,new Dimensions(1,1,1)));
+		Surface surface = Surface.of(1,1,1);
 		Layout layout = new Layout(surface, parts);
 		return layout;
 	}

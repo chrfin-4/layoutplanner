@@ -11,18 +11,19 @@
 
   <!-- Global termination -->
   <termination>
-    <minutesSpentLimit>0</minutesSpentLimit>
-    <secondsSpentLimit>30</secondsSpentLimit>
+    <minutesSpentLimit>5</minutesSpentLimit>
+    <secondsSpentLimit>0</secondsSpentLimit>
     <bestScoreLimit>0hard/0soft</bestScoreLimit>
   </termination>
 
   <!-- Algorithms / phases -->
 
-  <!-- <localSearch> -->
-    <!-- <localSearchType>LATE_ACCEPTANCE</localSearchType> -->
-    <!-- <termination> -->
-      <!-- <minutesSpentLimit>5</minutesSpentLimit> -->
-    <!-- </termination> -->
-  <!-- </localSearch> -->
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <termination>
+      <minutesSpentLimit>0</minutesSpentLimit>
+	  <secondsSpentLimit>0</secondsSpentLimit>
+    </termination>
+  </localSearch>
 
 </solver>

@@ -21,7 +21,7 @@ import static se.ltu.kitting.model.Rotation.rotation;
  * @author Christoffer Fink
  */
 // TODO: add comparison
-@PlanningEntity(difficultyComparatorClass = DefaultAreaComparator.class)
+@PlanningEntity
 public class Part {
 
   // Problem facts.
@@ -294,15 +294,12 @@ public class Part {
   }
 
   public Dimensions currentDimensions() {
-    return currentRegion()._2.plus(Dimensions.UNIT);
+    return rotation(sideDown, rotation).apply(size);
   }
 
   /** Warning: Subject to rounding errors! */
   public Dimensions currentCenter() {
-    var region = currentRegion();
-    var origin = region._1;
-    var size = region._2.plus(Dimensions.UNIT);
-    return cornerToCenter(origin, size);
+    return cornerToCenter(position, currentDimensions());
   }
 
   // TODO: Move to separate util class.
@@ -316,27 +313,27 @@ public class Part {
   }
 
   public int width() {
-    return currentDimensions().x - position.x;
+    return currentDimensions().x;
   }
 
   public int depth() {
-    return currentDimensions().y - position.y;
+    return currentDimensions().y;
   }
 
   public int height() {
-    return currentDimensions().z - position.z;
+    return currentDimensions().z;
   }
   
   public int originalWidth() {
-    return size.x;
+    return size.getX();
   }
 
   public int originalDepth() {
-    return size.y;
+    return size.getY();
   }
 
   public int originalHeight() {
-    return size.z;
+    return size.getZ();
   }
 
   /**
@@ -376,6 +373,26 @@ public class Part {
   }
 
   /** Minimum actually possible area. Never changes. */
+  public int minAllowedAreaWithZ(int z) {
+    return allowedDown.stream()
+      .filter(side -> {
+        Dimensions newSize = Rotation.rotateOntoSide(side, size);
+        return newSize.z <= z;
+      })
+      .mapToInt(this::areaOf).min().getAsInt();
+  }
+
+  /** Minimum actually possible area. Never changes. */
+  public int maxAllowedAreaWithZ(int z) {
+    return allowedDown.stream()
+      .filter(side -> {
+        Dimensions newSize = Rotation.rotateOntoSide(side, size);
+        return newSize.z <= z;
+      })
+      .mapToInt(this::areaOf).max().getAsInt();
+  }
+
+  /** Minimum actually possible area. Never changes. */
   public int minAllowedArea() {
     return allowedDown.stream().mapToInt(this::areaOf).min().getAsInt();
   }
@@ -394,7 +411,7 @@ public class Part {
   public int maxLength() {
     return Math.max(size.x, Math.max(size.y, size.z));
   }
-  
+
   /**
    * Check whether this part intersects with the other part.
    * Depends on the current region of both parts.
@@ -425,14 +442,9 @@ public class Part {
     }
   }
   
-  /** Returns width and depth of part on specified side */
-  public Pair<Integer,Integer> dimensionsOf(Side side) {
-    switch (side) {
-      case bottom: case top: return Pair.of(size.x, size.y);
-      case back: case front: return Pair.of(size.x, size.z);
-      case left: case right: return Pair.of(size.z, size.y);
-      default: throw new IllegalArgumentException("Unexpected side: " + side);
-    }
+  public Pair<Integer,Integer> dimensionsOf(Side side){
+    Dimensions dim = Rotation.rotateOntoSide(side, size);
+	return Pair.of(dim.getX(),dim.getY());
   }
 
   /**
