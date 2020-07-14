@@ -29,11 +29,11 @@
   </constructionHeuristic>
 
   <localSearch>
-    <localSearchType>HILL_CLIMBING</localSearchType>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
     <termination>
       <minutesSpentLimit>0</minutesSpentLimit>
-      <unimprovedSecondsSpentLimit>30</unimprovedSecondsSpentLimit>
-      <unimprovedScoreDifferenceThreshold>1hard/*soft</unimprovedScoreDifferenceThreshold>
+      <!-- <unimprovedSecondsSpentLimit>30</unimprovedSecondsSpentLimit> -->
+      <!-- <unimprovedScoreDifferenceThreshold>1hard/*soft</unimprovedScoreDifferenceThreshold> -->
     </termination>
   </localSearch>
 

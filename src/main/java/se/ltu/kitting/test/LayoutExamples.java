@@ -7,6 +7,7 @@ import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
 import se.ltu.kitting.model.Side;
 import se.ltu.kitting.model.Wagon;
+import se.ltu.kitting.model.Rotation;
 import ch.rfin.util.Pair;
 
 import static se.ltu.kitting.model.Side.*;
@@ -227,12 +228,12 @@ public class LayoutExamples {
       .surface(1500,780,1000)
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
-      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
-      .part().dimensions(150,60,110).partNumber("Screws").add() // All
-      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
-      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
-      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
-      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
+      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
+      .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(75,75,0)).add() 
+      .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom).partNumber("Mouse").margin(20).add()
       .build();
   }
   
@@ -241,12 +242,12 @@ public class LayoutExamples {
       .surface(750,780,1000)
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
-      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
-      .part().dimensions(150,60,110).partNumber("Screws").add() // All
-      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
-      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
-      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
-      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
+      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(675,705,0), Rotation.Z90).add() // All
+      .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
+      .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(75,75,0)).add() 
+      .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom).partNumber("Mouse").margin(20).add()
       .build();
   }
   
@@ -255,12 +256,12 @@ public class LayoutExamples {
       .surface(1500,780,200)
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
-      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
-      .part().dimensions(150,60,110).partNumber("Screws").add() // All
-      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
-      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
-      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
-      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
+      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
+      .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(75,75,0)).add() 
+      .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom).partNumber("Mouse").margin(20).add()
       .build();
   }
   
@@ -269,20 +270,20 @@ public class LayoutExamples {
       .surface(1500,780,1000)
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
-      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
-      .part().dimensions(150,60,110).partNumber("Screws").add() // All
-      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
-      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
-      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
-      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
-	  .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
+      .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
+      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
+      .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(75,75,0)).add() 
+      .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom).partNumber("Mouse").margin(20).add()
+      .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
-      .part().dimensions(220,320,150).allowSides(bottom, back).preferredSide(bottom).partNumber("Plastic box").add()
+      .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
       .part().dimensions(150,60,110).partNumber("Screws").add() // All
-      .part().dimensions(160,460,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Keyboard").add()
-      .part().dimensions(200,240,5).allowSides(bottom, back).partNumber("Mousepad").add() 
-      .part().dimensions(190,120,60).allowSides(bottom, back).preferredSide(bottom).partNumber("Lunchbox").add() 
-      .part().dimensions(110,60,30).allowSides(bottom, back).preferredSide(bottom).partNumber("Mouse").add()
+      .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
+      .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").add() 
+      .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 
+      .part().dimensions(110,60,30).allowSides(bottom).partNumber("Mouse").margin(20).add()
       .build();
   }
 

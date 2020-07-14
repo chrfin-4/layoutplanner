@@ -93,10 +93,11 @@ public class Vis extends JPanel {
 		g.setColor(Color.black);
 		g.drawRect(startPosX, startPosY, partWidth, partDepth);
 		g.drawString(String.valueOf(part.getId()), startPosX + partWidth/2 - 5, startPosY + partDepth/2 + 12);
+		g.drawString(String.valueOf(part.getSideDown()), startPosX + partWidth/2 - 15, startPosY + partDepth/2);
         if (part.getRotation() != null && part.getRotation() != Rotation.ZERO) {
           g.setColor(Color.BLACK);
           //g.drawRect(startPosX, startPosY, partWidth - 1, partDepth - 1);
-		  g.drawString(rotationName(part.getRotation()), startPosX + partWidth/2 - 10, startPosY + partDepth/2);
+		  g.drawString(rotationName(part.getRotation()), startPosX + partWidth/2 - 12, startPosY + partDepth/2 + 24);
         }
         count++;
       }
