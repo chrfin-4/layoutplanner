@@ -79,8 +79,6 @@ public class LayoutBuilder {
   }
 
   public LayoutBuilder part(Dimensions size) {
-    //return part(new Part(-1, "?", size));
-    //return part().id(counter++).dimensions(size).add();
     return part().id(counter).dimensions(size).add();
   }
 
@@ -129,19 +127,23 @@ public class LayoutBuilder {
     private int id;
     private String pnr;
     private Dimensions dimensions;
-    private Side preferredSide = Side.bottom;
+    private Side preferredSide;
     private Rotation rotation;
-    private EnumSet<Side> allowedSides = EnumSet.noneOf(Side.class);
-    private int margin = 0;
+    private EnumSet<Side> allowedSides;
+    private int margin;
+    private LayoutHint hint;
 
     private PartBuilder reset() {
       margin = 0;
       allowedSides = EnumSet.noneOf(Side.class);
+      preferredSide = Side.bottom;
+      hint = null;
       return this;
     }
 
     private PartBuilder(LayoutBuilder lb) {
       this.lb = lb;
+      reset();
     }
 
     public LayoutBuilder add() {
@@ -152,6 +154,7 @@ public class LayoutBuilder {
       part.setAllowedDown(EnumSet.copyOf(allowedSides));
       part.setPreferredDown(preferredSide);
       part.setMargin(margin);
+      part.setHint(hint);
       return lb.part(part);
     }
 
@@ -224,6 +227,23 @@ public class LayoutBuilder {
 
     public PartBuilder margin(int margin) {
       this.margin = margin;
+      return this;
+    }
+
+    public PartBuilder mandatory(Dimensions position) {
+      return hint(position, LayoutHint.mandatoryWeight);
+    }
+
+    public PartBuilder mandatory(Dimensions position, Rotation rotation) {
+      return hint(position, rotation, LayoutHint.mandatoryWeight);
+    }
+
+    public PartBuilder hint(Dimensions position, double weight) {
+      return hint(position, null, weight);
+    }
+
+    public PartBuilder hint(Dimensions position, Rotation rotation, double weight) {
+      this.hint = new LayoutHint(position, rotation, weight);
       return this;
     }
 

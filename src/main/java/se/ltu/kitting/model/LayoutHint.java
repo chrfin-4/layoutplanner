@@ -10,67 +10,83 @@ import java.util.Optional;
  */
 public class LayoutHint {
 
-  public static final double defaultWeight = 1.0;
-  public static final double mandatoryWeight = 10.0;
+  public static final int defaultWeight = 1;
+  public static final int mandatoryWeight = 10;
 
-  private final Dimensions position;
-  private final double weight;
+  private final Dimensions centerPosition;
+  private final int weight;
   private final Optional<Rotation> rotation;
 
   public LayoutHint(Dimensions position) {
     this(position, defaultWeight);
   }
 
-  public LayoutHint(Dimensions position, double weight) {
-    this(position, null, weight);
+  public LayoutHint(Dimensions centerPosition, double weight) {
+    this(centerPosition, Optional.empty(), weight);
   }
 
-  public LayoutHint(Dimensions position, Rotation rotation) {
-    this(position, rotation, defaultWeight);
+  public LayoutHint(Dimensions centerPosition, Rotation rotation) {
+    this(centerPosition, rotation, defaultWeight);
   }
 
-  public LayoutHint(Dimensions position, Rotation rotation, double weight) {
-    assertValid(position, weight);
-    this.position = position;
-    this.rotation = Optional.ofNullable(rotation);
-    this.weight = weight;
+  public LayoutHint(Dimensions centerPosition, Rotation rotation, double weight) {
+    this(centerPosition, Optional.ofNullable(rotation), weight);
+  }
+
+  public LayoutHint(Dimensions centerPosition, Optional<Rotation> rotation, double weight) {
+    this.centerPosition = centerPosition;
+    this.rotation = rotation;
+    this.weight = (int)weight;
+    assertValid(centerPosition, this.weight);
   }
 
   /** Factory for making mandatory hint (no rotation). */
-  public static LayoutHint mandatory(Dimensions position) {
-    return mandatory(position, null);
+  public static LayoutHint mandatory(Dimensions centerPosition) {
+    return mandatory(centerPosition, null);
   }
 
   /** Factory for making mandatory hint (with rotation). */
-  public static LayoutHint mandatory(Dimensions position, Rotation rotation) {
-    return new LayoutHint(position, rotation, mandatoryWeight);
+  public static LayoutHint mandatory(Dimensions centerPosition, Rotation rotation) {
+    return new LayoutHint(centerPosition, rotation, mandatoryWeight);
   }
 
-  public Dimensions position() {
-    return position;
+  public LayoutHint withPosition(Dimensions centerPosition) {
+    return new LayoutHint(centerPosition, rotation, weight);
+  }
+
+  public LayoutHint withRotation(Rotation rotation) {
+    return new LayoutHint(centerPosition, rotation, weight);
+  }
+
+  public LayoutHint withWeight(double weight) {
+    return new LayoutHint(centerPosition, rotation, weight);
+  }
+
+  public Dimensions centerPosition() {
+    return centerPosition;
   }
 
   public Optional<Rotation> rotation() {
     return rotation;
   }
 
-  public double weight() {
+  public int weight() {
     return weight;
   }
 
   public boolean isMandatory() {
-    return weight == 10.0;
+    return weight == mandatoryWeight;
   }
 
-  private static void assertValid(Dimensions d, double w) {
+  private static void assertValid(Dimensions d, int w) {
     if (d == null) {
       throw new IllegalArgumentException("Illegal argument: dimensions = " + d);
     }
-    if (w < 1.0) {
-      throw new IllegalArgumentException("Illegal argument: weight < 1.0");
+    if (w < 1) {
+      throw new IllegalArgumentException("Illegal argument: weight < 1");
     }
-    if (w > 10.0) {
-      throw new IllegalArgumentException("Illegal argument: weight > 10.0");
+    if (w > 10) {
+      throw new IllegalArgumentException("Illegal argument: weight > 10");
     }
   }
 
