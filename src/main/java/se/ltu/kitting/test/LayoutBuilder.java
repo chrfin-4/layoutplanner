@@ -61,6 +61,7 @@ public class LayoutBuilder {
   }
 
   public PartBuilder part() {
+    pb.allowedSides.clear();
     return pb.id(counter);
   }
 
