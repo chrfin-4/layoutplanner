@@ -120,7 +120,6 @@ public class LayoutBuilder {
    * Build parts.
    * Some defaults:
    * - By default allows all sides.
-   * - Preferes bottom if no preferred side set.
    */
   public static class PartBuilder {
     private final LayoutBuilder lb;
@@ -136,7 +135,7 @@ public class LayoutBuilder {
     private PartBuilder reset() {
       margin = 0;
       allowedSides = EnumSet.noneOf(Side.class);
-      preferredSide = Side.bottom;
+      preferredSide = null;
       hint = null;
       return this;
     }
