@@ -155,9 +155,11 @@ public class LayoutBuilder {
       part.setPreferredDown(preferredSide);
       part.setMargin(margin);
       part.setHint(hint);
-      if (hint != null && hint.weight() == LayoutHint.mandatoryWeight) {
-        part.setPosition(hint.centerPosition());
-        part.setRotation(hint.rotation().orElse(null));
+      // Set position and rotation if mandatory and unamiguous hint exists.
+      if (hint != null && hint.isMandatory() && preferredSide != null && hint.rotation().isPresent()) {
+        part.setSideDown(preferredSide);
+        part.setRotation(hint.rotation().get());
+        part.setPosition(Part.centerToCorner(hint.centerPosition(), part.currentDimensions()));
       }
       return lb.part(part);
     }
