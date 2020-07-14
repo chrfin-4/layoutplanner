@@ -155,6 +155,10 @@ public class LayoutBuilder {
       part.setPreferredDown(preferredSide);
       part.setMargin(margin);
       part.setHint(hint);
+      if (hint != null && hint.weight() == LayoutHint.mandatoryWeight) {
+        part.setPosition(hint.centerPosition());
+        part.setRotation(hint.rotation().orElse(null));
+      }
       return lb.part(part);
     }
 
