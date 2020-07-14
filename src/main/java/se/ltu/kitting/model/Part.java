@@ -202,8 +202,8 @@ public class Part {
 
   @ValueRangeProvider(id = "sides")
   public Collection<Side> getAllowedSidesDown() {
-    //return Side.normalize(allowedDown); // Reduce number of variables.
-    return List.of(Side.bottom, Side.top, Side.back, Side.left);  // Optimal for demo.
+    return Side.normalize(allowedDown); // Reduce number of variables.
+    //return List.of(Side.bottom, Side.top, Side.back, Side.left);  // Optimal for demo.
   }
 
   // --- END of OptaPlanner facts and variables ---

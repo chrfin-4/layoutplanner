@@ -141,6 +141,9 @@ public class LayoutBuilder {
 
     public LayoutBuilder add() {
       Part part = new Part(id, pnr, dimensions);
+      if (allowedSides.isEmpty()) {
+        allowedSides = Side.all();
+      }
       part.setAllowedDown(EnumSet.copyOf(allowedSides));
       part.setPreferredDown(preferredSide);
       part.setMargin(margin);
