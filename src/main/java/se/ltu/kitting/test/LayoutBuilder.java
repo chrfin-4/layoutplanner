@@ -129,10 +129,10 @@ public class LayoutBuilder {
     private int id;
     private String pnr;
     private Dimensions dimensions;
-    private Side preferredSide;
+    private Side preferredSide = Side.bottom;
     private Rotation rotation;
-    private Set<Side> allowedSides;
-    private Set<Side> disallowedSides;
+    private EnumSet<Side> allowedSides = EnumSet.noneOf(Side.class);
+    private int margin = 0;
 
     private PartBuilder(LayoutBuilder lb) {
       this.lb = lb;
@@ -140,7 +140,9 @@ public class LayoutBuilder {
 
     public LayoutBuilder add() {
       Part part = new Part(id, pnr, dimensions);
-      // TODO: set additional properties
+      part.setAllowedDown(EnumSet.copyOf(allowedSides));
+      part.setPreferredDown(preferredSide);
+      part.setMargin(margin);
       return lb.part(part);
     }
 
@@ -175,18 +177,44 @@ public class LayoutBuilder {
       return allowSide(side);
     }
 
+    public PartBuilder disallowSides(Side ... sides) {
+      Arrays.stream(sides).forEach(this::disallowSide);
+      return this;
+    }
+
+    public PartBuilder disallowSides(Iterable<Side> sides) {
+      sides.iterator().forEachRemaining(this::disallowSide);
+      return this;
+    }
+
+    public PartBuilder disallowSide(Side side) {
+      if (allowedSides.equals(EnumSet.noneOf(Side.class))) {
+        allowedSides = Side.all();
+      }
+      allowedSides.remove(side);
+      return this;
+    }
+
     public PartBuilder allowSides(Side ... sides) {
       Arrays.stream(sides).forEach(this::allowSide);
       return this;
     }
 
-    public PartBuilder allowSides(Collection<Side> sides) {
-      sides.stream().forEach(this::allowSide);
+    public PartBuilder allowSides(Iterable<Side> sides) {
+      sides.iterator().forEachRemaining(this::allowSide);
       return this;
     }
 
     public PartBuilder allowSide(Side side) {
+      if (allowedSides.equals(Side.all())) {
+        allowedSides = EnumSet.noneOf(Side.class);
+      }
       allowedSides.add(side);
+      return this;
+    }
+
+    public PartBuilder margin(int margin) {
+      this.margin = margin;
       return this;
     }
 

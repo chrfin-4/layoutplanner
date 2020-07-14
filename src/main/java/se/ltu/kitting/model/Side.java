@@ -18,15 +18,20 @@ public enum Side {
   left, right, back, front, bottom, top;
 
   /** Return a set of all sides. */
-  public static Set<Side> all() {
+  public static EnumSet<Side> all() {
     return EnumSet.allOf(Side.class);
+  }
+
+  /** Return an empty set. */
+  public static EnumSet<Side> none() {
+    return EnumSet.noneOf(Side.class);
   }
 
   /**
    * Return the representative sides without any redundantly equivalent sides.
    * Returns {left, back, bottom}.
    */
-  public static Set<Side> canonical() {
+  public static EnumSet<Side> canonical() {
     return EnumSet.of(left, back, bottom);
   }
 
@@ -34,7 +39,7 @@ public enum Side {
    * Returns a set that is equivalent to the given set, but with no redundant
    * (equivalent) sides. Does not modify the set given as a parameter.
    */
-  public static Set<Side> withoutRedundancy(Set<Side> sides) {
+  public static EnumSet<Side> withoutRedundancy(Set<Side> sides) {
     EnumSet<Side> result = EnumSet.noneOf(Side.class);
     for (var side : sides) {
       if (!result.contains(side.opposite())) {
@@ -45,7 +50,7 @@ public enum Side {
   }
 
   /** Removes redundancy by removing the non-canonical side if possible. */
-  public static Set<Side> normalize(Set<Side> sides) {
+  public static EnumSet<Side> normalize(Set<Side> sides) {
     EnumSet<Side> result = EnumSet.noneOf(Side.class);
     for (var side : sides) {
       if (sides.contains(side) && sides.contains(side.opposite())) {
@@ -70,7 +75,7 @@ public enum Side {
     }
   }
 
-  public static Set<Side> opposites(Collection<Side> sides) {
+  public static EnumSet<Side> opposites(Collection<Side> sides) {
     EnumSet<Side> result = EnumSet.noneOf(Side.class);
     sides.stream().map(Side::opposite).forEach(result::add);
     return result;
