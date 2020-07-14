@@ -20,7 +20,13 @@ public class Main {
   public static void main(String[] args) throws Exception {
     //runAndVisualize(layout2());
     //runBenchmark("solverConf.xml", layout1(), layout2(), layout3());//, layout4(), layout5(), layout6(), layout7());
-    runExampleBenchmarkMulti1();
+	List<Pair<String,Layout>> realisticLayouts = realisticLayouts();
+	Benchmark b = Benchmark.builder()
+	.config("solverConf.xml")
+	.testLayouts(realisticLayouts)
+	.build();
+	runExampleBenchmark(b);
+    //runExampleBenchmarkMulti1();
   }
 
   @Deprecated

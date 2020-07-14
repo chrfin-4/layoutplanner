@@ -44,7 +44,7 @@ public class Part {
   /** The part should preferentially be placed on this side. */
   private Side preferredDown;
   /** Minimum free margin around all sides. */
-  private int minMargin;
+  private int margin;
 
   // Planning variables.
   // Should probably remain uninitialized, or OptaPlanner can get confused and
@@ -186,6 +186,15 @@ public class Part {
   @ProblemFactProperty
   public Side getPreferredDown() {
     return preferredDown;
+  }
+  
+  @ProblemFactProperty
+  public int getMargin(){
+    return margin;
+  }
+    
+  public void setMargin(int margin){
+    this.margin = margin;
   }
 
   public void setPreferredDown(Side side) {

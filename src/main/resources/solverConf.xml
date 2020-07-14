@@ -31,7 +31,7 @@
   <localSearch>
     <localSearchType>HILL_CLIMBING</localSearchType>
     <termination>
-      <minutesSpentLimit>5</minutesSpentLimit>
+      <minutesSpentLimit>0</minutesSpentLimit>
       <unimprovedSecondsSpentLimit>30</unimprovedSecondsSpentLimit>
       <unimprovedScoreDifferenceThreshold>1hard/*soft</unimprovedScoreDifferenceThreshold>
     </termination>
