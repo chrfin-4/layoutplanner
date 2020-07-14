@@ -34,7 +34,8 @@ public class Vis extends JPanel {
   
   public static void draw(Layout layout, String layoutDescription){
 	JFrame frame = new JFrame(layoutDescription);
-	scale = 300/layout.getSurface().depth();
+	// scale = 300/layout.getSurface().depth();
+	scale = 1;
     int width = (scale * layout.getSurface().width() + margin) + (scale * layout.getSurface().depth() + margin);
     int height = scale * layout.getSurface().depth() + margin;
     Vis v = new Vis(layout, width, height);
@@ -90,6 +91,7 @@ public class Vis extends JPanel {
         g.setColor(colors.get(count % colors.size()));
         g.fillRect(startPosX, startPosY, partWidth, partDepth);
 		g.setColor(Color.black);
+		g.drawRect(startPosX, startPosY, partWidth, partDepth);
 		g.drawString(String.valueOf(part.getId()), startPosX + partWidth/2 - 5, startPosY + partDepth/2 + 12);
         if (part.getRotation() != null && part.getRotation() != Rotation.ZERO) {
           g.setColor(Color.BLACK);

@@ -71,8 +71,8 @@ public class Surface {
     final int x = origin.getX() + dimensions.getX();
     final int y = origin.getY() + dimensions.getY();
     final int z = origin.getZ();
-    for (int i = 0; i < x; i+=1) {
-      for (int j = 0; j < y; j+=1) {
+    for (int i = 0; i < x; i+=10) {
+      for (int j = 0; j < y; j+=10) {
         positions.add(Dimensions.of(i,j,z));
       }
     }

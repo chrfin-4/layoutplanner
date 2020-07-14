@@ -16,11 +16,12 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
     return HardSoftScore.of(hardScore, 0);
   }
 
-  // Return negative number of overlapping parts
+  // Return negative score for parts overlapping, outside or placed on disallowed side
   public int getHardScore(Layout layout) {
     int outside = countPartsOutside(layout);
 	int overlap = countOverlappingParts(layout);
-    return -(overlap + outside);
+	int disallowedSide = countDisallowedSidesDown(layout);
+    return -(overlap + outside + disallowedSide);
   }
 
   // Counts the number of parts that overlap eachother
@@ -43,10 +44,11 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
     return count;
   }
 
-  // Check if two parts overlap
+  // Check if two parts overlap - considering maximal margin between two parts
   public static boolean partsOverlap(Part p1, Part p2) {
 	Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
 	Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
+	int margin = Math.max(p1.getMargin(), p2.getMargin());
 	Dimensions startPositionP1 = currentRegionP1._1;
 	Dimensions endPositionP1 = currentRegionP1._2;
 	Dimensions startPositionP2 = currentRegionP2._1;
@@ -57,10 +59,10 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
 	  return false;
 	}
 
-	int rect1xLeft = startPositionP1.getX();
-    int rect1xRight = endPositionP1.getX();
-    int rect1yBack = startPositionP1.getY();
-    int rect1yFront = endPositionP1.getY();
+	int rect1xLeft = startPositionP1.getX() - margin;
+    int rect1xRight = endPositionP1.getX() + margin;
+    int rect1yBack = startPositionP1.getY() - margin;
+    int rect1yFront = endPositionP1.getY() + margin;
     int rect2xLeft = startPositionP2.getX();
     int rect2xRight = endPositionP2.getX();
     int rect2yBack = startPositionP2.getY();
@@ -96,4 +98,27 @@ public class ScoreCalculator implements EasyScoreCalculator<Layout> {
     return height || depth || width;
   }
 
+  // Count parts placed on a disallowed side
+  public int countDisallowedSidesDown(Layout layout){
+    List<Part> parts = layout.getParts();
+	int count = 0;
+	for(Part part : parts) {
+      if(part.getPosition() == null){
+		continue;
+	  }	
+	  if(!allowedSideDown(part)){
+		count++;
+	  }
+	}	
+	return count;
+  }  
+
+  // Check if placed side down is allowed
+  public boolean allowedSideDown(Part part){
+	if(part.getAllowedDown().contains(part.getSideDown())){
+	  return true;
+    } else {
+      return false;
+	}		
+  }
 }
