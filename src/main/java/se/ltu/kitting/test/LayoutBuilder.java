@@ -61,8 +61,7 @@ public class LayoutBuilder {
   }
 
   public PartBuilder part() {
-    pb.allowedSides.clear();
-    return pb.id(counter);
+    return pb.reset().id(counter);
   }
 
   public LayoutBuilder parts(Part ... parts) {
@@ -135,6 +134,12 @@ public class LayoutBuilder {
     private EnumSet<Side> allowedSides = EnumSet.noneOf(Side.class);
     private int margin = 0;
 
+    private PartBuilder reset() {
+      margin = 0;
+      allowedSides = EnumSet.noneOf(Side.class);
+      return this;
+    }
+
     private PartBuilder(LayoutBuilder lb) {
       this.lb = lb;
     }
@@ -192,7 +197,7 @@ public class LayoutBuilder {
     }
 
     public PartBuilder disallowSide(Side side) {
-      if (allowedSides.equals(EnumSet.noneOf(Side.class))) {
+      if (allowedSides.isEmpty()) {
         allowedSides = Side.all();
       }
       allowedSides.remove(side);
