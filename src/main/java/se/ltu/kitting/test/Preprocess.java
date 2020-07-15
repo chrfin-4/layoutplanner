@@ -15,32 +15,32 @@ import java.util.Set;
  * Can edit out impossible layouthints to optimize the solving process
  */
 public class Preprocess {
-  
-  public static void preprocess(Layout layout){
+
+  public static void preprocess(Layout layout) throws Exception {
 	/* --- Unsolvable checks --- */
-    minAreaCheck(layout);	
-	
+    minAreaCheck(layout);
+
 	/* --- Modifying layout --- */
 	removeImpossibleSides(layout);
   }
-  
+
   // Check if total area of part is greater than total area of surfaces
-  public static void minAreaCheck(Layout layout){
+  public static void minAreaCheck(Layout layout) throws Exception {
 	int totalPartArea = 0;
 	int totalSurfaceArea = 0;
     for(Part part : layout.getParts()){
-	  totalPartArea += part.minAllowedArea();  
+	  totalPartArea += part.minAllowedArea();
 	}
 	for(Surface surface : layout.getWagon().surfaces()){
-	  totalSurfaceArea += surface.width() * surface.depth();	
+	  totalSurfaceArea += surface.width() * surface.depth();
     }
 	if(totalPartArea > totalSurfaceArea){
 	  throw new Exception("Unsolvable - area of parts greater than area of surfaces");
 	}
   }
-  
+
   // Removes impossible sides from allowedDown if the height is greater than surface height
-  // Only removes side if it can not be placed down on any surface.   
+  // Only removes side if it can not be placed down on any surface.
   public static void removeImpossibleSides(Layout layout){
 	for(Part part : layout.getParts()){
 	  Set<Side> allowedSides = part.getAllowedDown();
@@ -62,7 +62,7 @@ public class Preprocess {
 	  if(partY > surfaceZ && (allowedSides.contains(Side.back) || allowedSides.contains(Side.front))){
         allowedSides.remove(Side.bottom);
 		allowedSides.remove(Side.top);
-      }	  
+      }
 	  if(partX > surfaceZ && (allowedSides.contains(Side.left) || allowedSides.contains(Side.right))){
         allowedSides.remove(Side.left);
 		allowedSides.remove(Side.right);
