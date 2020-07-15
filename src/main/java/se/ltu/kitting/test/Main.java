@@ -12,6 +12,7 @@ import se.ltu.kitting.model.Surface;
 import ch.rfin.util.Pair;
 
 import static se.ltu.kitting.test.LayoutExamples.*;
+import static se.ltu.kitting.test.Preprocess.*;
 import static java.util.stream.Collectors.joining;
 import static se.ltu.kitting.util.StreamUtil.stream;
 
@@ -34,6 +35,7 @@ public class Main {
     //runExampleBenchmarkMulti1();
     List<Pair<String,Integer>> configs = List.of(pair("firstFit30s.xml",100), pair("late10s.xml",10), pair("late30s.xml",5), pair("late60s.xml",1));
     for (var layout : realisticLayouts()) {
+	  preprocess(layout._2);
       System.out.println("Solving layout: " + layout._1 + "...");
       long start = System.currentTimeMillis();
       Layout solved = runMultiResolution(layout._2, configs);

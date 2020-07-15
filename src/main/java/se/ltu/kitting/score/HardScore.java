@@ -126,7 +126,6 @@ public class HardScore {
   
   // Check if position or rotation together with position is as specified in hint
   public static boolean lockedPart(Part part){ 
-	//if(part.getHint().rotation() == null){
 	if(!part.getHint().rotation().isPresent()){
       return lockedPosition(part);
     } else {
