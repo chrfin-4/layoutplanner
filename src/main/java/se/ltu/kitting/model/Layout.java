@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 @PlanningSolution
 public class Layout {
 
+  private int positionStepSize = 1;
   /** Holds the surfaces on which the parts will be placed. */
   private Wagon wagon;
   /** The parts that will be placed on the surface(s) - planning entities. */
@@ -64,7 +65,7 @@ public class Layout {
 
   @ValueRangeProvider(id = "positions")
   public Collection<Dimensions> getPositions() {
-    return wagon.allPositions();
+    return PositionProvider.positions(wagon, positionStepSize);
   }
 
   // Does not necessarily have to be defined on this class.
@@ -80,6 +81,15 @@ public class Layout {
 
   public void setScore(HardSoftScore score) {
     this.score = score;
+  }
+
+  @ProblemFactProperty
+  public int getPositionStepSize() {
+    return positionStepSize;
+  }
+
+  public void setPositionStepSize(int step) {
+    this.positionStepSize = step;
   }
 
   @ProblemFactProperty

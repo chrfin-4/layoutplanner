@@ -65,14 +65,16 @@ public class Surface {
   /**
    * Returns a collection of all the positions (all the (x,y,z) triples) of the
    * bottom surface.
+   * @deprecated use PositionProvider(wagon, stepSize)
    */
+  @Deprecated
   public Collection<Dimensions> getSurfacePositions() {
     final Collection<Dimensions> positions = new ArrayList<>();
     final int x = origin.getX() + dimensions.getX();
     final int y = origin.getY() + dimensions.getY();
     final int z = origin.getZ();
-    for (int i = 0; i < x; i+=10) {
-      for (int j = 0; j < y; j+=10) {
+    for (int i = 0; i < x; i+=1) {
+      for (int j = 0; j < y; j+=1) {
         positions.add(Dimensions.of(i,j,z));
       }
     }

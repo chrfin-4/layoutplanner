@@ -15,18 +15,53 @@ import static se.ltu.kitting.test.LayoutExamples.*;
 import static java.util.stream.Collectors.joining;
 import static se.ltu.kitting.util.StreamUtil.stream;
 
+import se.ltu.kitting.util.Util;
+import static ch.rfin.util.Pair.pair;
+
 public class Main {
 
   public static void main(String[] args) throws Exception {
     //runAndVisualize(layout2());
     //runBenchmark("solverConf.xml", layout1(), layout2(), layout3());//, layout4(), layout5(), layout6(), layout7());
-	List<Pair<String,Layout>> realisticLayouts = realisticLayouts();
-	Benchmark b = Benchmark.builder()
-	.config("solverConf.xml")
-	.testLayouts(realisticLayouts)
-	.build();
-	runExampleBenchmark(b);
+    /*
+    List<Pair<String,Layout>> realisticLayouts = realisticLayouts();
+    Benchmark b = Benchmark.builder()
+      .config("solverConf.xml")
+      .testLayouts(realisticLayouts)
+      .build();
+    runExampleBenchmark(b);
+    */
     //runExampleBenchmarkMulti1();
+    List<Pair<String,Integer>> configs = List.of(pair("firstFit30s.xml",100), pair("late10s.xml",10), pair("late30s.xml",5), pair("late60s.xml",1));
+    for (var layout : realisticLayouts()) {
+      System.out.println("Solving layout: " + layout._1 + "...");
+      long start = System.currentTimeMillis();
+      Layout solved = runMultiResolution(layout._2, configs);
+      long end = System.currentTimeMillis();
+      long time = end - start;
+      System.out.println(String.format("Finished after %5d ms: with score: %s", time, solved.getScore()));
+      Vis.draw(solved);
+    }
+  }
+
+  public static Layout runMultiResolution(Layout layout, Iterable<Pair<String,Integer>> configs) {
+    int phase = 1;
+    for (var conf : configs) {
+      String xml = conf._1;
+      int stepSize = conf._2;
+      layout.setPositionStepSize(stepSize);
+      long start = System.currentTimeMillis();
+      layout = Util.solve(layout, xml);
+      long end = System.currentTimeMillis();
+      long time = end - start;
+      System.out.println(String.format("  %5d ms: %20s    (phase %2d, resolution %3d, config %s)", time, layout.getScore(), phase, conf._2, conf._1));
+      if (layout.getScore().getHardScore() == 0 && layout.getScore().getSoftScore() == 0) {
+        System.out.println("  Is optimal. Stopping.");
+        break;
+      }
+      phase++;
+    }
+    return layout;
   }
 
   @Deprecated
