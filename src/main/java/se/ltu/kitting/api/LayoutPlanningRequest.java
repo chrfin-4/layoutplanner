@@ -25,8 +25,8 @@ import static java.util.stream.Collectors.toList;
 public class LayoutPlanningRequest {
 
   // XXX: required or not? Is nothing required?
-  private String version;
-  private Kit kit;
+  public String version;
+  public Kit kit;
   // The request must have a non-empty list of parts.
   private List<Part_> parts;
 

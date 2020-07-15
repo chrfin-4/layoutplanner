@@ -35,9 +35,20 @@ public class LayoutPlanningResponse {
   }
 
   // XXX: include more than just the parts.
-  public static LayoutPlanningResponse fromLayout(Layout layout) {
+  public static LayoutPlanningResponse fromLayout(LayoutPlanningRequest request, Layout layout) {
     List<PartOut> parts = layout.getParts().stream().map(PartOut::new).collect(toList());
-    return new LayoutPlanningResponse(parts);
+    LayoutPlanningResponse response = new LayoutPlanningResponse(parts);
+    response.wagon = layout.getWagon();
+    return response;
+  }
+
+  public static LayoutPlanningResponse fromError(LayoutPlanningRequest request, Exception e) {
+    List<PartOut> parts = request.getLayout().getParts().stream().map(PartOut::nullLayout).collect(toList());
+    LayoutPlanningResponse response = new LayoutPlanningResponse(parts);
+    response.messagesToDisplay = List.of(Message.error(e.getMessage()));
+    response.version = request.version;
+    response.kit = request.kit;
+    return response;
   }
 
   public static LayoutPlanningResponse fromJson(String json) {
@@ -87,11 +98,23 @@ public class LayoutPlanningResponse {
     // Optional.
     private Layout_ layout;
 
+    PartOut() {
+    }
+
     PartOut(Part part) {
       id = part.getId();
       partNumber = part.getPartNumber();
       layout = new Layout_(part.currentCenter(), part.getSideDown(), part.getRotation());
     }
+
+    public static PartOut nullLayout(Part part) {
+      PartOut p = new PartOut();
+      p.id = part.getId();
+      p.partNumber = part.getPartNumber();
+      p.layout = null;
+      return p;
+    }
+
   }
 
 }
@@ -102,8 +125,27 @@ enum Severity {
 
 class Message {
   private String message;
-  private String code;
   private Severity severity;
+  private String code;
+
+  private Message(String message, Severity severity, String code) {
+    this.message = message;
+    this.severity = severity;
+    this.code = code;
+  }
+
+  public static Message info(String msg) {
+    return new Message(msg, Severity.info, "?");
+  }
+
+  public static Message warn(String msg) {
+    return new Message(msg, Severity.warning, "?");
+  }
+
+  public static Message error(String msg) {
+    return new Message(msg, Severity.error, "?");
+  }
+
 }
 
 // TODO: Make response more compact by omitting zeros?

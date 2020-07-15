@@ -29,16 +29,16 @@ public class LayoutExamples {
 					Pair.of("Layout 10: Easy, rotation multiple directions", layout10()),
 					Pair.of("Layout 11: 'Real example'", layout11()),
 					Pair.of("Layout 12: Layout 11 w. less free space", layout12()));
-					
+
 	private static List<Pair<String,Layout>> realisticLayouts = List.of(Pair.of("Layout 1: 8 items, lots of space", realisticLayout1()),
 					Pair.of("Layout 2: 8 items, half space", realisticLayout2()),
 					Pair.of("Layout 3: 8 items, low height", realisticLayout3()),
-					Pair.of("Layout 4: 16 items, full space", realisticLayout4()));				
+					Pair.of("Layout 4: 16 items, full space", realisticLayout4()));
 
 	public static List<Pair<String,Layout>> getAll() {
 		return layouts;
 	}
-	
+
 	public static List<Pair<String,Layout>> realisticLayouts() {
 		return realisticLayouts;
 	}
@@ -229,7 +229,7 @@ public class LayoutExamples {
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
       .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
-      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      .part().dimensions(150,60,110).partNumber("Screws").preferredSide(bottom).mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
       .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
       .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(120,120,0)).add() 
       .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 

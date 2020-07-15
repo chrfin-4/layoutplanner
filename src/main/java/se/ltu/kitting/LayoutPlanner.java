@@ -12,8 +12,13 @@ import se.ltu.kitting.model.Layout;
 public class LayoutPlanner {
 
   public static LayoutPlanningResponse requestLayout(LayoutPlanningRequest request) {
-    Layout solved = solve(request.getLayout());
-    return LayoutPlanningResponse.fromLayout(solved);
+    try {
+      // TODO: add preprocessing
+      Layout solved = solve(request.getLayout());
+      return LayoutPlanningResponse.fromLayout(request, solved);
+    } catch (Exception e) {
+      return LayoutPlanningResponse.fromError(request, e);
+    }
   }
 
   public static Layout solve(Layout unsolved) {
