@@ -71,7 +71,9 @@ public final class Rotation {
     } else if (z == 90) {
       return Z90;
     } else {
-      throw new IllegalArgumentException("Illegal argument: z not 0 or 90: " + z);
+      //throw new IllegalArgumentException("Illegal argument: z not 0 or 90: " + z);
+      System.out.println("Only 0 or Z90 allowed. Illegal rotation: " + z);
+      return ZERO;
     }
   }
 
