@@ -62,6 +62,14 @@ public class Surface {
     return dimensions.getZ();
   }
 
+  public int volume() {
+    return dimensions.x * dimensions.y * dimensions.z;
+  }
+
+  public Dimensions size() {
+    return dimensions;
+  }
+
   /**
    * Returns a collection of all the positions (all the (x,y,z) triples) of the
    * bottom surface.

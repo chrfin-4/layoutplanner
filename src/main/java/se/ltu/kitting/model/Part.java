@@ -362,7 +362,8 @@ public class Part {
    * Note that the area changes depending on rotation.
    */
   public int currentArea() {
-    throw new UnsupportedOperationException("Not implemented.");
+    var dim = currentDimensions();
+    return dim.x * dim.y;
   }
 
   /** Minimum theoretically possible area. Never changes. */

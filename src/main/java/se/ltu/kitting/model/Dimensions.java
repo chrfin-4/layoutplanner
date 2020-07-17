@@ -6,7 +6,7 @@ package se.ltu.kitting.model;
  * This class is immutable.
  * @author Christoffer Fink
  */
-public final class Dimensions {
+public final class Dimensions implements Comparable<Dimensions> {
 
   public static final Dimensions ZERO = Dimensions.of(0,0,0);
   public static final Dimensions UNIT = Dimensions.of(1,1,1);
@@ -50,6 +50,17 @@ public final class Dimensions {
 
   public int getZ() {
     return z;
+  }
+
+  public int compareTo(Dimensions other) {
+    return Double.compare(distance(ZERO, this), distance(ZERO, other));
+  }
+
+  public double distance(Dimensions p1, Dimensions p2) {
+    int dx = p1.x-p2.x;
+    int dy = p1.y-p2.y;
+    int dz = p1.z-p2.z;
+    return Math.sqrt(dx + dy + dz);
   }
 
   /**

@@ -110,6 +110,20 @@ public class LayoutExamples {
 	}
 
 	// Odd shapes that just barely fit perfectly
+	public static Layout layout15() {
+    return LayoutBuilder.builder()
+      .surface(1000,1000,1)
+      .part().dimensions(350,300,1).allowSides(bottom).add()
+      .part().dimensions(200,450,1).allowSides(bottom).add()
+      .part().dimensions(450,450,1).allowSides(bottom).add()
+      .part().dimensions(350,600,1).allowSides(bottom).add()
+      .part().dimensions(500,450,1).allowSides(bottom).add()
+      .part().dimensions(150,550,1).allowSides(bottom).add()
+      .part().dimensions(850,100,1).allowSides(bottom).add()
+      .build();
+	}
+
+	// Odd shapes that just barely fit perfectly
 	public static Layout layout5() {
     return LayoutBuilder.builder()
       .surface(100,100,1)
@@ -229,7 +243,8 @@ public class LayoutExamples {
       .part().dimensions(480,200,330).allowSides(bottom, back).preferredSide(bottom).partNumber("Monitor").add()
       .part().dimensions(290,190,70).partNumber("Cornflakes").add() // All
       .part().dimensions(220,320,150).allowSides(bottom).partNumber("Plastic box").margin(5).add()
-      .part().dimensions(150,60,110).partNumber("Screws").preferredSide(bottom).mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      //.part().dimensions(150,60,110).partNumber("Screws").preferredSide(bottom).mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
+      .part().dimensions(150,60,110).partNumber("Screws").mandatory(Dimensions.of(1425,705,0), Rotation.Z90).add() // All
       .part().dimensions(160,460,30).allowSides(bottom).partNumber("Keyboard").margin(10).add()
       .part().dimensions(200,240,5).allowSides(bottom, top).partNumber("Mousepad").mandatory(Dimensions.of(120,120,0)).add() 
       .part().dimensions(190,120,60).allowSides(bottom, top).preferredSide(bottom).partNumber("Lunchbox").add() 

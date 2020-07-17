@@ -1,9 +1,11 @@
 package se.ltu.kitting;
 
 import org.optaplanner.core.api.solver.SolverFactory;
-import se.ltu.kitting.api.LayoutPlanningRequest;
-import se.ltu.kitting.api.LayoutPlanningResponse;
+import se.ltu.kitting.api.PlanningRequest;
+import se.ltu.kitting.api.PlanningResponse;
+import se.ltu.kitting.api.json.JsonIO;
 import se.ltu.kitting.model.Layout;
+import se.ltu.kitting.test.Preprocess;
 
 /**
  * Takes requests and returns responses.
@@ -11,13 +13,20 @@ import se.ltu.kitting.model.Layout;
  */
 public class LayoutPlanner {
 
-  public static LayoutPlanningResponse requestLayout(LayoutPlanningRequest request) {
+  public static PlanningResponse requestLayout(PlanningRequest request) {
     try {
-      // TODO: add preprocessing
-      Layout solved = solve(request.getLayout());
-      return LayoutPlanningResponse.fromLayout(request, solved);
-    } catch (Exception e) {
-      return LayoutPlanningResponse.fromError(request, e);
+      Layout unsolved = request.getLayout();
+      Preprocess.preprocess(unsolved);
+      unsolved.setPositionStepSize(10);
+      long start = System.currentTimeMillis();
+      Layout solved = solve(unsolved);
+      long end = System.currentTimeMillis();
+      long time = end-start;
+      System.out.println("time: " + time + " ms");
+      return PlanningResponse.fromLayout(request, solved);
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return PlanningResponse.fromError(request, e);
     }
   }
 
@@ -29,8 +38,11 @@ public class LayoutPlanner {
   }
 
   public static String jsonResponse(String jsonRequest) {
-    LayoutPlanningRequest planningRequest = LayoutPlanningRequest.fromJson(jsonRequest);
-    return requestLayout(planningRequest).toJson();
+    System.out.println("Handling request: " + jsonRequest);
+    PlanningRequest planningRequest = JsonIO.request(jsonRequest);
+    String jsonResponse = JsonIO.toJson(requestLayout(planningRequest));
+    System.out.println("Returning response: " + jsonResponse);
+    return jsonResponse;
   }
 
 }

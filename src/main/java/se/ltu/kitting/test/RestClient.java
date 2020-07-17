@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import se.ltu.kitting.api.*;
+import se.ltu.kitting.api.json.JsonIO;
 import se.ltu.kitting.model.*;
 import se.ltu.kitting.LayoutPlanner;
 
@@ -17,13 +18,19 @@ public class RestClient {
 
   public static void main(String[] args) throws Exception {
     String jsonRequest = getJsonString(jsonRequestFile);
+    System.out.println("Sending request:");
+    System.out.println(jsonRequest);
 
     String jsonResponse = sendRequestToServer(jsonRequest);
+    System.out.println("Got response:");
+    System.out.println(jsonResponse);
 
-    LayoutPlanningRequest req = LayoutPlanningRequest.fromJson(jsonRequest);
-    LayoutPlanningResponse resp = LayoutPlanningResponse.fromJson(jsonResponse);
+    /* must implement getSolution to work with latest changes
+    PlanningRequest req = JsonIO.request(jsonRequest);
+    PlanningResponse resp = JsonIO.response(jsonResponse);
     Layout solution = getSolution(req, resp);
     Vis.draw(solution);
+    */
   }
 
   private static String sendRequestToServer(String jsonRequest) throws Exception {
@@ -52,17 +59,8 @@ public class RestClient {
     return getJsonString(file).getBytes();
   }
 
-  private static Layout getSolution(LayoutPlanningRequest req, LayoutPlanningResponse resp) {
-    Layout problem = req.getLayout();
-    for (var part : problem.getParts()) {
-      Side side = resp.getSide(part.getId()).get();
-      part.setSideDown(side);
-      Rotation rot = resp.getRotation(part.getId()).get();
-      part.setRotation(rot);
-      Dimensions center = resp.getCenterPosition(part.getId()).get();
-      part.setPosition(Part.centerToCorner(center, part.currentDimensions()));
-    }
-    return problem;
+  private static Layout getSolution(PlanningRequest req, PlanningResponse resp) {
+    throw new UnsupportedOperationException("Not implemented.");
   }
 
 }
