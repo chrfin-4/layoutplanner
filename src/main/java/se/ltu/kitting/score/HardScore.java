@@ -9,6 +9,12 @@ import se.ltu.kitting.model.Dimensions;
 import java.util.List;
 import ch.rfin.util.Pair;
 
+/**
+ * Calculates the hard score for a solution. 
+ * Desirable score is 0 which guarantees that:
+ * No overlap, no parts outside of surface, no parts placed on a disallowed side and
+ * parts with a mandatory hint are on the desired position.
+ */
 public class HardScore {
 
   // Return negative score for parts overlapping, outside or placed on disallowed side
@@ -48,12 +54,10 @@ public class HardScore {
 	Dimensions endPositionP1 = currentRegionP1._2;
 	Dimensions startPositionP2 = currentRegionP2._1;
 	Dimensions endPositionP2 = currentRegionP2._2;
-
 	// Parts do not overlap if they are on different surfaces
 	if(startPositionP1.getZ() != startPositionP2.getZ()){
 	  return false;
 	}
-
 	int rect1xLeft = startPositionP1.getX() - margin;
     int rect1xRight = endPositionP1.getX() + margin;
     int rect1yBack = startPositionP1.getY() - margin;
@@ -62,7 +66,6 @@ public class HardScore {
     int rect2xRight = endPositionP2.getX();
     int rect2yBack = startPositionP2.getY();
     int rect2yFront = endPositionP2.getY();
-
     return rect1xLeft <= rect2xRight && rect1xRight >= rect2xLeft &&
       rect1yBack <= rect2yFront && rect1yFront >= rect2yBack;
   }

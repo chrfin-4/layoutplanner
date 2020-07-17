@@ -5,13 +5,11 @@ import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.Dimensions;
 import se.ltu.kitting.model.Side;
-import se.ltu.kitting.model.Wagon;
-import se.ltu.kitting.model.Rotation;
 import java.util.Set;
 
 /**
  * Recommended to run layout through this class before solving it
- * Can declare layouts unsolvable
+ * Can declare layouts unsolvable (by throwing exceptions)
  * Can edit out impossible layouthints to optimize the solving process
  */
 public class Preprocess {
@@ -38,10 +36,24 @@ public class Preprocess {
 	  throw new Exception("Unsolvable - area of parts greater than area of surfaces");
 	}
   }
-
+  
+  // Check if several parts have mandatory layout hints with same position
+  public static void mandatoryCollision(Layout layout) throws Exception {
+	Set<Dimensions> positions = null;
+	for(Part part : layout.getParts()){
+	  if(part.getHint().isMandatory()){
+		
+		if(positions.contains(part.getHint().centerPosition())){
+		  throw new Exception("Unsolvable - multiple madatory hints require same position");
+		}
+        positions.add(part.getHint().centerPosition());
+      }
+    }	  
+  }
+  
   // Removes impossible sides from allowedDown if the height is greater than surface height
   // Only removes side if it can not be placed down on any surface.
-  public static void removeImpossibleSides(Layout layout){
+  public static void removeImpossibleSides(Layout layout) throws Exception{
 	for(Part part : layout.getParts()){
 	  Set<Side> allowedSides = part.getAllowedDown();
 	  int partX = part.getSize().getX();
@@ -68,14 +80,11 @@ public class Preprocess {
 		allowedSides.remove(Side.right);
       }
 	  // Removes preferred if removed from allowedSides.
-	  // Should return a warning?
 	  if(!allowedSides.contains(part.getPreferredDown())){
 	    part.setPreferredDown(null);
 	  }
-	  
 	  if(allowedSides.isEmpty()){
-	    System.out.println("WARNING: Unsolvable - no sides allowed to place down");
-		//Return result without solving
+	    throw new Exception("Unsolvable - no sides are allowed down");
 	  }
 	  part.setAllowedDown(allowedSides);
     }

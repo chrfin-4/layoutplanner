@@ -3,12 +3,12 @@ package se.ltu.kitting.score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 import se.ltu.kitting.model.Layout;
-import se.ltu.kitting.model.Surface;
-import se.ltu.kitting.model.Part;
-import se.ltu.kitting.model.Dimensions;
-import java.util.List;
-import ch.rfin.util.Pair;
 
+/**
+ * Returns the combined hard and soft score of a layout.
+ * Used to define how good a solution is.
+ * Hard score have a higher priority than soft score.
+ */
 public class ScoreCalculator implements EasyScoreCalculator<Layout> {
 
   public HardSoftScore calculateScore(Layout layout) {
