@@ -77,7 +77,21 @@ public class PlanningResponse {
   }
 
   public static PlanningResponse fromLayout(PlanningRequest request, se.ltu.kitting.model.Layout layout) {
+    return fromLayout(request, layout, Optional.empty(), Optional.empty());
+  }
+
+  public static PlanningResponse fromLayout(PlanningRequest request,
+      se.ltu.kitting.model.Layout layout,
+      Optional<List<Message>> globalMessages,
+      Optional<Map<Integer,List<Message>>> partMessages) {
     var response = new PlanningResponse(request, layout);
+    if (globalMessages.isPresent()) {
+      globalMessages.get().forEach(response::addMessage);
+    }
+    if (partMessages.isPresent()) {
+      Map<Integer,List<Message>> pm = partMessages.get();
+      pm.forEach((id,list) -> list.forEach(msg -> response.addMessage(id, msg)));
+    }
     response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
     return response;
   }
