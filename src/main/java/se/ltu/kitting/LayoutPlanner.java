@@ -1,12 +1,15 @@
 package se.ltu.kitting;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Map;
 import org.optaplanner.core.api.solver.SolverFactory;
 import se.ltu.kitting.api.PlanningRequest;
 import se.ltu.kitting.api.PlanningResponse;
+import se.ltu.kitting.api.Message;
 import se.ltu.kitting.api.json.JsonIO;
 import se.ltu.kitting.model.Layout;
-//import se.ltu.kitting.test.Preprocess;
+import se.ltu.kitting.test.Preprocess;
 import ch.rfin.util.Pair;
 
 import static ch.rfin.util.Pair.pair;
@@ -18,9 +21,11 @@ import static ch.rfin.util.Pair.pair;
 public class LayoutPlanner {
 
   public static PlanningResponse requestLayout(PlanningRequest request) {
-    try {
+    Pair<Optional<List<Message>>, Optional<Map<Integer,List<Message>>>> messages = pair(Optional.empty(), Optional.empty());
+	try {
       long start = System.currentTimeMillis();
       Layout unsolved = request.getLayout();
+	  messages = Preprocess.preprocess(unsolved);
       //Preprocess.preprocess(unsolved);  // Throws exception when surfaces have z=1.
       List<Pair<String,Integer>> configs = List.of(
           pair("firstFit5s.xml",10),
@@ -31,10 +36,10 @@ public class LayoutPlanner {
       long end = System.currentTimeMillis();
       long time = end-start;
       System.out.println(String.format("Finished after %5d ms: with score: %s", time, solved.getScore()));
-      return PlanningResponse.fromLayout(request, solved);
+      return PlanningResponse.fromLayout(request, solved, messages._1, messages._2);
     } catch (Throwable e) {
       e.printStackTrace();
-      return PlanningResponse.fromError(request, e);
+      return PlanningResponse.fromError(request, e, messages._1, messages._2);
     }
   }
 

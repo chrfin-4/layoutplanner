@@ -99,5 +99,19 @@ public class PlanningResponse {
   public static PlanningResponse fromError(PlanningRequest request, Throwable e) {
     return new PlanningResponse(request, null).addMessage(Message.fromError(e));
   }
-
+  
+  public static PlanningResponse fromError(PlanningRequest request,
+      Throwable e,
+      Optional<List<Message>> globalMessages,
+      Optional<Map<Integer,List<Message>>> partMessages) {
+    var response = new PlanningResponse(request, null);
+    if (globalMessages.isPresent()) {
+      globalMessages.get().forEach(response::addMessage);
+    }
+    if (partMessages.isPresent()) {
+      Map<Integer,List<Message>> pm = partMessages.get();
+      pm.forEach((id,list) -> list.forEach(msg -> response.addMessage(id, msg)));
+    }
+    return response.addMessage(Message.fromError(e));
+  }
 }
