@@ -1,9 +1,9 @@
 package se.ltu.kitting.util;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.Iterator;
 import ch.rfin.util.Pair;
-import ch.rfin.java.util.function.Fun;
 
 /**
  * Some tools for working with Streams.
@@ -27,7 +27,7 @@ public class StreamUtil {
    * This is essentially just the Pair factory method curried with the first
    * item.
    */
-  public static <T,S> Fun<S,Pair<T,S>> pairWithFirst(T first) {
+  public static <T,S> Function<S,Pair<T,S>> pairWithFirst(T first) {
     return s -> Pair.of(first, s);
   }
 
@@ -36,7 +36,7 @@ public class StreamUtil {
    * return a pair with the parameter to this function second and the parameter
    * to the returned function first: s → (f → (f,s)).
    */
-  public static <T,S> Fun<T,Pair<T,S>> pairWithSecond(S second) {
+  public static <T,S> Function<T,Pair<T,S>> pairWithSecond(S second) {
     return t -> Pair.of(t, second);
   }
 
