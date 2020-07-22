@@ -18,7 +18,9 @@ public class PlanningResponse {
 
   private PlanningRequest request;
   private Layout solution;
+  @Deprecated
   private List<Message> globalMessages;
+  @Deprecated
   private Map<Integer,List<Message>> partMessages = new HashMap<>();
 
   private PlanningResponse(PlanningRequest request, Layout solution) {
@@ -76,48 +78,68 @@ public class PlanningResponse {
     return Optional.ofNullable(solution);
   }
 
+  @Deprecated
   public static PlanningResponse fromLayout(PlanningRequest request, se.ltu.kitting.model.Layout layout) {
     return fromLayout(request, layout, Optional.empty(), Optional.empty());
   }
 
+  @Deprecated
   public static PlanningResponse fromLayout(PlanningRequest request,
       se.ltu.kitting.model.Layout layout,
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
-    var response = new PlanningResponse(request, layout);
-    addMessages(response, globalMessages, partMessages); 
-    return response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
+    return new PlanningResponse(request, layout)
+      .addMessages(globalMessages, partMessages)
+      .addMessages(request.messages())
+      .addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
   }
 
   public static PlanningResponse fromError(PlanningRequest request, Throwable e) {
-    return new PlanningResponse(request, null).addMessage(Message.fromError(e));
+    return new PlanningResponse(request, null)
+      .addMessages(request.messages())
+      .addMessage(Message.fromError(e));
   }
-  
+
+  @Deprecated
   public static PlanningResponse fromError(PlanningRequest request,
       Throwable e,
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
-	return fromError(request, globalMessages, partMessages).addMessage(Message.fromError(e));
+    return fromError(request, globalMessages, partMessages)
+      .addMessage(Message.fromError(e));
   }
-  
+
+  @Deprecated
   public static PlanningResponse fromError(PlanningRequest request,
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
-    var response = new PlanningResponse(request, null);
-    addMessages(response, globalMessages, partMessages);
-    return response;
+    return new PlanningResponse(request, null)
+      .addMessages(globalMessages, partMessages)
+      .addMessages(request.messages());
   }
-  
-  private static PlanningResponse addMessages(PlanningResponse response, 
-      Optional<List<Message>> globalMessages, 
-	  Optional<Map<Integer,List<Message>>> partMessages){
-	if (globalMessages.isPresent()) {
-      globalMessages.get().forEach(response::addMessage);
-    }
-    if (partMessages.isPresent()) {
-      Map<Integer,List<Message>> pm = partMessages.get();
-      pm.forEach((id,list) -> list.forEach(msg -> response.addMessage(id, msg)));
-    }  
-	return response;
+
+  public static PlanningResponse response(PlanningRequest request, Throwable e) {
+    return response(request).addMessage(Message.fromError(e));
   }
+
+  public static PlanningResponse response(PlanningRequest request) {
+    return response(request, (Layout) null);
+  }
+
+  public static PlanningResponse response(PlanningRequest request, Layout solution) {
+    return new PlanningResponse(request, solution).addMessages(request.messages());
+  }
+
+  private PlanningResponse addMessages(Messages messages) {
+    return addMessages(messages.globalMessages(), Optional.ofNullable(messages.partMessages()));
+  }
+
+  private PlanningResponse addMessages(
+      Optional<List<Message>> globalMessages,
+	    Optional<Map<Integer,List<Message>>> partMessages) {
+    globalMessages.ifPresent(list -> list.forEach(this::addMessage));
+    partMessages.ifPresent(map -> map.forEach((id, list) -> list.forEach(msg -> addMessage(id, msg))));
+	  return this;
+  }
+
 }
