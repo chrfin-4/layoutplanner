@@ -85,15 +85,9 @@ public class PlanningResponse {
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
     var response = new PlanningResponse(request, layout);
-    if (globalMessages.isPresent()) {
-      globalMessages.get().forEach(response::addMessage);
-    }
-    if (partMessages.isPresent()) {
-      Map<Integer,List<Message>> pm = partMessages.get();
-      pm.forEach((id,list) -> list.forEach(msg -> response.addMessage(id, msg)));
-    }
-    response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
-    return response;
+    addMessages(response, globalMessages, partMessages); 
+    //response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
+    return response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
   }
 
   public static PlanningResponse fromError(PlanningRequest request, Throwable e) {
@@ -105,13 +99,20 @@ public class PlanningResponse {
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
     var response = new PlanningResponse(request, null);
-    if (globalMessages.isPresent()) {
+    addMessages(response, globalMessages, partMessages);
+    return response.addMessage(Message.fromError(e));
+  }
+  
+  private static PlanningResponse addMessages(PlanningResponse response, 
+      Optional<List<Message>> globalMessages, 
+	  Optional<Map<Integer,List<Message>>> partMessages){
+	if (globalMessages.isPresent()) {
       globalMessages.get().forEach(response::addMessage);
     }
     if (partMessages.isPresent()) {
       Map<Integer,List<Message>> pm = partMessages.get();
       pm.forEach((id,list) -> list.forEach(msg -> response.addMessage(id, msg)));
-    }
-    return response.addMessage(Message.fromError(e));
+    }  
+	return response;
   }
 }

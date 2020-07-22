@@ -353,7 +353,7 @@ public class Part {
    * Note that the volume never changes, since it is based on the size.
    */
   public int volume() {
-    throw new UnsupportedOperationException("Not implemented.");
+    return width()*depth()*height();
   }
 
   /**

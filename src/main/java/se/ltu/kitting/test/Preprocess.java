@@ -29,6 +29,10 @@ public class Preprocess {
 	
 	/* --- Unsolvable checks --- */
     minAreaCheck(layout).ifPresent(generalMessages::add);
+	volumeCheck(layout).ifPresent(generalMessages::add);
+	
+	partTooBig(layout).ifPresent(maps::add);
+	mandatoryHintCollision(layout).ifPresent(maps::add);
 	
 	/* --- Modifying layout --- */
 	removeImpossibleSides(layout).ifPresent(maps::add);
@@ -42,8 +46,26 @@ public class Preprocess {
     return Pair.of(Optional.of(generalMessages), Optional.of(partMessages));
   }
 
+  // Simple check so volume of parts are less than volume of surfaces
+  // Alternativ: use wagon but dimensions not required
+  public static Optional<Message> volumeCheck(Layout layout) {
+	Dimensions wagonDimensions = layout.getWagon().dimensions();
+	int totalSurfaceVolume = 0;
+	int totalPartVolume = 0;
+	for(Surface surface : layout.getWagon().surfaces()){
+	  totalSurfaceVolume += surface.width() * surface.depth() * surface.height();
+    }
+	for(Part part : layout.getParts()){
+	  totalPartVolume += part.volume();
+	}  
+	if(totalPartVolume > totalSurfaceVolume){
+      return Optional.of(Message.error("Unsolvable - volume of parts greater than volume of surfaces"));
+	}
+	return Optional.empty();
+  }
+
   // Check if total area of part is greater than total area of surfaces
-  // Margin not considered yet
+  // Margin not considered
   public static Optional<Message> minAreaCheck(Layout layout) {
 	int totalPartArea = 0;
 	int totalSurfaceArea = 0;
@@ -60,6 +82,7 @@ public class Preprocess {
   }
   
   // Check if a part is too big to fit on wagon
+  // Not considering allowed sides
   public static Optional<Map<Integer,List<Message>>> partTooBig(Layout layout) {
 	Map<Integer,List<Message>> messages = new HashMap<>();
 	int surfaceX = 0;
@@ -74,9 +97,9 @@ public class Preprocess {
 	  int width = part.width();
 	  int height = part.height();
 	  int depth = part.depth();
-	  if(Math.min(width, Math.min(height, depth)) > Math.max(surfaceX, Math.max(surfaceY, surfaceZ))){
+	  if(Math.max(width, Math.max(height, depth)) > Math.max(surfaceX, Math.max(surfaceY, surfaceZ))){
 		messages.put(part.getId(), List.of(Message.error("Part does not fit on any surface")));
-	  }
+	  } 
     }
 	if(messages.isEmpty()){
 	  return Optional.empty();
@@ -84,19 +107,28 @@ public class Preprocess {
     return Optional.of(messages);
   }
   
-  // Check if several parts have mandatory layout hints with same position
-  // Add min area around centerposition for part
-  public static Optional<Map<Integer,List<Message>>> mandatoryCollision(Layout layout) {
+  // Check if several parts have mandatory layout hints that collide considering position
+  // No check for allowed sides down nor rotation
+  public static Optional<Map<Integer,List<Message>>> mandatoryHintCollision(Layout layout) {
 	Map<Integer,List<Message>> messages = new HashMap<>();
-	Set<Dimensions> positions = null;
+	Set<Dimensions> positions = new HashSet<>();
 	for(Part part : layout.getParts()){
-	  if(part.getHint().isMandatory()){
-		if(positions.contains(part.getHint().centerPosition())){
-		  messages.put(part.getId(), List.of(Message.error("multiple madatory hints require same position")));
-		  //return Optional.of(Message.error("Unsolvable - multiple madatory hints require same position"));
-		}
-        positions.add(part.getHint().centerPosition());
-      }
+	  if(part.getHint() != null){
+	    if(part.getHint().isMandatory()){
+		  int minLength = Math.min(part.width(), Math.min(part.height(), part.depth()));
+		  Dimensions centerPosition = part.getHint().centerPosition();
+		  int z = centerPosition.getZ();
+		  // Add all positions around center that part definitely covers
+		  for(int x = centerPosition.getX() - minLength/2; x <= centerPosition.getX() + minLength/2; x++){
+		    for(int y = centerPosition.getY() - minLength/2; y <= centerPosition.getY() + minLength/2; y++){
+			  if(positions.contains(Dimensions.of(x,y,z))){
+		        messages.put(part.getId(), List.of(Message.error("multiple mandatory hints require same positions")));
+		      }		    
+			  positions.add(Dimensions.of(x,y,z));
+	        }
+		  }
+        }
+	  }
     }
 	if(messages.isEmpty()){
 	  return Optional.empty();
@@ -104,9 +136,10 @@ public class Preprocess {
     return Optional.of(messages);	
   }
   
-  // Removes impossible sides from allowedDown if the height is greater than surface height
+  // Removes sides from allowedDown if a length is greater than the side lengths of surface
   // Only removes side if it can not be placed down on any surface.
   // Only works if surfaces has a height
+  // partTooBig() not needed together with this method
   public static Optional<Map<Integer,List<Message>>> removeImpossibleSides(Layout layout) {
 	Map<Integer,List<Message>> messages = new HashMap<>();
 	for(Part part : layout.getParts()){
@@ -122,15 +155,18 @@ public class Preprocess {
 		surfaceY = Math.max(surfaceY, surface.depth());
 		surfaceZ = Math.max(surfaceZ, surface.height());
 	  }
-      if(partZ > surfaceZ && (allowedSides.contains(Side.bottom) || allowedSides.contains(Side.top))){
+      if((partZ > surfaceZ || partX > Math.max(surfaceX, surfaceY) || partY > Math.max(surfaceX, surfaceY))
+	     && (allowedSides.contains(Side.bottom) || allowedSides.contains(Side.top))){
 		allowedSides.remove(Side.bottom);
 		allowedSides.remove(Side.top);
 	  }
-	  if(partY > surfaceZ && (allowedSides.contains(Side.back) || allowedSides.contains(Side.front))){
-        allowedSides.remove(Side.bottom);
-		allowedSides.remove(Side.top);
+	  if((partY > surfaceZ || partX > Math.max(surfaceX, surfaceY) || partZ > Math.max(surfaceX, surfaceY))
+	     && (allowedSides.contains(Side.back) || allowedSides.contains(Side.front))){
+        allowedSides.remove(Side.back);
+		allowedSides.remove(Side.front);
       }
-	  if(partX > surfaceZ && (allowedSides.contains(Side.left) || allowedSides.contains(Side.right))){
+	  if((partX > surfaceZ || partY > Math.max(surfaceX, surfaceY) || partZ > Math.max(surfaceX, surfaceY)) 
+		 && (allowedSides.contains(Side.left) || allowedSides.contains(Side.right))){
         allowedSides.remove(Side.left);
 		allowedSides.remove(Side.right);
       }
@@ -139,7 +175,7 @@ public class Preprocess {
 	    part.setPreferredDown(null);
 	  }
 	  if(allowedSides.isEmpty()){
-		messages.put(part.getId(), List.of(Message.error("No sides allowed down")));
+		messages.put(part.getId(), List.of(Message.error("No side can be placed down")));
 	  }
 	  part.setAllowedDown(allowedSides);
     }
