@@ -31,6 +31,8 @@ public class PlanningRequest {
   // Currently assumes that a wagon hint is provided.
   private Optional<WagonHint> wagonHint;
 
+  private final Messages messages = new Messages();
+
   public PlanningRequest(Kit kit, List<Part> parts) {
     this(kit, parts, Optional.empty());
   }
@@ -54,7 +56,7 @@ public class PlanningRequest {
   }
 
   public List<Part> parts() {
-    return parts; // TODO: defensive copy
+    return List.copyOf(parts); // TODO: defensive copy
   }
 
   public Layout getLayout() {
@@ -62,4 +64,9 @@ public class PlanningRequest {
     Wagon wagon = wagonHint.get().wagon();
     return new Layout(wagon, parts);
   }
+
+  public Messages messages() {
+    return messages;
+  }
+
 }

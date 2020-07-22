@@ -10,9 +10,9 @@ public class Message {
     error, warning, info;
   }
 
-  private String message;
-  private Severity severity;
-  private String code;
+  public String message;
+  public Severity severity;
+  public String code;
 
   private Message(String message, Severity severity, String code) {
     this.message = message;
@@ -39,9 +39,29 @@ public class Message {
   public Message code(String code) {
     return new Message(message, severity, code);
   }
-  
+
+  public String message() {
+    return message;
+  }
+
   public Severity severity() {
     return severity;
+  }
+
+  public String code() {
+    return code;
+  }
+
+  public boolean isError() {
+    return severity == Severity.error;
+  }
+
+  public boolean isWarning() {
+    return severity == Severity.warning;
+  }
+
+  public boolean isInfo() {
+    return severity == Severity.info;
   }
 
 }

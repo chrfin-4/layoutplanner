@@ -8,6 +8,7 @@ import se.ltu.kitting.api.json.LayoutPlanningResponse; // JSON data
 import se.ltu.kitting.api.json.LayoutPlanningRequest;  // JSON data
 import se.ltu.kitting.api.PlanningResponse;     // domain model
 import se.ltu.kitting.api.PlanningRequest;      // domain model
+import se.ltu.kitting.api.Message;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.LayoutHint;
 import se.ltu.kitting.model.Dimensions;
@@ -34,7 +35,27 @@ public class JsonIO {
       .map(JsonIO::toModel)
       .collect(toList());
     Optional<WagonHint> wagonHint = req.wagonHint().map(JsonIO::toModel);
-    return new PlanningRequest(toModel(req.kit), parts, wagonHint);
+    var result = new PlanningRequest(toModel(req.kit), parts, wagonHint);
+    return validateRequest(req, result);
+  }
+
+  private static PlanningRequest validateRequest(LayoutPlanningRequest req, PlanningRequest result) {
+    for (var p : req.parts) {
+      if (p.layoutHint == null) {
+        continue;
+      }
+      var rotation = p.layoutHint.rotation;
+      if (rotation == null) {
+        continue;
+      }
+      int x = rotation.rotation_x;
+      int y = rotation.rotation_y;
+      int z = rotation.rotation_z;
+      if ((x != 0 && x != 90) || (y != 0 && y != 90) || (z != 0 && z != 90)) {
+        result.messages().addMessage((int) p.id, Message.warn("only 0 and 90 degrees currently supported"));
+      }
+    }
+    return result;
   }
 
   public static String toJson(PlanningResponse res) {
