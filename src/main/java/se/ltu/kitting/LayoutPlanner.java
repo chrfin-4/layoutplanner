@@ -26,7 +26,9 @@ public class LayoutPlanner {
       long start = System.currentTimeMillis();
       Layout unsolved = request.getLayout();
 	  messages = Preprocess.preprocess(unsolved);
-      //Preprocess.preprocess(unsolved);  // Throws exception when surfaces have z=1.
+	  if (messages._1.map(list -> list.stream().anyMatch(m -> m.severity() == Message.Severity.error)).orElse(false)) {
+		return PlanningResponse.fromError(request, messages._1, messages._2);
+	  }
       List<Pair<String,Integer>> configs = List.of(
           pair("firstFit5s.xml",10),
           pair("late2s.xml",5),

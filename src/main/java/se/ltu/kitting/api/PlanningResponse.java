@@ -86,7 +86,6 @@ public class PlanningResponse {
       Optional<Map<Integer,List<Message>>> partMessages) {
     var response = new PlanningResponse(request, layout);
     addMessages(response, globalMessages, partMessages); 
-    //response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
     return response.addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
   }
 
@@ -98,9 +97,15 @@ public class PlanningResponse {
       Throwable e,
       Optional<List<Message>> globalMessages,
       Optional<Map<Integer,List<Message>>> partMessages) {
+	return fromError(request, globalMessages, partMessages).addMessage(Message.fromError(e));
+  }
+  
+  public static PlanningResponse fromError(PlanningRequest request,
+      Optional<List<Message>> globalMessages,
+      Optional<Map<Integer,List<Message>>> partMessages) {
     var response = new PlanningResponse(request, null);
     addMessages(response, globalMessages, partMessages);
-    return response.addMessage(Message.fromError(e));
+    return response;
   }
   
   private static PlanningResponse addMessages(PlanningResponse response, 

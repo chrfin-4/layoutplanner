@@ -39,5 +39,9 @@ public class Message {
   public Message code(String code) {
     return new Message(message, severity, code);
   }
+  
+  public Severity severity() {
+    return severity;
+  }
 
 }
