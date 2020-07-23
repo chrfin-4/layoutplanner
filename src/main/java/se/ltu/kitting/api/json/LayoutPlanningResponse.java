@@ -30,21 +30,19 @@ import static java.util.stream.Collectors.toList;
       z: number,
     },
     surfaces: [                   // required (minimum 1 surface)
-      origin: Coordinate3d,         // !! not required ???
-      dimensions: Coordinate3d,     // !! not required ???
+      id: integer,                  // required
+      origin: Coordinate3d,
+      dimensions: Coordinate3d,
     ],
   },
   parts: [                        // required (minimum 1 part)
     id: int,                        // required (NOTE: SCHEMA SAYS "number", but will always be an int.)
     partNumber: string,             // required
     layout: {
+      surfaceId: integer,           // required
       origin: Coordinate3d,         // required
       orientation: "left"/"right"/"bottom"/"top"/"back"/"front", // required
-      rotation: {
-        rotation_z: number,         // 0 or 90
-        rotation_x: number,         // always 0
-        rotation_y: number,         // always 0
-      },
+      rotation: integer,            // always 0 or 90
     },
     messagesToDisplay: [
       message: string,          // required
@@ -80,10 +78,11 @@ public class LayoutPlanningResponse {
 
     public static class Layout {
       // Required.
+      public int surfaceId;
       public Coordinate3D origin;
       public Side orientation;
       // Optional. (But leaving it out doesn't make much sense.)
-      public Rotation rotation;
+      public int rotation;
     }
   }
 

@@ -21,15 +21,15 @@ public class Message {
   }
 
   public static Message info(String msg) {
-    return new Message(msg, Severity.info, null);
+    return new Message(msg, Severity.info, "hello");
   }
 
   public static Message warn(String msg) {
-    return new Message(msg, Severity.warning, null);
+    return new Message(msg, Severity.warning, "hello");
   }
 
   public static Message error(String msg) {
-    return new Message(msg, Severity.error, null);
+    return new Message(msg, Severity.error, "hello");
   }
 
   public static Message fromError(Throwable t) {

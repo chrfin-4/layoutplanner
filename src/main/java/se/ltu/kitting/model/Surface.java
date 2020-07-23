@@ -11,16 +11,28 @@ import java.util.ArrayList;
  */
 public class Surface {
 
+  public final int id;
   /** The (width,depth,height) of the surface. */
   public final Dimensions dimensions;
   public final Dimensions origin;
 
+  @Deprecated
   private Surface(Dimensions dimensions, Dimensions origin) {
+    this(-1, dimensions, origin);
+  }
+
+  private Surface(int id, Dimensions dimensions, Dimensions origin) {
     this.dimensions = dimensions;
     this.origin = origin;
+    this.id = id;
   }
 
   /** Factory method. Origin defaults to (0,0). */
+  public static Surface of(int id, Dimensions dimensions) {
+    return surface(id, dimensions, Dimensions.ZERO);
+  }
+
+  /** Factory method. Origin defaults to (0,0), id defaults to -1. */
   public static Surface of(Dimensions dimensions) {
     return surface(dimensions, Dimensions.ZERO);
   }
@@ -48,6 +60,11 @@ public class Surface {
   /** Factory method. */
   public static Surface surface(Dimensions dimensions, Dimensions origin) {
     return new Surface(dimensions, origin);
+  }
+
+  /** Factory method. */
+  public static Surface surface(int id, Dimensions dimensions, Dimensions origin) {
+    return new Surface(id, dimensions, origin);
   }
 
   public int width() {

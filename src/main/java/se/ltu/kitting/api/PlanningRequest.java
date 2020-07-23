@@ -1,21 +1,11 @@
 package se.ltu.kitting.api;
 
 import java.util.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import se.ltu.kitting.model.Dimensions;
-import se.ltu.kitting.model.Side;
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Kit;
 import se.ltu.kitting.model.Wagon;
-import se.ltu.kitting.model.Rotation;
-import se.ltu.kitting.model.Surface;
-import se.ltu.kitting.model.LayoutHint;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.WagonHint;
-import java.lang.reflect.Type;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Represents an incoming request and holds all parameters.
@@ -25,13 +15,13 @@ import static java.util.stream.Collectors.toList;
  */
 public class PlanningRequest {
 
-  private Kit kit;
+  private final Kit kit;
   // The request must have a non-empty list of parts.
-  private List<Part> parts;
+  private final List<Part> parts;
   // Currently assumes that a wagon hint is provided.
-  private Optional<WagonHint> wagonHint;
+  private final Optional<WagonHint> wagonHint;
 
-  private final Messages messages = new Messages();
+  private final Messages messages;
 
   public PlanningRequest(Kit kit, List<Part> parts) {
     this(kit, parts, Optional.empty());
@@ -42,9 +32,18 @@ public class PlanningRequest {
   }
 
   public PlanningRequest(Kit kit, List<Part> parts, Optional<WagonHint> wagonHint) {
+    this(kit, parts, wagonHint, new Messages());
+  }
+
+  public PlanningRequest(Kit kit, List<Part> parts, Optional<WagonHint> wagonHint, Messages messages) {
     this.kit = kit;
     this.parts = parts;
     this.wagonHint = wagonHint;
+    this.messages = messages;
+  }
+
+  public PlanningRequest withMessages(Messages messages) {
+    return new PlanningRequest(kit, parts, wagonHint, messages);
   }
 
   public Optional<WagonHint> wagonHint() {

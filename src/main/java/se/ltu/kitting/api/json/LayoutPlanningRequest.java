@@ -23,6 +23,7 @@ import se.ltu.kitting.model.Side;
       capabilities: [string],     // required
       dimensions: Coordinate3d,
       surfaces: [                 // (optional!?, minimum 1 surface)
+        id: integer,              // required
         origin: Coordinate3d,
         dimensions: Coordinate3d,
       ]
@@ -35,7 +36,7 @@ import se.ltu.kitting.model.Side;
     dimensions: Coordinate3d      // required
     partDesc: string,
     functionGroup: string,
-    minMargin: int                // (optional, will be rounded up to the nearest int)
+    minMargin: number,            // (optional, will be rounded up to the nearest int)
     orientation: {                // required
       allowedDown: [
         "left"/"right"/"bottom"/"top"/"back"/"front"
@@ -46,11 +47,9 @@ import se.ltu.kitting.model.Side;
     requiredCapabilities: [string],
     layoutHint: {
       origin: Coordinate3d,       // required
-      rotation: {
-        rotation_z: int,          // rounded to 0 or 90 degrees
-        rotation_x: int,          // ignored
-        rotation_y: int,          // ignored
-      },
+      surfaceId: integer,         // required (not currently in schema)
+      orientation: "left"/"right"/"bottom"/"top"/"back"/"front"
+      rotation: number,           // truncated to integer
       weightFactor: number,       // (optional, [1,10], default 1, will be truncated to integer)
     },
   ],
@@ -77,6 +76,7 @@ public class LayoutPlanningRequest {
     public double weight;  // Min 0.
     public Collection<String> requiredCapabilities;
     public LayoutHint layoutHint;
+    public double minMargin;
 
     public Optional<LayoutHint> layoutHint() {
       return Optional.ofNullable(layoutHint);
@@ -100,15 +100,15 @@ public class LayoutPlanningRequest {
       // Required.
       public Coordinate3D origin;
       // Optional.
-      public Rotation rotation;
+      public double rotation;
       public double weightFactor;
 
       public Coordinate3D origin() {
         return origin;
       }
 
-      public Optional<Rotation> rotation() {
-        return Optional.ofNullable(rotation);
+      public double rotation() {
+        return rotation;
       }
 
       public double weightFactor() {

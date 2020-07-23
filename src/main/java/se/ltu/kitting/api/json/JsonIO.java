@@ -11,6 +11,7 @@ import se.ltu.kitting.api.PlanningRequest;      // domain model
 import se.ltu.kitting.api.Message;
 import se.ltu.kitting.model.Part;
 import se.ltu.kitting.model.LayoutHint;
+import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Dimensions;
 import se.ltu.kitting.model.Rotation;
 import se.ltu.kitting.model.WagonHint;
@@ -44,14 +45,8 @@ public class JsonIO {
       if (p.layoutHint == null) {
         continue;
       }
-      var rotation = p.layoutHint.rotation;
-      if (rotation == null) {
-        continue;
-      }
-      int x = rotation.rotation_x;
-      int y = rotation.rotation_y;
-      int z = rotation.rotation_z;
-      if ((x != 0 && x != 90) || (y != 0 && y != 90) || (z != 0 && z != 90)) {
+      int z = (int) p.layoutHint.rotation;
+      if (z != 0 && z != 90) {
         result.messages().addMessage((int) p.id, Message.warn("only 0 and 90 degrees currently supported"));
       }
     }
@@ -71,7 +66,7 @@ public class JsonIO {
       var result = new LayoutPlanningResponse.Part();
       result.id = part.getId();
       result.partNumber = part.getPartNumber();
-      result.layout = partLayout(part);
+      result.layout = partLayout(part, res.solution());
       res.messagesForPart(part.getId())
         .ifPresent(m -> result.messagesToDisplay = m);
       parts.add(result);
@@ -93,18 +88,21 @@ public class JsonIO {
     throw new UnsupportedOperationException("Not implemented.");
   }
 
-  public static LayoutPlanningResponse.Part.Layout partLayout(Part part) {
+  public static LayoutPlanningResponse.Part.Layout partLayout(Part part, Optional<Layout> layout) {
     Dimensions position = part.getPosition();
     Side side = part.getSideDown();
     Rotation rotation = part.getRotation();
     if (position == null || side == null || rotation == null) {
       return null;
     }
+    Surface surface = layout.get().surfaceOf(part);
     Dimensions center = Part.cornerToCenter(position, part.currentDimensions());
     var result = new LayoutPlanningResponse.Part.Layout();
+    center = center.minus(Dimensions.of(0,0,surface.origin.z));
     result.origin = Coordinate3D.from(center);
     result.orientation = side;
-    result.rotation = se.ltu.kitting.api.json.Rotation.from(rotation);
+    result.rotation = rotation.z;
+    result.surfaceId = surface.id;
     return result;
   }
 
@@ -126,6 +124,7 @@ public class JsonIO {
     Wagon.Surface result = new Wagon.Surface();
     result.origin = origin;
     result.dimensions = dimensions;
+    result.id = surface.id;
     return result;
   }
 
@@ -152,7 +151,7 @@ public class JsonIO {
 
   public static LayoutHint toModel(LayoutPlanningRequest.Part.LayoutHint hint) {
     Dimensions dimensions = hint.origin().toDimensions();
-    Optional<Rotation> rotation = hint.rotation().map(r -> r.toRotation());
+    var rotation = Rotation.of((int) hint.rotation());
     return new LayoutHint(dimensions, rotation, hint.weightFactor());
   }
 
@@ -180,7 +179,8 @@ public class JsonIO {
   public static Surface toModel(Wagon.Surface surface) {
     Dimensions origin = surface.origin().map(Coordinate3D::toDimensions).get();
     Dimensions size = surface.dimensions().map(Coordinate3D::toDimensions).get();
-    return Surface.of(size, origin);
+    int id = surface.id;
+    return Surface.surface(id, size, origin);
   }
 
 }

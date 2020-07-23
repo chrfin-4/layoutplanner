@@ -13,8 +13,13 @@ public class Wagon {
   public Coordinate3D dimensions;
 
   public static class Surface {
-    public Coordinate3D origin;     // Optional! :o
-    public Coordinate3D dimensions; // Optional! :o
+    public int id;                    // required
+    public Coordinate3D origin;
+    public Coordinate3D dimensions;
+
+    public int id() {
+      return id;
+    }
 
     public Optional<Coordinate3D> origin() {
       return Optional.ofNullable(origin);
