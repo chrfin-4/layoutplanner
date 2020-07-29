@@ -47,6 +47,10 @@ public class Surface {
     return surface(dimensions, origin);
   }
 
+  public int id() {
+    return id;
+  }
+
   /** Factory method. Origin defaults to (0,0). */
   public static Surface surface(Dimensions dimensions) {
     return surface(dimensions, Dimensions.ZERO);
@@ -85,25 +89,6 @@ public class Surface {
 
   public Dimensions size() {
     return dimensions;
-  }
-
-  /**
-   * Returns a collection of all the positions (all the (x,y,z) triples) of the
-   * bottom surface.
-   * @deprecated use PositionProvider(wagon, stepSize)
-   */
-  @Deprecated
-  public Collection<Dimensions> getSurfacePositions() {
-    final Collection<Dimensions> positions = new ArrayList<>();
-    final int x = origin.getX() + dimensions.getX();
-    final int y = origin.getY() + dimensions.getY();
-    final int z = origin.getZ();
-    for (int i = 0; i < x; i+=1) {
-      for (int j = 0; j < y; j+=1) {
-        positions.add(Dimensions.of(i,j,z));
-      }
-    }
-    return positions;
   }
 
 }

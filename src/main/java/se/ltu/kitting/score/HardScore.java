@@ -72,16 +72,16 @@ public class HardScore {
 
   // Counts the number of parts outside surface
   public static int countPartsOutside(Layout layout){
-		List<Part> parts = layout.getParts();
-		int count = 0;
-		for(Part part : parts) {
-				if(part.getPosition() != null){
-			if(partOutside(part, layout.surfaceOf(part))){
-				count++;
-			}
-			}
-		}
-		return count;
+    List<Part> parts = layout.getParts();
+    int count = 0;
+    for(Part part : parts) {
+      if(part.getPosition() != null){
+        if(partOutside(part, layout.surfaceOf(part))){
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   // Checks if part is outside of surface
@@ -136,14 +136,14 @@ public class HardScore {
   public static boolean lockedPosition(Layout layout, Part part){
 	  boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
 	  boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
-		boolean sameSurface = layout.surfaceOf(part).surfaceId() == part.getHint().surfaceId();
+		boolean sameSurface = layout.surfaceOf(part).id() == part.getHint().surfaceId();
     return sameX && sameY && sameSurface;
   }
   
 	// Check if part is placed on side specified in hint
 	public static boolean lockedSide(Part part){
 	  if(part.getHint().side().isPresent()){
-			return part.getSideDown().equals(part.getHint().side());
+			return part.getSideDown().equals(part.getHint().side().get());
 		}
 		return true;
 	}

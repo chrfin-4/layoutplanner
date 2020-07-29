@@ -72,15 +72,12 @@ public class Wagon {
     return dimensions;
   }
 
-  public Surface surfaceOf(Dimensions position) {
-    return surfaces.stream().filter(s -> s.origin.z == position.z).findAny().get();
+  public Surface getSurfaceById(int id) {
+    return surfaces.stream().filter(s -> s.id == id).findAny().get();
   }
 
-  public List<Dimensions> allPositions() {
-    return surfaces.stream()
-      .map(Surface::getSurfacePositions)
-      .flatMap(Collection::stream)
-      .collect(toList());
+  public Surface surfaceOf(Dimensions position) {
+    return surfaces.stream().filter(s -> s.origin.z == position.z).findAny().get();
   }
 
 }

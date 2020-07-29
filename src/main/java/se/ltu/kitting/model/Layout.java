@@ -110,7 +110,7 @@ public class Layout {
   // --- END of OptaPlanner things ---
 
   public Surface surfaceOf(Part part) {
-    return wagon.surfaceOf(part.getPosition());
+    return wagon.getSurfaceById(part.getPosition().z);
   }
 
   /** Total volume required to fit all parts. */
