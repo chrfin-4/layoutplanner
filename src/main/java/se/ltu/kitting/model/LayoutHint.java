@@ -14,56 +14,85 @@ public class LayoutHint {
   public static final int mandatoryWeight = 10;
 
   private final Dimensions centerPosition;
+  private final int surfaceId;
   private final int weight;
   private final Optional<Rotation> rotation;
+  private final Optional<Side> side;
 
-  public LayoutHint(Dimensions position) {
-    this(position, defaultWeight);
+  public LayoutHint(Dimensions position, int surfaceId) {
+    this(position, surfaceId, Optional.empty(), Optional.empty(), defaultWeight);
   }
 
+  @Deprecated(forRemoval = true)
   public LayoutHint(Dimensions centerPosition, double weight) {
-    this(centerPosition, Optional.empty(), weight);
+    this(centerPosition, -1, Optional.empty(), Optional.empty(), weight);
   }
 
+  @Deprecated(forRemoval = true)
   public LayoutHint(Dimensions centerPosition, Rotation rotation) {
-    this(centerPosition, rotation, defaultWeight);
+    this(centerPosition, -1, Optional.of(rotation), Optional.empty(), defaultWeight);
   }
 
+  @Deprecated(forRemoval = true)
   public LayoutHint(Dimensions centerPosition, Rotation rotation, double weight) {
-    this(centerPosition, Optional.ofNullable(rotation), weight);
+    this(centerPosition, -1, Optional.ofNullable(rotation), Optional.empty(), weight);
   }
 
+  @Deprecated(forRemoval = true)
   public LayoutHint(Dimensions centerPosition, Optional<Rotation> rotation, double weight) {
+    this(centerPosition, -1, rotation, Optional.empty(), weight);
+  }
+
+  private LayoutHint(Dimensions centerPosition, int surfaceId, Optional<Rotation> rotation, Optional<Side> side, double weight) {
     this.centerPosition = centerPosition;
+    this.surfaceId = surfaceId;
     this.rotation = rotation;
     this.weight = (int)weight;
+    this.side = side;
     assertValid(centerPosition, this.weight);
   }
 
+  /** Factory. */
+  public static LayoutHint hint(Dimensions centerPosition, int surfaceId) {
+    return new LayoutHint(centerPosition, surfaceId);
+  }
+
   /** Factory for making mandatory hint (no rotation). */
-  public static LayoutHint mandatory(Dimensions centerPosition) {
-    return mandatory(centerPosition, null);
+  public static LayoutHint mandatory(Dimensions centerPosition, int surfaceId) {
+    return mandatory(centerPosition, surfaceId);
   }
 
   /** Factory for making mandatory hint (with rotation). */
-  public static LayoutHint mandatory(Dimensions centerPosition, Rotation rotation) {
-    return new LayoutHint(centerPosition, rotation, mandatoryWeight);
+  public static LayoutHint mandatory(Dimensions centerPosition, int surfaceId, Rotation rotation) {
+    return mandatory(centerPosition, surfaceId).withRotation(rotation);
   }
 
   public LayoutHint withPosition(Dimensions centerPosition) {
-    return new LayoutHint(centerPosition, rotation, weight);
+    return new LayoutHint(centerPosition, surfaceId, rotation, side, weight);
   }
 
   public LayoutHint withRotation(Rotation rotation) {
-    return new LayoutHint(centerPosition, rotation, weight);
+    return new LayoutHint(centerPosition, surfaceId, Optional.ofNullable(rotation), side, weight);
   }
 
   public LayoutHint withWeight(double weight) {
-    return new LayoutHint(centerPosition, rotation, weight);
+    return new LayoutHint(centerPosition, surfaceId, rotation, side, weight);
+  }
+
+  public LayoutHint withSide(Side side) {
+    return new LayoutHint(centerPosition, surfaceId, rotation, Optional.ofNullable(side), weight);
   }
 
   public Dimensions centerPosition() {
     return centerPosition;
+  }
+
+  public int surfaceId() {
+    return surfaceId;
+  }
+
+  public Optional<Side> side() {
+    return side;
   }
 
   public Optional<Rotation> rotation() {

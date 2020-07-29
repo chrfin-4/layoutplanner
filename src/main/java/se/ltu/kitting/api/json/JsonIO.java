@@ -152,7 +152,10 @@ public class JsonIO {
   public static LayoutHint toModel(LayoutPlanningRequest.Part.LayoutHint hint) {
     Dimensions dimensions = hint.origin().toDimensions();
     var rotation = Rotation.of((int) hint.rotation());
-    return new LayoutHint(dimensions, rotation, hint.weightFactor());
+    return new LayoutHint(dimensions, hint.surfaceId)
+      .withRotation(rotation)
+      .withWeight(hint.weightFactor())
+      .withSide(hint.orientation);
   }
 
   public static se.ltu.kitting.model.Kit toModel(Kit kit) {

@@ -99,12 +99,22 @@ public class LayoutPlanningRequest {
     public static class LayoutHint {
       // Required.
       public Coordinate3D origin;
+      public int surfaceId;
       // Optional.
       public double rotation;
       public double weightFactor;
+      public Side orientation;
 
       public Coordinate3D origin() {
         return origin;
+      }
+
+      public int surfaceId() {
+        return surfaceId;
+      }
+
+      public Side orientation() {
+        return orientation;
       }
 
       public double rotation() {
