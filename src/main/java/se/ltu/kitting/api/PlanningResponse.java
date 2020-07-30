@@ -127,7 +127,8 @@ public class PlanningResponse {
   }
 
   public static PlanningResponse response(PlanningRequest request, Layout solution) {
-    return new PlanningResponse(request, solution).addMessages(request.messages());
+    return new PlanningResponse(request, solution).addMessages(request.messages())
+      .addMessage(Message.info(String.valueOf(solution.getScore())).code("Score"));
   }
 
   private PlanningResponse addMessages(Messages messages) {
