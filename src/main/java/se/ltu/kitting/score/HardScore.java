@@ -120,11 +120,8 @@ public class HardScore {
 		int count = 0;
 		for(Part part : parts) {
 			if(part.getPosition() != null && part.getHint() != null){
-				if(part.getHint().isMandatory() && !lockedPart(part)){
-					count++;
-				}
-				if(part.getHint().isMandatory() && !lockedSurface(layout, part)){
-				  count++;
+				if(part.getHint().isMandatory()){
+					count += lockedPosition(part) + lockedSurface(layout, part) + lockedSide(part) + lockedRotation(part);
 				}
 			}
 		}	
@@ -132,34 +129,40 @@ public class HardScore {
   }  
   
   // Check if part is places as specified in hint
-  public static boolean lockedPart(Part part){ 
-	  return lockedPosition(part) && lockedRotation(part) && lockedSide(part); 
-  }	  
+  // public static boolean lockedPart(Part part){ 
+	  // return lockedPosition(part) && lockedRotation(part) && lockedSide(part); 
+  // }	  
 	  
   // Check if part has the center position specified in hint
-  public static boolean lockedPosition(Part part){
+  public static int lockedPosition(Part part){
 	  boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
 	  boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
-    return sameX && sameY;
+    if(sameX && sameY){
+			return 0;
+		}
+		return 1;
   }
   
-	public static boolean lockedSurface(Layout layout, Part part){
-		return layout.surfaceOf(part).id() == part.getHint().surfaceId();
+	public static int lockedSurface(Layout layout, Part part){
+		if(layout.surfaceOf(part).id() == part.getHint().surfaceId()){
+			return 0;
+		} 
+		return 1;
 	}
 	
 	// Check if part is placed on side specified in hint
-	public static boolean lockedSide(Part part){
-	  if(part.getHint().side().isPresent()){
-			return part.getSideDown().equals(part.getHint().side().get());
+	public static int lockedSide(Part part){
+	  if(part.getHint().side().isPresent() && part.getSideDown().equals(part.getHint().side().get())){
+			return 0;
 		}
-		return true;
+		return 1;
 	}
 	
   // Check if part has the rotation specified in hint
-  public static boolean lockedRotation(Part part){
-		if(part.getHint().rotation().isPresent()){
-			return part.getRotation().equals(part.getHint().rotation().get());
+  public static int lockedRotation(Part part){
+		if(part.getHint().rotation().isPresent() && part.getRotation().equals(part.getHint().rotation().get())){
+			return 0;
 		}
-    return true;
+    return 1;
   }
 }
