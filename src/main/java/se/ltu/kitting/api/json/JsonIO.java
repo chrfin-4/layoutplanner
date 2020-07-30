@@ -47,7 +47,7 @@ public class JsonIO {
       }
       int z = (int) p.layoutHint.rotation;
       if (z != 0 && z != 90) {
-        result.messages().addMessage((int) p.id, Message.warn("only 0 and 90 degrees currently supported"));
+        result.messages().addMessage((int) p.id, Message.warn("Only 0 and 90 degrees currently supported."));
       }
     }
     return result;
@@ -96,9 +96,8 @@ public class JsonIO {
       return null;
     }
     Surface surface = layout.get().surfaceOf(part);
-    Dimensions center = Part.cornerToCenter(position, part.currentDimensions());
+    Dimensions center = part.currentCenter();
     var result = new LayoutPlanningResponse.Part.Layout();
-    center = center.minus(Dimensions.of(0,0,surface.origin.z));
     result.origin = Coordinate3D.from(center);
     result.orientation = side;
     result.rotation = rotation.z;
@@ -171,17 +170,14 @@ public class JsonIO {
     List<Surface> surfaces = wagon.surfaces().stream()
       .map(JsonIO::toModel)
       .collect(toList());
-    var result = se.ltu.kitting.model.Wagon.of(wagon.wagonId, surfaces)
-      .withCapabilities(wagon.capabilities());
-    return wagon.dimensions()
-      .map(Coordinate3D::toDimensions)
-      .map(result::withDimensions)
-      .orElse(result);
+    return se.ltu.kitting.model.Wagon.of(wagon.wagonId, surfaces)
+      .withCapabilities(wagon.capabilities())
+      .withDimensions(wagon.dimensions().toDimensions());
   }
 
   public static Surface toModel(Wagon.Surface surface) {
-    Dimensions origin = surface.origin().map(Coordinate3D::toDimensions).get();
-    Dimensions size = surface.dimensions().map(Coordinate3D::toDimensions).get();
+    Dimensions origin = surface.origin().toDimensions();
+    Dimensions size = surface.dimensions().toDimensions();
     int id = surface.id;
     return Surface.surface(id, size, origin);
   }

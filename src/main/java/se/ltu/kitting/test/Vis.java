@@ -36,8 +36,8 @@ public class Vis extends JPanel {
 	JFrame frame = new JFrame(layoutDescription);
 	// scale = 300/layout.getSurface().depth();
 	scale = 1;
-    int width = (scale * layout.getSurface().width() + margin) + (scale * layout.getSurface().depth() + margin);
-    int height = scale * layout.getSurface().depth() + margin;
+    int width = (scale * layout.getWagon().width() + margin) + (scale * layout.getWagon().depth() + margin);
+    int height = scale * layout.getWagon().depth() + margin;
     Vis v = new Vis(layout, width, height);
     frame.add(v);
     frame.setSize(width, height);
@@ -59,8 +59,8 @@ public class Vis extends JPanel {
   }
   
   public void paintSurface(Graphics g) {
-	int sw = scale * layout.getSurface().width();
-    int sh = scale * layout.getSurface().depth();
+	int sw = scale * layout.getWagon().width();
+    int sh = scale * layout.getWagon().depth();
 	//int offset = margin/3;
 	g.setColor(Color.GRAY);
 	g.fillRect(offset - 1,offset - 1, sw + 2, sh + 2);
@@ -81,7 +81,7 @@ public class Vis extends JPanel {
 	  int originalPartDepth = scale * part.getSize().getY();
       if (pos == null) {
         g.setColor(Color.GRAY);
-        g.fillRect(offset + scale * layout.getSurface().width() + margin + 10, offset + lastUnplacedY, originalPartWidth, originalPartDepth);
+        g.fillRect(offset + scale * layout.getWagon().width() + margin + 10, offset + lastUnplacedY, originalPartWidth, originalPartDepth);
         lastUnplacedY += part.getSize().getY() * scale + 10;
       } else {
 		int startPosX = offset + scale * pos.getX();

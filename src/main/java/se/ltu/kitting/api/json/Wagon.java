@@ -9,24 +9,24 @@ public class Wagon {
   public String wagonId;
   public List<String> capabilities; // may be empty
   public List<Surface> surfaces;    // at least 1
-  // Optional.
   public Coordinate3D dimensions;
 
   public static class Surface {
-    public int id;                    // required
-    public Coordinate3D origin;
+    // All required.
+    public int id;
     public Coordinate3D dimensions;
+    public Coordinate3D origin;
 
     public int id() {
       return id;
     }
 
-    public Optional<Coordinate3D> origin() {
-      return Optional.ofNullable(origin);
+    public Coordinate3D dimensions() {
+      return dimensions;
     }
 
-    public Optional<Coordinate3D> dimensions() {
-      return Optional.ofNullable(dimensions);
+    public Coordinate3D origin() {
+      return origin;
     }
 
   }
@@ -39,8 +39,8 @@ public class Wagon {
     return capabilities == null ? List.of() : capabilities;
   }
 
-  public Optional<Coordinate3D> dimensions() {
-    return Optional.ofNullable(dimensions);
+  public Coordinate3D dimensions() {
+    return dimensions;
   }
 
 }

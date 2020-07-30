@@ -101,12 +101,6 @@ public class Layout {
     this.wagon = wagon;
   }
 
-  /** @deprecated because there will be multiple surfaces in the future */
-  @Deprecated(forRemoval = true)
-  public Surface getSurface() {
-    return wagon.surfaces().get(0);
-  }
-
   // --- END of OptaPlanner things ---
 
   public Surface surfaceOf(Part part) {

@@ -72,6 +72,14 @@ public class Wagon {
     return dimensions;
   }
 
+  public int width() {
+    return dimensions.x;
+  }
+
+  public int depth() {
+    return dimensions.y;
+  }
+
   public Surface getSurfaceById(int id) {
     return surfaces.stream().filter(s -> s.id == id).findAny().get();
   }
