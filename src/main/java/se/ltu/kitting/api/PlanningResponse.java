@@ -78,46 +78,6 @@ public class PlanningResponse {
     return Optional.ofNullable(solution);
   }
 
-  @Deprecated
-  public static PlanningResponse fromLayout(PlanningRequest request, se.ltu.kitting.model.Layout layout) {
-    return fromLayout(request, layout, Optional.empty(), Optional.empty());
-  }
-
-  @Deprecated
-  public static PlanningResponse fromLayout(PlanningRequest request,
-      se.ltu.kitting.model.Layout layout,
-      Optional<List<Message>> globalMessages,
-      Optional<Map<Integer,List<Message>>> partMessages) {
-    return new PlanningResponse(request, layout)
-      .addMessages(globalMessages, partMessages)
-      .addMessages(request.messages())
-      .addMessage(Message.info(String.valueOf(layout.getScore())).code("Score"));
-  }
-
-  public static PlanningResponse fromError(PlanningRequest request, Throwable e) {
-    return new PlanningResponse(request, null)
-      .addMessages(request.messages())
-      .addMessage(Message.fromError(e));
-  }
-
-  @Deprecated
-  public static PlanningResponse fromError(PlanningRequest request,
-      Throwable e,
-      Optional<List<Message>> globalMessages,
-      Optional<Map<Integer,List<Message>>> partMessages) {
-    return fromError(request, globalMessages, partMessages)
-      .addMessage(Message.fromError(e));
-  }
-
-  @Deprecated
-  public static PlanningResponse fromError(PlanningRequest request,
-      Optional<List<Message>> globalMessages,
-      Optional<Map<Integer,List<Message>>> partMessages) {
-    return new PlanningResponse(request, null)
-      .addMessages(globalMessages, partMessages)
-      .addMessages(request.messages());
-  }
-
   public static PlanningResponse response(PlanningRequest request, Throwable e) {
     return response(request).addMessage(Message.fromError(e));
   }
