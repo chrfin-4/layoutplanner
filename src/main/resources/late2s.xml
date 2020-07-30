@@ -15,7 +15,7 @@
     <localSearchType>LATE_ACCEPTANCE</localSearchType>
     <termination>
       <secondsSpentLimit>2</secondsSpentLimit>
-      <unimprovedMillisecondsSpentLimit>100</unimprovedMillisecondsSpentLimit>
+      <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
       <unimprovedScoreDifferenceThreshold>0hard/2soft</unimprovedScoreDifferenceThreshold>
     </termination>
   </localSearch>
