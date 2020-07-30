@@ -32,15 +32,15 @@ public class HardScore {
     List<Part> parts = layout.getParts();
     int count = 0;
     for (int i = 0; i < parts.size() - 1; i++) {
-	  for(int j = i + 1; j < parts.size(); j++) {
-		Part p1 = parts.get(i);
-		Part p2 = parts.get(j);
-		if (p1.getPosition() != null && p2.getPosition() != null){
-	      if(partsOverlap(p1, p2)) {
-		    count++;
-		  }
-		}
-	  }
+			for(int j = i + 1; j < parts.size(); j++) {
+			Part p1 = parts.get(i);
+			Part p2 = parts.get(j);
+			if (p1.getPosition() != null && p2.getPosition() != null){
+				if(partsOverlap(p1, p2)) {
+					count++;
+				}
+			}
+			}
     }
     return count;
   }
@@ -87,7 +87,8 @@ public class HardScore {
   // Checks if part is outside of surface
   public static boolean partOutside(Part part, Surface surface){
     Dimensions partEnd = part.getPosition().plus(part.currentDimensions());
-    Dimensions surfaceEnd = surface.origin.plus(surface.dimensions);
+    // Dimensions surfaceEnd = surface.origin.plus(surface.dimensions);
+		Dimensions surfaceEnd = surface.dimensions;
     boolean height = partEnd.z > surfaceEnd.z;
     boolean depth = partEnd.y > surfaceEnd.y;
     boolean width = partEnd.x > surfaceEnd.x;
@@ -99,10 +100,10 @@ public class HardScore {
     List<Part> parts = layout.getParts();
 		int count = 0;
 		for(Part part : parts) {
-				if(part.getPosition() != null && part.getSideDown() != null){
+			if(part.getPosition() != null && part.getSideDown() != null){
 				if(!allowedSideDown(part)){
-				count++;
-			}
+					count++;
+				}
 			}
 		}	
 		return count;
