@@ -9,7 +9,9 @@ import se.ltu.kitting.api.PlanningResponse;
 import se.ltu.kitting.api.Message;
 import se.ltu.kitting.api.json.JsonIO;
 import se.ltu.kitting.model.Layout;
-import se.ltu.kitting.test.Preprocess;
+import se.ltu.kitting.model.Part;
+import se.ltu.kitting.model.Dimensions;
+import se.ltu.kitting.Preprocess;
 import ch.rfin.util.Pair;
 
 import static ch.rfin.util.Pair.pair;
@@ -21,7 +23,6 @@ import static ch.rfin.util.Pair.pair;
 public class LayoutPlanner {
 
   public static PlanningResponse requestLayout(PlanningRequest request) {
-    // Pair<Optional<List<Message>>, Optional<Map<Integer,List<Message>>>> messages = pair(Optional.empty(), Optional.empty());
 		try {
 			long start = System.currentTimeMillis();
 			Layout unsolved = request.getLayout();
@@ -30,14 +31,10 @@ public class LayoutPlanner {
 			if(request.messages().hasErrors()){
 				return PlanningResponse.response(request);
 			}
-			// messages = Preprocess.preprocess(unsolved);
-			// if (messages._1.map(list -> list.stream().anyMatch(m -> m.severity() == Message.Severity.error)).orElse(false)) {
-			// return PlanningResponse.fromError(request, messages._1, messages._2);
-			// }
       List<Pair<String,Integer>> configs = List.of(
           pair("firstFit5s.xml",10),
           pair("late2s.xml",5),
-          pair("late2s.xml",1)
+          pair("late2s-thorough.xml",1)
         );
       Layout solved = runMultiResolution(unsolved, configs);
       long end = System.currentTimeMillis();

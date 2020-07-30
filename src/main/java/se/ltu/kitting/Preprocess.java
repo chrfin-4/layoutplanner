@@ -1,4 +1,4 @@
-package se.ltu.kitting.test;
+package se.ltu.kitting;
 
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
@@ -19,7 +19,7 @@ import ch.rfin.util.Pair;
 
 /**
  * Recommended to run layout through this class before solving it to add error messages
- * Can declare layouts unsolvable 
+ * Can declare layouts unsolvable
  * Can edit out impossible layouthints to optimize the solving process
  */
 public class Preprocess {
@@ -28,37 +28,32 @@ public class Preprocess {
     List<Message> globalMessages = new ArrayList<>();
     List<Map<Integer,List<Message>>> maps = new ArrayList<>();
     Map<Integer, List<Message>> partMessages = new HashMap<>();
-		
+
 		minAreaCheck(request,layout);
     volumeCheck(request,layout);
     /* --- Part checks --- */
     partTooBig(request,layout);
-    // mandatoryHintCollision(request,layout); 
     /* --- Modifying layout --- */
+    applyHints(layout);
     removeImpossibleSides(request,layout);
-			
-    // combineMessages(globalMessages, maps, 
-      // /* --- General layout checks --- */
-      // minAreaCheck(layout),
-      // volumeCheck(layout),
-      // /* --- Part checks --- */
-      // partTooBig(layout), 
-      // mandatoryHintCollision(layout), 
-      // /* --- Modifying layout --- */
-      // removeImpossibleSides(layout)
-    // );
-
-    // Make lists of messages for each part
-    // for(Part part : layout.getParts()){
-      // partMessages.put(part.getId(), new ArrayList());
-      // for(Map<Integer,List<Message>> map : maps){
-        // partMessages.get(part.getId()).addAll(map.getOrDefault(part.getId(), List.of()));
-      // }
-    // }
-    // return Pair.of(Optional.of(globalMessages), Optional.of(partMessages));
 		return request;
   }
-  
+
+  private static void applyHints(Layout layout) {
+    for (Part part : layout.getParts()) {
+      if (part.getHint() != null) {
+        part.getHint().rotation().ifPresent(part::setRotation);
+        part.getHint().side().ifPresent(part::setSideDown);
+        Dimensions pos = part.getHint().centerPosition();
+        if (part.getRotation() != null && part.getSideDown() != null) {
+          pos = Part.centerToCorner(pos, part.currentDimensions());
+        }
+        pos = Dimensions.of(pos.x, pos.y, part.getHint().surfaceId());
+        part.setPosition(pos);
+      }
+    }
+  }
+
   // Divide pair and add to right list
   private static void combineMessages(List<Message> globalMessages, List<Map<Integer,List<Message>>> maps, Pair<Optional<Message>, Optional<Map<Integer,List<Message>>>> ... pairs){
     for(Pair<Optional<Message>, Optional<Map<Integer,List<Message>>>> pair : pairs){
@@ -78,7 +73,7 @@ public class Preprocess {
     }
     for(Part part : layout.getParts()){
       totalPartVolume += part.volume();
-    }  
+    }
     if(totalPartVolume > totalSurfaceVolume){
 			request.messages().addMessage(Message.error("Unsolvable - volume of parts greater than volume of surfaces"));
     }
@@ -101,7 +96,7 @@ public class Preprocess {
     }
     return request;
   }
-  
+
   // Check if a part is too big to fit on wagon
   // Not considering allowed sides
   public static PlanningRequest partTooBig(PlanningRequest request, Layout layout) {
@@ -120,14 +115,14 @@ public class Preprocess {
       int depth = part.depth();
       if(Math.max(width, Math.max(height, depth)) > Math.max(surfaceX, Math.max(surfaceY, surfaceZ))){
 				request.messages().addMessage(part, Message.error("Part does not fit on any surface"));
-      } 
+      }
     }
     if(!messages.isEmpty()){
       request.messages().addMessage(Message.error("Unsolvable - part do not fit on surfaces"));
     }
 		return request;
   }
- 
+
   // Removes sides from allowedDown if a length is greater than the side lengths of surface
   // Only removes side if it can not be placed down on any surface.
   // Only works if surfaces has a height
@@ -174,7 +169,7 @@ public class Preprocess {
     }
     if(!messages.isEmpty()){
 			request.messages().addMessage(Message.error("Unsolvable - no allowed side to place down for part"));
-    }		
+    }
 		return request;
   }
 }
