@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.kitting.model.Layout</solutionClass>
+  <entityClass>se.ltu.kitting.model.Part</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.kitting.score.ScoreCalculator</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Algorithms / phases -->
+
+  <!-- Intended for use with resolution 1. -->
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <termination>
+      <secondsSpentLimit>5</secondsSpentLimit>
+      <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+      <unimprovedScoreDifferenceThreshold>0hard/1soft</unimprovedScoreDifferenceThreshold>
+    </termination>
+  </localSearch>
+
+</solver>

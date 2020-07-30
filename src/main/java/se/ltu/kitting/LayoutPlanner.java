@@ -32,9 +32,10 @@ public class LayoutPlanner {
 				return PlanningResponse.response(request);
 			}
       List<Pair<String,Integer>> configs = List.of(
-          pair("firstFit5s.xml",10),
+          pair("firstFit5s.xml",50),
+          pair("late2s.xml",10),
           pair("late2s.xml",5),
-          pair("late2s-thorough.xml",1)
+          pair("late5s-thorough.xml",1)
         );
       Layout solved = runMultiResolution(unsolved, configs);
       long end = System.currentTimeMillis();
