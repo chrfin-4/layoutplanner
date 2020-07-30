@@ -21,14 +21,19 @@ import static ch.rfin.util.Pair.pair;
 public class LayoutPlanner {
 
   public static PlanningResponse requestLayout(PlanningRequest request) {
-    Pair<Optional<List<Message>>, Optional<Map<Integer,List<Message>>>> messages = pair(Optional.empty(), Optional.empty());
-	try {
-      long start = System.currentTimeMillis();
-      Layout unsolved = request.getLayout();
-	  messages = Preprocess.preprocess(unsolved);
-	  if (messages._1.map(list -> list.stream().anyMatch(m -> m.severity() == Message.Severity.error)).orElse(false)) {
-		return PlanningResponse.fromError(request, messages._1, messages._2);
-	  }
+    // Pair<Optional<List<Message>>, Optional<Map<Integer,List<Message>>>> messages = pair(Optional.empty(), Optional.empty());
+		try {
+			long start = System.currentTimeMillis();
+			Layout unsolved = request.getLayout();
+			// Add messages and edit layout
+			request = Preprocess.preprocess(request, unsolved);
+			if(request.messages().hasErrors()){
+				return PlanningResponse.response(request);
+			}
+			// messages = Preprocess.preprocess(unsolved);
+			// if (messages._1.map(list -> list.stream().anyMatch(m -> m.severity() == Message.Severity.error)).orElse(false)) {
+			// return PlanningResponse.fromError(request, messages._1, messages._2);
+			// }
       List<Pair<String,Integer>> configs = List.of(
           pair("firstFit5s.xml",10),
           pair("late2s.xml",5),
@@ -38,10 +43,10 @@ public class LayoutPlanner {
       long end = System.currentTimeMillis();
       long time = end-start;
       System.out.println(String.format("Finished after %5d ms: with score: %s", time, solved.getScore()));
-      return PlanningResponse.fromLayout(request, solved, messages._1, messages._2);
+      return PlanningResponse.response(request, solved);
     } catch (Throwable e) {
       e.printStackTrace();
-      return PlanningResponse.fromError(request, e, messages._1, messages._2);
+      return PlanningResponse.response(request, e);
     }
   }
 
