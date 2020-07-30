@@ -119,28 +119,34 @@ public class HardScore {
     List<Part> parts = layout.getParts();
 		int count = 0;
 		for(Part part : parts) {
-				if(part.getPosition() != null && part.getHint() != null){
-				if(part.getHint().isMandatory() && !lockedPart(layout, part)){
-				count++;
-			}
+			if(part.getPosition() != null && part.getHint() != null){
+				if(part.getHint().isMandatory() && !lockedPart(part)){
+					count++;
+				}
+				if(part.getHint().isMandatory() && !lockedSurface(layout, part)){
+				  count++;
+				}
 			}
 		}	
 		return count;
   }  
   
   // Check if part is places as specified in hint
-  public static boolean lockedPart(Layout layout, Part part){ 
-	  return lockedPosition(layout, part) && lockedRotation(part) && lockedSide(part); 
+  public static boolean lockedPart(Part part){ 
+	  return lockedPosition(part) && lockedRotation(part) && lockedSide(part); 
   }	  
 	  
-  // Check if part has the center position and placed on the surface specified in hint
-  public static boolean lockedPosition(Layout layout, Part part){
+  // Check if part has the center position specified in hint
+  public static boolean lockedPosition(Part part){
 	  boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
 	  boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
-		boolean sameSurface = layout.surfaceOf(part).id() == part.getHint().surfaceId();
-    return sameX && sameY && sameSurface;
+    return sameX && sameY;
   }
   
+	public static boolean lockedSurface(Layout layout, Part part){
+		return layout.surfaceOf(part).id() == part.getHint().surfaceId();
+	}
+	
 	// Check if part is placed on side specified in hint
 	public static boolean lockedSide(Part part){
 	  if(part.getHint().side().isPresent()){
