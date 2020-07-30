@@ -33,13 +33,13 @@ public class HardScore {
     int count = 0;
     for (int i = 0; i < parts.size() - 1; i++) {
 			for(int j = i + 1; j < parts.size(); j++) {
-			Part p1 = parts.get(i);
-			Part p2 = parts.get(j);
-			if (p1.getPosition() != null && p2.getPosition() != null){
-				if(partsOverlap(p1, p2)) {
-					count++;
+				Part p1 = parts.get(i);
+				Part p2 = parts.get(j);
+				if (p1.getPosition() != null && p2.getPosition() != null){
+					if(partsOverlap(p1, p2)) {
+						count++;
+					}
 				}
-			}
 			}
     }
     return count;
@@ -87,7 +87,6 @@ public class HardScore {
   // Checks if part is outside of surface
   public static boolean partOutside(Part part, Surface surface){
     Dimensions partEnd = part.getPosition().plus(part.currentDimensions());
-    // Dimensions surfaceEnd = surface.origin.plus(surface.dimensions);
 		Dimensions surfaceEnd = surface.dimensions;
     boolean height = partEnd.z > surfaceEnd.z;
     boolean depth = partEnd.y > surfaceEnd.y;
@@ -121,48 +120,42 @@ public class HardScore {
 		for(Part part : parts) {
 			if(part.getPosition() != null && part.getHint() != null){
 				if(part.getHint().isMandatory()){
-					count += lockedPosition(part) + lockedSurface(layout, part) + lockedSide(part) + lockedRotation(part);
+					count += countHintViolations(layout, part);
 				}
 			}
 		}	
 		return count;
   }  
   
-  // Check if part is places as specified in hint
-  // public static boolean lockedPart(Part part){ 
-	  // return lockedPosition(part) && lockedRotation(part) && lockedSide(part); 
-  // }	  
+  public static int countHintViolations(Layout layout, Part part){ 
+	  return positionViolatesHint(part) +
+			surfaceViolatesHint(layout, part) +
+			rotationViolatesHint(part) +
+			sideViolatesHint(part);
+  }	  
 	  
   // Check if part has the center position specified in hint
-  public static int lockedPosition(Part part){
+  public static int positionViolatesHint(Part part){
 	  boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
 	  boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
-    if(sameX && sameY){
-			return 0;
-		}
-		return 1;
+		return sameX && sameY ? 0 : 1;
   }
   
-	public static int lockedSurface(Layout layout, Part part){
-		if(layout.surfaceOf(part).id() == part.getHint().surfaceId()){
-			return 0;
-		} 
-		return 1;
+	public static int surfaceViolatesHint(Layout layout, Part part){
+		return layout.surfaceOf(part).id() == part.getHint().surfaceId() ? 0 : 1;
 	}
 	
 	// Check if part is placed on side specified in hint
-	public static int lockedSide(Part part){
-	  if(part.getHint().side().isPresent() && part.getSideDown().equals(part.getHint().side().get())){
-			return 0;
-		}
-		return 1;
+	public static int sideViolatesHint(Part part){
+		return part.getHint().side()
+			.map(s -> part.getSideDown().equals(s) ? 0 : 1)
+			.orElse(1);
 	}
 	
   // Check if part has the rotation specified in hint
-  public static int lockedRotation(Part part){
-		if(part.getHint().rotation().isPresent() && part.getRotation().equals(part.getHint().rotation().get())){
-			return 0;
-		}
-    return 1;
+  public static int rotationViolatesHint(Part part){
+		return part.getHint().rotation()
+		  .map(r -> part.getRotation().equals(r) ? 0 : 1)
+			.orElse(1);
   }
 }

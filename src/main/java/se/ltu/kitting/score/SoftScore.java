@@ -19,8 +19,8 @@ public class SoftScore {
   // Return negative score for parts not on preferred side and not on mandatory postion
   public static int getSoftScore(Layout layout) {
     int notPreferred = countNotPreferredSides(layout);
-	  int mandatory = mandatory(layout);
-    return -(notPreferred + mandatory);
+	  int totalDistance = totalDistance(layout);
+    return -(notPreferred + totalDistance);
   }
 
   // Count parts placed on a none preferred side
@@ -51,38 +51,24 @@ public class SoftScore {
   }		
  
 
-  public static int mandatory(Layout layout){
+  public static int totalDistance(Layout layout){
     List<Part> parts = layout.getParts();
-		int total = 0;
+		int totalDistance = 0;
 		for(Part part : parts) {
 			if(part.getPosition() != null && part.getHint() != null){
 				if(part.getHint().isMandatory()){
-					total += distanceToPosition(part) + wrongSide(part) + wrongRotation(part);
+					totalDistance += distanceToPosition(part);
 				}
 			}
 		}	
-		return total;
+		return totalDistance;
   }  
   
 	// Distance between parts current postions and mandatory position
   public static int distanceToPosition(Part part){ 
-		int x = Math.abs(part.currentCenter().getX() - part.getHint().centerPosition().getX());	 
-    int y = Math.abs(part.currentCenter().getY() - part.getHint().centerPosition().getY());	 
-    return x + y; 	
+		int x = Math.abs(part.currentCenter().getX() - part.getHint().centerPosition().getX());
+    int y = Math.abs(part.currentCenter().getY() - part.getHint().centerPosition().getY());
+    return x + y;
   }	
 	
-	public static int wrongSide(Part part){
-	  if(part.getHint().side().isPresent() && part.getSideDown().equals(part.getHint().side().get())){
-			return 0;
-		}
-		return 1;
-	}
-	
-  public static int wrongRotation(Part part){
-		if(part.getHint().rotation().isPresent() && part.getRotation().equals(part.getHint().rotation().get())){
-			return 0;
-		}
-    return 1;
-  }
-	  
 }
