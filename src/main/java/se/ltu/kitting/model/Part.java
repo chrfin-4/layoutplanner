@@ -323,7 +323,8 @@ public class Part {
 
   /** Warning: Subject to rounding errors! */
   public Dimensions currentCenter() {
-    return cornerToCenter(position, currentDimensions());
+    var size = currentDimensions();
+    return Dimensions.of(position.x + size.x/2, position.y + size.y/2, size.z/2);
   }
 
   // TODO: Move to separate util class.

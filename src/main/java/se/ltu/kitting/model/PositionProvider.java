@@ -10,10 +10,9 @@ public class PositionProvider {
     for (Surface surface : wagon.surfaces()) {
       final int x = surface.origin.getX() + surface.dimensions.getX();
       final int y = surface.origin.getY() + surface.dimensions.getY();
-      //final int z = surface.origin.getZ();
       final int z = surface.id;
-      for (int i = surface.origin.x; i < x; i += stepSize) {
-        for (int j = surface.origin.y; j < y; j += stepSize) {
+      for (int i = 0; i < x; i += stepSize) {
+        for (int j = 0; j < y; j += stepSize) {
           positions.add(Dimensions.of(i,j,z));
         }
       }
