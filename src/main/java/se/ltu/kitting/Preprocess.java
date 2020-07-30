@@ -156,19 +156,19 @@ public class Preprocess {
       }
 			// Warning if layout hint has other side down than preferred
 			if(part.getHint() != null && part.getHint().side().isPresent() && !part.getPreferredDown().equals(part.getHint().side().get())){
-				request.messages().addMessage(part, Message.warn("Preferred side do not match side in layout hint"));
+				request.messages().addMessage(part, Message.warn("Preferred side does not match side in layout hint."));
 			}
       // Removes preferred if removed from allowedSides.
       if(!allowedSides.contains(part.getPreferredDown())){
         part.setPreferredDown(null);
       }
       if(allowedSides.isEmpty()){
-				request.messages().addMessage(part, Message.error("No side can be placed down"));
+				request.messages().addMessage(part, Message.error("No side can be placed down."));
       }
       part.setAllowedDown(allowedSides);
     }
     if(!messages.isEmpty()){
-			request.messages().addMessage(Message.error("Unsolvable - no allowed side to place down for part"));
+			request.messages().addMessage(Message.error("Unsolvable - no allowed side to place down for part."));
     }
 		return request;
   }
