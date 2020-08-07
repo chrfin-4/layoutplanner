@@ -81,7 +81,12 @@ public class Wagon {
   }
 
   public Surface getSurfaceById(int id) {
-    return surfaces.stream().filter(s -> s.id == id).findAny().get();
+    final var result = surfaces.stream().filter(s -> s.id == id).findAny();
+    if (result.isEmpty()) {
+      final var ids = surfaces.stream().map(s -> s.id).collect(toList());
+      throw new IllegalArgumentException("Could not find surface id " + id + " in " + ids);
+    }
+    return result.get();
   }
 
   public Surface surfaceOf(Dimensions position) {
