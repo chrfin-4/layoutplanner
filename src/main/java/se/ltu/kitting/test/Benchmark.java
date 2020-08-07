@@ -416,11 +416,7 @@ public class Benchmark {
       this.test = test;
       this.time = time;
       this.solution = solution;
-      // XXX: Layout should be changed to return a HardSoftLongScore
-      //this.score = solution.getScore();
-      HardSoftScore intScore = solution.getScore();
-      HardSoftLongScore longScore = HardSoftLongScore.of(intScore.getHardScore(), intScore.getSoftScore());
-      this.score = longScore;
+      this.score = solution.getScore();
     }
 
     public Test test() {

@@ -7,7 +7,7 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 import ch.rfin.util.Pair;
 
 import static java.util.stream.Collectors.toList;
@@ -27,7 +27,7 @@ public class Layout {
   private Wagon wagon;
   /** The parts that will be placed on the surface(s) - planning entities. */
   private List<Part> parts;
-  private HardSoftScore score;
+  private HardSoftLongScore score;
 
   /** A no-arg constructor is required by OptaPlanner. */
   public Layout() { }
@@ -75,11 +75,11 @@ public class Layout {
   }
 
   @PlanningScore
-  public HardSoftScore getScore() {
+  public HardSoftLongScore getScore() {
     return score;
   }
 
-  public void setScore(HardSoftScore score) {
+  public void setScore(HardSoftLongScore score) {
     this.score = score;
   }
 
@@ -103,7 +103,18 @@ public class Layout {
 
   // --- END of OptaPlanner things ---
 
+  public boolean isOptimalSolution() {
+    return isFeasibleSolution() && score.getSoftScore() == 0;
+  }
+
+  public boolean isFeasibleSolution() {
+    return score.isFeasible();
+  }
+
   public Surface surfaceOf(Part part) {
+    if (part.getPosition() == null) {
+      throw new IllegalArgumentException("Cannot get the surface of a part with no position.");
+    }
     return wagon.getSurfaceById(part.getPosition().z);
   }
 
