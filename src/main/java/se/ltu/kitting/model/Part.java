@@ -5,11 +5,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import ch.rfin.util.Pair;
-import java.util.Set;
-import java.util.List;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
@@ -36,11 +32,11 @@ public class Part {
   /**
    * The size of the part when in its original, non-rotated position.
    * This never changes. To get the current dimensions, including rotation,
-   * use {@link #currentRegion()}.
+   * use {@link #currentRegion()} or {@link #currentDimensions()}.
    */
   private Dimensions size;
   /** The part may be placed on these sides. */
-  private Set<Side> allowedDown = Set.of(Side.bottom, Side.left, Side.back);
+  private Set<Side> allowedDown;
   /** The part should preferentially be placed on this side. */
   private Side preferredDown;
   /** Minimum free margin around all sides. */
@@ -113,7 +109,6 @@ public class Part {
 
   public void setPosition(Dimensions pos) {
     this.position = pos;
-    currentRegion = computeCurrentRegion(sideDown, rotation);
   }
 
   @PlanningVariable(valueRangeProviderRefs = {"rotations"})
@@ -122,10 +117,6 @@ public class Part {
   }
 
   public void setRotation(Rotation rotation) {
-    // XXX: need to consider what to do when rotation == null.
-    if (rotation != null && rotation != this.rotation) {
-      currentRegion = computeCurrentRegion(sideDown, rotation);
-    }
     this.rotation = rotation;
   }
 
@@ -135,10 +126,6 @@ public class Part {
   }
 
   public void setSideDown(Side sideDown) {
-    // XXX: need to consider what to do when sideDown == null.
-    if (sideDown != null && sideDown != this.sideDown) {
-      currentRegion = computeCurrentRegion(sideDown, rotation);
-    }
     this.sideDown = sideDown;
   }
 
@@ -209,31 +196,57 @@ public class Part {
   }
 
   public void setPreferredDown(Side side) {
-    // XXX: is this really a good idea?
-    // It seems to make sense to use the preferred side by default. You gotta
-    // start somewhere, might as well take advantage of the hint.
-    // But what if a different side turns out to overall be much better?
-    // A construction heuristic would refuse to try.
-    if (sideDown == null) {
-      sideDown = preferredDown;
-    }
     preferredDown = side;
   }
 
+  // Make sure list is ordered:
+  // - hint
+  // - preferred
+  // - allowed (normalized)
   @ValueRangeProvider(id = "sides")
-  public Collection<Side> getAllowedSidesDown() {
-    return Side.normalize(allowedDown); // Reduce number of variables.
-    //return List.of(Side.bottom, Side.top, Side.back, Side.left);  // Optimal for demo.
+  public List<Side> getAllowedSidesDown() {
+    // Assumes hinted and preferred sides are also allowed!
+    if (hasMandatoryHint() && hint.side().isPresent()) {
+      return List.of(hint.side().get());
+    }
+    final Set<Side> allowed = new HashSet<>(allowedDown);
+    final List<Side> sides = new ArrayList<>();
+    if (hint != null && hint.side().isPresent()) {
+      final var side = hint.side().get();
+      sides.add(side);  // hint goes first
+      allowed.remove(side);
+      allowed.remove(side.opposite());
+    }
+    // If the preferred side is allowed, that means it cannot be equivalent to
+    // the hinted side (if it exists).
+    if (allowed.contains(preferredDown)) {
+      sides.add(preferredDown); // then the preferred side comes second
+      allowed.remove(preferredDown);
+      allowed.remove(preferredDown.opposite());
+    }
+    sides.addAll(Side.normalize(allowed));  // remove redundant sides from remaining
+    return sides;
   }
 
   // --- END of OptaPlanner facts and variables ---
 
-  public static Part of(Dimensions size) {
-    throw new UnsupportedOperationException("Not implemented.");
+  /** Has a layout hint, which may or may not be mandatory. */
+  public boolean hasHint() {
+    return hint != null;
   }
 
-  public static Part of(Dimensions size, Dimensions position) {
-    throw new UnsupportedOperationException("Not implemented.");
+  /** Has a layout hint that is NOT mandatory. */
+  public boolean hasOptionalHint() {
+    return hint != null && !hint.isMandatory();
+  }
+
+  /** Has a *mandatory* layout hint. */
+  public boolean hasMandatoryHint() {
+    return hint != null && hint.isMandatory();
+  }
+
+  public boolean fullyInitialized() {
+    return position != null && sideDown != null && rotation != null;
   }
 
   /**
@@ -294,28 +307,21 @@ public class Part {
    */
   public Pair<Dimensions,Dimensions> currentRegion() {
     // TODO: throw an illegal state exception when there is no position set?
-    if (currentRegion == null) {
-      currentRegion = computeCurrentRegion(sideDown, rotation);
-    }
-    return currentRegion;
+    return computeCurrentRegion(sideDown, rotation);
   }
 
   // Uses side + rotationZ.
   private Pair<Dimensions,Dimensions> computeCurrentRegion(Side side, Rotation rot) {
-    if (position == null || size == null) {
-      return currentRegion; // Undefined when there is no position.
-    }
-    // default to bottom side.
-    if (side == null) {
-      side = Side.bottom; // XXX: hmm, maybe rather default to preferred side? If anything, that is.
-    }
-    // default to zero rotation.
-    if (rot == null) {
-      rot = Rotation.ZERO;  // XXX: default to layout hint, if available?
+    if (!fullyInitialized()) {
+      return null;
     }
     Dimensions newSize = rotation(side, rot).apply(size);
-    return Pair.of(position, position.plus(newSize).minus(Dimensions.UNIT));
+    // Position uses (x,y,surface), but the region is relative to some surface.
+    // So we ignore the Z coordinate of the position.
+    return Pair.of(position.withZ(0), position.withZ(0).plus(newSize).minus(Dimensions.UNIT));
   }
+
+  // TODO: add applyHint() method?
 
   public Dimensions currentDimensions() {
     return rotation(sideDown, rotation).apply(size);

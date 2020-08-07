@@ -10,7 +10,7 @@ import java.util.List;
 import ch.rfin.util.Pair;
 
 /**
- * Calculates the hard score for a solution. 
+ * Calculates the hard score for a solution.
  * Desirable score is 0 which guarantees that:
  * No overlap, no parts outside of surface, no parts placed on a disallowed side and
  * parts with a mandatory hint are on the desired position.
@@ -71,12 +71,12 @@ public class HardScore {
   }
 
   // Counts the number of parts outside surface
-  public static int countPartsOutside(Layout layout){
+  public static int countPartsOutside(Layout layout) {
     List<Part> parts = layout.getParts();
     int count = 0;
-    for(Part part : parts) {
-      if(part.getPosition() != null){
-        if(partOutside(part, layout.surfaceOf(part))){
+    for (Part part : parts) {
+      if (part.fullyInitialized()) {
+        if (partOutside(part, layout.surfaceOf(part))) {
           count++;
         }
       }
@@ -84,10 +84,15 @@ public class HardScore {
     return count;
   }
 
-  // Checks if part is outside of surface
-  public static boolean partOutside(Part part, Surface surface){
-    Dimensions partEnd = part.getPosition().plus(part.currentDimensions());
-		Dimensions surfaceEnd = surface.dimensions;
+  // Checks if part is outside of surface.
+  public static boolean partOutside(Part part, Surface surface) {
+    var tmp = part.getPosition();
+    Dimensions partEnd = Dimensions.of(tmp.x, tmp.y, 0).plus(part.currentDimensions()); // Part position is relative to surface. So z = 0.
+    Dimensions surfaceEnd = surface.dimensions;
+    return partOutside(partEnd, surfaceEnd);
+  }
+
+  public static boolean partOutside(Dimensions partEnd, Dimensions surfaceEnd) {
     boolean height = partEnd.z > surfaceEnd.z;
     boolean depth = partEnd.y > surfaceEnd.y;
     boolean width = partEnd.x > surfaceEnd.x;
@@ -104,58 +109,57 @@ public class HardScore {
 					count++;
 				}
 			}
-		}	
+		}
 		return count;
-  }  
+  }
 
   // Check if placed side down is allowed
   public static boolean allowedSideDown(Part part){
 		return part.getAllowedDown().contains(part.getSideDown());
-  }		
-  
-  // Count number of locked parts not at their position
-  public static int countMisplacedParts(Layout layout){
+  }
+
+  // Count number of parts that don't match their layout hint.
+  // (All violations count equally, whether mandatory or not.)
+  public static int countMisplacedParts(Layout layout) {
     List<Part> parts = layout.getParts();
-		int count = 0;
-		for(Part part : parts) {
-			if(part.getPosition() != null && part.getHint() != null){
-				if(part.getHint().isMandatory()){
-					count += countHintViolations(layout, part);
-				}
-			}
-		}	
-		return count;
-  }  
-  
-  public static int countHintViolations(Layout layout, Part part){ 
-	  return positionViolatesHint(part) +
-			surfaceViolatesHint(layout, part) +
-			rotationViolatesHint(part) +
-			sideViolatesHint(part);
-  }	  
-	  
-  // Check if part has the center position specified in hint
-  public static int positionViolatesHint(Part part){
-	  boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
-	  boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
-		return sameX && sameY ? 0 : 1;
+    int count = 0;
+    for (Part part : parts) {
+      if (part.hasMandatoryHint() && !partMatchesHint(layout, part)) {
+        count++;
+      }
+    }
+    return count;
   }
-  
-	public static int surfaceViolatesHint(Layout layout, Part part){
-		return layout.surfaceOf(part).id() == part.getHint().surfaceId() ? 0 : 1;
-	}
-	
-	// Check if part is placed on side specified in hint
-	public static int sideViolatesHint(Part part){
-		return part.getHint().side()
-			.map(s -> part.getSideDown().equals(s) ? 0 : 1)
-			.orElse(1);
-	}
-	
-  // Check if part has the rotation specified in hint
-  public static int rotationViolatesHint(Part part){
-		return part.getHint().rotation()
-		  .map(r -> part.getRotation().equals(r) ? 0 : 1)
-			.orElse(1);
+
+  // Check whether part matches the layout hint.
+  public static boolean partMatchesHint(Layout layout, Part part) {
+    return positionMatchesHint(part) &&
+      surfaceMatchesHint(layout, part) &&
+      sideMatchesHint(part) &&
+      rotationMatchesHint(part);
   }
+
+  // Check whether part has the center position specified in hint.
+  public static boolean positionMatchesHint(Part part) {
+    assert part.getHint().centerPosition() != null;
+    boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
+    boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
+    return sameX && sameY;
+  }
+
+  // Check whether part is placed on the surface specified in hint.
+  public static boolean surfaceMatchesHint(Layout layout, Part part) {
+    return layout.surfaceOf(part).id() == part.getHint().surfaceId();
+  }
+
+  // Check whether part is placed on side specified in hint.
+  public static boolean sideMatchesHint(Part part) {
+    return part.getHint().side().map(s -> part.getSideDown() == s).orElse(true);
+  }
+
+  // Check whether part has the rotation specified in hint.
+  public static boolean rotationMatchesHint(Part part) {
+    return part.getHint().rotation().map(r -> part.getRotation() == r).orElse(true);
+  }
+
 }
