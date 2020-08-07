@@ -17,6 +17,7 @@ public class PositionProvider {
         }
       }
     }
+    java.util.Collections.shuffle(positions);
     return positions;
   }
 
