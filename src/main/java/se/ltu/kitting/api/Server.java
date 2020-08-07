@@ -1,37 +1,28 @@
 package se.ltu.kitting.api;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import se.ltu.kitting.LayoutPlanner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import static java.util.stream.Collectors.joining;
+import se.ltu.kitting.LayoutPlanner;
 
 /**
  * REST endpoint, takes requests and returns responses as JSON.
- * This is a quick and dirty firt version.
  * @author Christoffer Fink
  */
-@SuppressWarnings("serial")
-@WebServlet(name = "LayoutPlanning", urlPatterns = {"/requestLayout"}, loadOnStartup = 1)
-public class Server extends HttpServlet {
+@SpringBootApplication
+@RestController
+public class SpringServer {
 
-  @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    sendJson(LayoutPlanner.jsonResponse(jsonRequest(request)), response);
+  public static void main(String[] args) {
+    SpringApplication.run(SpringServer.class, args);
   }
 
-  public static void sendJson(String json, ServletResponse response) throws IOException {
-    response.getWriter().print(json);
-  }
-
-  public static String jsonRequest(ServletRequest request) throws IOException {
-    return request.getReader().lines().collect(joining());
+  @PostMapping("/requestLayout")
+  public String requestLayout(@RequestBody String json) {
+    return LayoutPlanner.jsonResponse(json);
   }
 
 }
