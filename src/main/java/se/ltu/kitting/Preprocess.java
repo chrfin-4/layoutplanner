@@ -155,7 +155,7 @@ public class Preprocess {
         allowedSides.remove(Side.right);
       }
 			// Warning if layout hint has other side down than preferred
-			if(part.getHint() != null && part.getHint().side().isPresent() && !part.getPreferredDown().equals(part.getHint().side().get())){
+			if(part.getHint() != null && part.getHint().side().isPresent() && !part.getHint().side().get().equals(part.getPreferredDown())){
 				request.messages().addMessage(part, Message.warn("Preferred side does not match side in layout hint."));
 			}
       // Removes preferred if removed from allowedSides.
