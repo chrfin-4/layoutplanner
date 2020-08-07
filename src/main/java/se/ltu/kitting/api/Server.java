@@ -14,10 +14,10 @@ import se.ltu.kitting.LayoutPlanner;
  */
 @SpringBootApplication
 @RestController
-public class SpringServer {
+public class Server {
 
   public static void main(String[] args) {
-    SpringApplication.run(SpringServer.class, args);
+    SpringApplication.run(Server.class, args);
   }
 
   @PostMapping("/requestLayout")
