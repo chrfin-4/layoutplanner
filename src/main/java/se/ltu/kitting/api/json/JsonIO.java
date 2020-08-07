@@ -89,6 +89,9 @@ public class JsonIO {
   }
 
   public static LayoutPlanningResponse.Part.Layout partLayout(Part part, Optional<Layout> layout) {
+    if (layout.isEmpty()) {
+      return null;
+    }
     Dimensions position = part.getPosition();
     Side side = part.getSideDown();
     Rotation rotation = part.getRotation();
@@ -98,7 +101,7 @@ public class JsonIO {
     Surface surface = layout.get().surfaceOf(part);
     Dimensions center = part.currentCenter();
     var result = new LayoutPlanningResponse.Part.Layout();
-    result.origin = Coordinate3D.from(center);
+    result.origin = center;
     result.orientation = side;
     result.rotation = rotation.z;
     result.surfaceId = surface.id;
@@ -113,16 +116,14 @@ public class JsonIO {
     result.surfaces = surfaces;
     result.wagonId = wagon.wagonId();
     result.capabilities = wagon.capabilities();
-    result.dimensions = Coordinate3D.from(wagon.dimensions());
+    result.dimensions = wagon.dimensions();
     return result;
   }
 
   public static Wagon.Surface fromModel(Surface surface) {
-    Coordinate3D origin = Coordinate3D.from(surface.origin);
-    Coordinate3D dimensions = Coordinate3D.from(surface.dimensions);
     Wagon.Surface result = new Wagon.Surface();
-    result.origin = origin;
-    result.dimensions = dimensions;
+    result.origin = surface.origin;
+    result.dimensions = surface.dimensions;
     result.id = surface.id;
     return result;
   }
@@ -136,7 +137,7 @@ public class JsonIO {
   }
 
   public static Part toModel(LayoutPlanningRequest.Part p) {
-    Part part = new Part((int) p.id, p.partNumber, p.dimensions.toDimensions());
+    Part part = new Part((int) p.id, p.partNumber, p.dimensions());
     p.orientation.allowedDown().ifPresent(part::setAllowedDown);
     p.orientation.preferredDown().ifPresent(part::setPreferredDown);
     p.layoutHint().map(JsonIO::toModel).ifPresent(part::setHint);
@@ -149,7 +150,7 @@ public class JsonIO {
   }
 
   public static LayoutHint toModel(LayoutPlanningRequest.Part.LayoutHint hint) {
-    Dimensions dimensions = hint.origin().toDimensions();
+    Dimensions dimensions = hint.origin();
     var rotation = Rotation.of((int) hint.rotation());
     return new LayoutHint(dimensions, hint.surfaceId)
       .withRotation(rotation)
@@ -172,12 +173,12 @@ public class JsonIO {
       .collect(toList());
     return se.ltu.kitting.model.Wagon.of(wagon.wagonId, surfaces)
       .withCapabilities(wagon.capabilities())
-      .withDimensions(wagon.dimensions().toDimensions());
+      .withDimensions(wagon.dimensions());
   }
 
   public static Surface toModel(Wagon.Surface surface) {
-    Dimensions origin = surface.origin().toDimensions();
-    Dimensions size = surface.dimensions().toDimensions();
+    Dimensions origin = surface.origin();
+    Dimensions size = surface.dimensions();
     int id = surface.id;
     return Surface.surface(id, size, origin);
   }

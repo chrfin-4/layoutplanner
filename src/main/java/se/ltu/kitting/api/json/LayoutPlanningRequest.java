@@ -5,14 +5,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.Optional;
 import se.ltu.kitting.model.Side;
+import se.ltu.kitting.model.Dimensions;
 
 /**
  * Low-level representation of an incoming request, mirroring the JSON schema.
  * Intermediate representation for translation from JSON.
 <p>
 <code>
+// As of commit 65d402d4a8a50ee96a362bb8b7cd3abf87f0c698 (2020-07-27)
 {
-  kit: {                      // required
+  kit: {
     kitId: string,              // required
     chassisId: string,          // required
     side: "left"/"right",       // (optional, default="left")
@@ -21,33 +23,33 @@ import se.ltu.kitting.model.Side;
     wagon: {
       wagonId: string,            // required
       capabilities: [string],     // required
-      dimensions: Coordinate3d,
-      surfaces: [                 // (optional!?, minimum 1 surface)
+      dimensions: Coordinate3d,   // required
+      surfaces: [                 // required, minimum 1 surface
         id: integer,              // required
-        origin: Coordinate3d,
-        dimensions: Coordinate3d,
+        origin: Coordinate3d,     // required
+        dimensions: Coordinate3d, // required
       ]
     },
     weightFactor: number,       // (optional, [1,10], default 1, will be truncated to integer)
   },
   parts: [                      // required (minimum 1 part)
-    id: number,                   // required (NOTE: will always be truncated to integer.)
+    id: integer,                  // required
     partNumber: string,           // required
     dimensions: Coordinate3d      // required
+    orientation: {                // required
+      allowedDown: [
+        "left"/"right"/"bottom"/"top"/"back"/"front"                // optional?
+      ],
+      preferredDown: "left"/"right"/"bottom"/"top"/"back"/"front"   // optional?
+    },
     partDesc: string,
     functionGroup: string,
     minMargin: number,            // (optional, will be rounded up to the nearest int)
-    orientation: {                // required
-      allowedDown: [
-        "left"/"right"/"bottom"/"top"/"back"/"front"
-      ],
-      preferredDown: "left"/"right"/"bottom"/"top"/"back"/"front"
-    },
     weight: number,               // (optional, in kg)
     requiredCapabilities: [string],
     layoutHint: {
       origin: Coordinate3d,       // required
-      surfaceId: integer,         // required (not currently in schema)
+      surfaceId: integer,         // required
       orientation: "left"/"right"/"bottom"/"top"/"back"/"front"
       rotation: number,           // truncated to integer
       weightFactor: number,       // (optional, [1,10], default 1, will be truncated to integer)
@@ -59,6 +61,21 @@ import se.ltu.kitting.model.Side;
  */
 public class LayoutPlanningRequest {
 
+  // Defined by schema.
+  public static final int defaultCoordinates = 0;
+  public static final double minRotation = 0.0;
+  public static final double maxRotation = 359.0;
+  public static final double defaultRotation = 0.0;
+  public static final double minWeightFactor = 1.0;
+  public static final double maxWeightFactor = 10.0;
+  public static final double defaultWeightFactor = 1.0;
+  public static final double minWeight = 0.0;
+  public static final Side defaultKitSide = Side.left;
+
+  // Defined locally (not in schema).
+  public static final double defaultMargin = 0.0;
+  public static final double minMargin = 0.0;
+
   public Kit kit;
   public List<Part> parts;
   // Currently assumes that a wagon hint is provided.
@@ -66,9 +83,9 @@ public class LayoutPlanningRequest {
 
   public static class Part {
     // Required.
-    public double id;
+    public int id;
     public String partNumber;
-    public Coordinate3D dimensions;
+    public Dimensions dimensions;
     public Orientation orientation;
     // Optional.
     public String partDesc;
@@ -82,7 +99,16 @@ public class LayoutPlanningRequest {
       return Optional.ofNullable(layoutHint);
     }
 
-    public class Orientation {
+    public Dimensions dimensions() {
+      return dimensions;
+    }
+
+    public Part dimensions(Dimensions dimensions) {
+      this.dimensions = dimensions;
+      return this;
+    }
+
+    public static class Orientation {
       public Set<Side> allowedDown; // Optional?
       public Side preferredDown;    // Optional?
 
@@ -98,14 +124,14 @@ public class LayoutPlanningRequest {
 
     public static class LayoutHint {
       // Required.
-      public Coordinate3D origin;
+      public Dimensions origin;
       public int surfaceId;
       // Optional.
       public double rotation;
       public double weightFactor;
       public Side orientation;
 
-      public Coordinate3D origin() {
+      public Dimensions origin() {
         return origin;
       }
 
@@ -124,6 +150,12 @@ public class LayoutPlanningRequest {
       public double weightFactor() {
         return weightFactor == 0.0 ? 1.0 : weightFactor;
       }
+
+      public LayoutHint origin(Dimensions origin) {
+        this.origin = origin;
+        return this;
+      }
+
     }
   }
 
@@ -134,6 +166,7 @@ public class LayoutPlanningRequest {
     public double weightFactor() {
       return weightFactor == 0.0 ? 1.0 : weightFactor;
     }
+
   }
 
   public Kit kit() {

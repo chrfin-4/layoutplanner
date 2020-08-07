@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.lang.reflect.Type;
 import com.google.gson.*;
 import se.ltu.kitting.model.Side;
+import se.ltu.kitting.model.Dimensions;
 
 import se.ltu.kitting.api.Message;
 
@@ -15,19 +16,20 @@ import static java.util.stream.Collectors.toList;
  * Intermediary representation for translation to JSON.
 <p>
 <code>
+// As of commit 8fd0af41b4b48c2802b60b352d83d9ba65ce09f3 (2020-07-27)
 {
-  kit: {                    // required
-    kitId: string,            // required
-    chassisId: string,        // required
-    side: "left"/"right",     // (optional, default="left")
+  kit: {                          // required
+    kitId: string,                  // required
+    chassisId: string,              // required
+    side: "left"/"right",           // (optional, default="left")
   },
   wagon: {                        // required
     wagonId: string,                // required
     capabilities: [string],         // required
-    dimensions: {                   // required (NOTE: numbers truncated to int)
-      x: number,
-      y: number,
-      z: number,
+    dimensions: {                   // required
+      x: integer,                   // default 0
+      y: integer,                   // default 0
+      z: integer,                   // default 0
     },
     surfaces: [                   // required (minimum 1 surface)
       id: integer,                  // required
@@ -36,24 +38,24 @@ import static java.util.stream.Collectors.toList;
     ],
   },
   parts: [                        // required (minimum 1 part)
-    id: int,                        // required (NOTE: SCHEMA SAYS "number", but will always be an int.)
+    id: integer,                    // required
     partNumber: string,             // required
     layout: {
       surfaceId: integer,           // required
       origin: Coordinate3d,         // required
       orientation: "left"/"right"/"bottom"/"top"/"back"/"front", // required
-      rotation: integer,            // always 0 or 90
+      rotation: number,             // (optional, default 0, values [0,359] allowed, is always 0 or 90)
     },
-    messagesToDisplay: [
-      message: string,          // required
+    messagesToDisplay: [            // (optional, default [])
+      message: string,                // required
       severity: "error"/"warning"/"info",     // required (default="error")
-      code: string,
+      code: string,                   // requred
     }
   ],
-  messagesToDisplay: [
+  messagesToDisplay: [            // (optional, default [])
     message: string,                      // required
     severity: "error"/"warning"/"info",   // required (default="error")
-    code: string,
+    code: string,                         // required
   ],
 }
 </code>
@@ -79,7 +81,8 @@ public class LayoutPlanningResponse {
     public static class Layout {
       // Required.
       public int surfaceId;
-      public Coordinate3D origin;
+      //public Coordinate3D origin;
+      public Dimensions origin;
       public Side orientation;
       // Optional. (But leaving it out doesn't make much sense.)
       public int rotation;
