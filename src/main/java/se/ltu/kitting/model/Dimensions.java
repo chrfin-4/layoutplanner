@@ -63,6 +63,18 @@ public final class Dimensions implements Comparable<Dimensions> {
     return Math.sqrt(dx + dy + dz);
   }
 
+  public Dimensions withX(int x) {
+    return Dimensions.of(x, y, z);
+  }
+
+  public Dimensions withY(int y) {
+    return Dimensions.of(x, y, z);
+  }
+
+  public Dimensions withZ(int z) {
+    return Dimensions.of(x, y, z);
+  }
+
   /**
    * Creates new dimensions by adding the other dimensions to these dimensions:
    * (x1,y1,z1).plus((x2,y2,z2)) = (x3,y3,z3).
