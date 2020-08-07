@@ -1,12 +1,16 @@
 package se.ltu.kitting.api;
 
 import java.util.*;
+
+// Deprecated.
 import se.ltu.kitting.model.Part;
 
 /**
  * Holds all info/warning/error messages that are accumulated while processing
  * a request to produce a response.
  * Note, instances of this class are mutable!
+ * However, they can only be mutated through the {@code add(...)} methods.
+ * The methods that return messages do not leak references.
  * @author Christoffer Fink
  */
 public class Messages {
@@ -15,24 +19,34 @@ public class Messages {
   private final Map<Integer,List<Message>> partMessages = new HashMap<>();
   private boolean hasErrors = false;
 
-  /** Associate a message with the ID of this part. */
+  @Deprecated(forRemoval = true)
   public Messages addMessage(Part part, Message msg) {
     return addMessage(part.getId(), msg);
   }
 
-  /** Associate a message with the part ID. */
+  @Deprecated(forRemoval = true)
   public Messages addMessage(int partId, Message msg) {
-    if (!partMessages.containsKey(partId)) {
-      partMessages.put(partId, new ArrayList<>());
-    }
-    partMessages.get(partId).add(msg);
+    return add(partId, msg);
+  }
+
+  @Deprecated(forRemoval = true)
+  public Messages addMessage(Message msg) {
+    return add(msg);
+  }
+
+  /** Add a global message. */
+  public Messages add(Message msg) {
+    globalMessages.add(msg);
     updateHasErrors(msg);
     return this;
   }
 
-  /** Add a global message. */
-  public Messages addMessage(Message msg) {
-    globalMessages.add(msg);
+  /** Associate a message with the part ID. */
+  public Messages add(int partId, Message msg) {
+    if (!partMessages.containsKey(partId)) {
+      partMessages.put(partId, new ArrayList<>());
+    }
+    partMessages.get(partId).add(msg);
     updateHasErrors(msg);
     return this;
   }
@@ -44,6 +58,12 @@ public class Messages {
     return Optional.of(List.copyOf(globalMessages));
   }
 
+  /**
+   * A map mapping part IDs to a list of messages.
+   * Note that there is no guarantee that a certain part ID has any messages
+   * associated with it. In that case, the ID doesn't map to anything.
+   * (So {@code get(id)} will return null.)
+   */
   public Map<Integer,List<Message>> partMessages() {
     return Map.copyOf(partMessages);
   }
@@ -58,6 +78,15 @@ public class Messages {
   /** Get all part IDs for which there are messages. */
   public Collection<Integer> partsWithMessages() {
     return partMessages.keySet();
+  }
+
+  public Collection<Message> allMessages() {
+    final var messages = new ArrayList<Message>();
+    messages.addAll(globalMessages);
+    for (final var list : partMessages.values()) {
+      messages.addAll(list);
+    }
+    return messages;
   }
 
   /**
@@ -76,6 +105,10 @@ public class Messages {
   /** Do any parts have messages? */
   public boolean hasPartMessages() {
     return !partMessages.isEmpty();
+  }
+
+  public Messages merge(Messages other) {
+    throw new UnsupportedOperationException("Not implemented.");
   }
 
   private void updateHasErrors(Message msg) {
