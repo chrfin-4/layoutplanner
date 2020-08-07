@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ArrayList;
 import java.lang.reflect.Type;
 import se.ltu.kitting.model.*;
+import se.ltu.kitting.api.Messages;
 
 import static java.util.stream.Collectors.toList;
 
@@ -16,36 +17,18 @@ import static java.util.stream.Collectors.toList;
  */
 public class PlanningResponse {
 
-  private PlanningRequest request;
-  private Layout solution;
-  @Deprecated
-  private List<Message> globalMessages;
-  @Deprecated
-  private Map<Integer,List<Message>> partMessages = new HashMap<>();
+  private final PlanningRequest request;
+  private final Layout solution;
+  private final Messages messages;
 
   private PlanningResponse(PlanningRequest request, Layout solution) {
     this.request = request;
     this.solution = solution;
+    this.messages = request.messages();
   }
 
-  public PlanningResponse addMessage(Part part, Message msg) {
-    return addMessage(part.getId(), msg);
-  }
-
-  public PlanningResponse addMessage(int partId, Message msg) {
-    if (!partMessages.containsKey(partId)) {
-      partMessages.put(partId, new ArrayList<>());
-    }
-    partMessages.get(partId).add(msg);
-    return this;
-  }
-
-  public PlanningResponse addMessage(Message msg) {
-    if (globalMessages == null) {
-      globalMessages = new ArrayList<>();
-    }
-    globalMessages.add(msg);
-    return this;
+  public Messages messages() {
+    return messages;
   }
 
   public PlanningRequest request() {
@@ -63,17 +46,6 @@ public class PlanningResponse {
     return parts().stream().filter(p -> p.getId() == id).findAny().get();
   }
 
-  public Optional<List<Message>> globalMessages() {
-    return Optional.ofNullable(globalMessages);
-  }
-
-  public Optional<List<Message>> messagesForPart(int id) {
-    if (partMessages.containsKey(id)) {
-      return Optional.of(List.copyOf(partMessages.get(id)));
-    }
-    return Optional.empty();
-  }
-
   public Optional<Layout> solution() {
     return Optional.ofNullable(solution);
   }
@@ -83,24 +55,38 @@ public class PlanningResponse {
   }
 
   public static PlanningResponse response(PlanningRequest request) {
-    return response(request, (Layout) null);
+    if (!request.messages().hasErrors()) {
+      request.messages().add(Message.error("Could not find a feasible solution.").code("Unsolved"));
+    }
+    return new PlanningResponse(request, null);
   }
 
   public static PlanningResponse response(PlanningRequest request, Layout solution) {
-    return new PlanningResponse(request, solution).addMessages(request.messages())
+    if (!solution.isFeasibleSolution()) {
+      return response(request); // Strip out all layouts. Completely fail.
+    }
+    return new PlanningResponse(request, solution)
       .addMessage(Message.info(String.valueOf(solution.getScore())).code("Score"));
   }
 
-  private PlanningResponse addMessages(Messages messages) {
-    return addMessages(messages.globalMessages(), Optional.ofNullable(messages.partMessages()));
+  public boolean hasFeasibleSolution() {
+    return solution != null && solution.isFeasibleSolution();
   }
 
-  private PlanningResponse addMessages(
-      Optional<List<Message>> globalMessages,
-	    Optional<Map<Integer,List<Message>>> partMessages) {
-    globalMessages.ifPresent(list -> list.forEach(this::addMessage));
-    partMessages.ifPresent(map -> map.forEach((id, list) -> list.forEach(msg -> addMessage(id, msg))));
-	  return this;
+  // TODO: deprecate?
+  public PlanningResponse addMessage(Message msg) {
+    messages.add(msg);
+    return this;
+  }
+
+  @Deprecated(forRemoval = true)
+  public Optional<List<Message>> messagesForPart(int id) {
+    return messages.partMessages(id);
+  }
+
+  @Deprecated(forRemoval = true)
+  public Optional<List<Message>> globalMessages() {
+    return messages.globalMessages();
   }
 
 }
