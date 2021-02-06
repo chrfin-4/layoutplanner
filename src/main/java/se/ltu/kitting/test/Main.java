@@ -12,7 +12,6 @@ import se.ltu.kitting.model.Surface;
 import ch.rfin.util.Pair;
 
 import static se.ltu.kitting.test.LayoutExamples.*;
-import static se.ltu.kitting.test.Preprocess.*;
 import static java.util.stream.Collectors.joining;
 import static se.ltu.kitting.util.StreamUtil.stream;
 
@@ -35,7 +34,6 @@ public class Main {
     //runExampleBenchmarkMulti1();
     List<Pair<String,Integer>> configs = List.of(pair("firstFit30s.xml",100), pair("late10s.xml",10), pair("late30s.xml",5), pair("late60s.xml",1));
     for (var layout : realisticLayouts()) {
-	    preprocess(layout._2);
       System.out.println("Solving layout: " + layout._1 + "...");
       long start = System.currentTimeMillis();
       Layout solved = runMultiResolution(layout._2, configs);
@@ -89,7 +87,6 @@ public class Main {
     SolverFactory<Layout> solverFactory = SolverFactory.createFromXmlResource(xmlConfig);
     Solver<Layout> solver = solverFactory.buildSolver();
     Layout solvedLayout = solver.solve(unsolvedLayout);
-    System.out.println("After " + solver.getTimeMillisSpent()/1000 + " s:");
     System.out.println("Score: " + solvedLayout.getScore());
     System.out.println("Positions:");
     System.out.println(solvedLayout.getParts().stream().map(p -> p.toString() + ": " + String.valueOf(p.getPosition())).collect(joining(", ")));

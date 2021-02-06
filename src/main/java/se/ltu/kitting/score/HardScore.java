@@ -1,7 +1,5 @@
 package se.ltu.kitting.score;
 
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 import se.ltu.kitting.model.Layout;
 import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Part;
