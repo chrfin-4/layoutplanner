@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.kitting.model.Layout</solutionClass>
+  <entityClass>se.ltu.kitting.model.Part</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.kitting.score.ScoreCalculator</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <minutesSpentLimit>0</minutesSpentLimit>
+    <secondsSpentLimit>15</secondsSpentLimit>
+    <bestScoreLimit>0hard/0soft</bestScoreLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.HintInit</customPhaseCommandClass>
+  </customPhase>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.ResolutionChange</customPhaseCommandClass>
+    <customProperties>
+      <property name="resolution" value="50" />
+    </customProperties>
+  </customPhase>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.RandomInit</customPhaseCommandClass>
+    <customProperties>
+      <property name="seed" value="321" />
+    </customProperties>
+  </customPhase>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.ResolutionChange</customPhaseCommandClass>
+    <customProperties>
+      <property name="resolution" value="10" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <termination>
+      <secondsSpentLimit>2</secondsSpentLimit>
+      <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+      <unimprovedScoreDifferenceThreshold>0hard/2soft</unimprovedScoreDifferenceThreshold>
+    </termination>
+  </localSearch>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.ResolutionChange</customPhaseCommandClass>
+    <customProperties>
+      <property name="resolution" value="5" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <termination>
+      <secondsSpentLimit>2</secondsSpentLimit>
+      <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+      <unimprovedScoreDifferenceThreshold>0hard/2soft</unimprovedScoreDifferenceThreshold>
+    </termination>
+  </localSearch>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.kitting.algo.ResolutionChange</customPhaseCommandClass>
+    <customProperties>
+      <property name="resolution" value="1" />
+    </customProperties>
+  </customPhase>
+
+  <!-- Intended for use with resolution 1. -->
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <termination>
+      <secondsSpentLimit>5</secondsSpentLimit>
+      <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+      <unimprovedScoreDifferenceThreshold>0hard/1soft</unimprovedScoreDifferenceThreshold>
+    </termination>
+  </localSearch>
+
+</solver>

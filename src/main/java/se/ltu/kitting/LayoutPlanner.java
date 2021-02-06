@@ -31,6 +31,7 @@ public class LayoutPlanner {
 			if(request.messages().hasErrors()){
 				return PlanningResponse.response(request);
 			}
+      /*
       List<Pair<String,Integer>> configs = List.of(
           pair("firstFit5s.xml",50),
           pair("late2s.xml",10),
@@ -38,6 +39,8 @@ public class LayoutPlanner {
           pair("late5s-thorough.xml",1)
         );
       Layout solved = runMultiResolution(unsolved, configs);
+      */
+      final Layout solved = solve(unsolved, "unified.xml");
       long end = System.currentTimeMillis();
       long time = end-start;
       System.out.println(String.format("Finished after %5d ms: with score: %s", time, solved.getScore()));
@@ -63,6 +66,8 @@ public class LayoutPlanner {
     return jsonResponse;
   }
 
+  // No longer needed.
+  @Deprecated
   public static Layout runMultiResolution(Layout layout, Iterable<Pair<String,Integer>> configs) {
     int phase = 1;
     for (var conf : configs) {

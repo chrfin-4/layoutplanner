@@ -34,7 +34,7 @@ public class Preprocess {
     /* --- Part checks --- */
     partTooBig(request,layout);
     /* --- Modifying layout --- */
-    applyHints(layout);
+    //applyHints(layout);
     removeImpossibleSides(request,layout);
 		return request;
   }
