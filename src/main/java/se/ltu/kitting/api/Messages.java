@@ -18,6 +18,11 @@ public class Messages {
   private final List<Message> globalMessages = new ArrayList<>();
   private final Map<Integer,List<Message>> partMessages = new HashMap<>();
   private boolean hasErrors = false;
+  private boolean hasWarnings = false;
+
+  public static Messages empty() {
+      return new Messages();
+  }
 
   @Deprecated(forRemoval = true)
   public Messages addMessage(Part part, Message msg) {
@@ -37,7 +42,7 @@ public class Messages {
   /** Add a global message. */
   public Messages add(Message msg) {
     globalMessages.add(msg);
-    updateHasErrors(msg);
+    updateSeverityFlags(msg);
     return this;
   }
 
@@ -47,10 +52,12 @@ public class Messages {
       partMessages.put(partId, new ArrayList<>());
     }
     partMessages.get(partId).add(msg);
-    updateHasErrors(msg);
+    updateSeverityFlags(msg);
     return this;
   }
 
+  // FIXME: should return an empty list rather than an optional
+  @Deprecated
   public Optional<List<Message>> globalMessages() {
     if (globalMessages.isEmpty()) {
       return Optional.empty();
@@ -68,6 +75,8 @@ public class Messages {
     return Map.copyOf(partMessages);
   }
 
+  // FIXME: should return an empty list rather than an optional
+  @Deprecated
   public Optional<List<Message>> partMessages(int partId) {
     if (partMessages.containsKey(partId)) {
       return Optional.of(List.copyOf(partMessages.get(partId)));
@@ -83,9 +92,7 @@ public class Messages {
   public Collection<Message> allMessages() {
     final var messages = new ArrayList<Message>();
     messages.addAll(globalMessages);
-    for (final var list : partMessages.values()) {
-      messages.addAll(list);
-    }
+    partMessages.values().forEach(messages::addAll);
     return messages;
   }
 
@@ -95,6 +102,14 @@ public class Messages {
    */
   public boolean hasErrors() {
     return hasErrors;
+  }
+
+  /**
+   * Has ANY warning message been added? Includes part-specific as well as gobal
+   * messages.
+   */
+  public boolean hasWarnings() {
+    return hasWarnings;
   }
 
   /** Are there any global messages? */
@@ -107,12 +122,19 @@ public class Messages {
     return !partMessages.isEmpty();
   }
 
+  /** Add all messages from the {@code other} Messages object. */
   public Messages merge(Messages other) {
-    throw new UnsupportedOperationException("Not implemented.");
+    if (other == null) {
+      return this;
+    }
+    other.globalMessages.forEach(this::add);
+    other.partMessages.forEach((i, list) -> list.forEach(msg -> add(i, msg)));
+    return this;
   }
 
-  private void updateHasErrors(Message msg) {
+  private void updateSeverityFlags(Message msg) {
     hasErrors = hasErrors || msg.isError();
+    hasWarnings = hasWarnings || msg.isWarning();
   }
 
 }
