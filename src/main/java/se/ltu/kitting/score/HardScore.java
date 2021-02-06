@@ -140,6 +140,9 @@ public class HardScore {
   // Check whether part has the center position specified in hint.
   public static boolean positionMatchesHint(Part part) {
     assert part.getHint().centerPosition() != null;
+    if (part.getPosition() == null || part.getRotation() == null || part.getSideDown() == null) {
+      return false;
+    }
     boolean sameX = part.currentCenter().getX() == part.getHint().centerPosition().getX();
     boolean sameY = part.currentCenter().getY() == part.getHint().centerPosition().getY();
     return sameX && sameY;
