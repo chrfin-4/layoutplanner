@@ -45,6 +45,10 @@ public class HardScore {
 
   // Check if two parts overlap - considering maximal margin between two parts
   public static boolean partsOverlap(Part p1, Part p2) {
+		// Parts do not overlap if they are on different surfaces
+    if (p1.getPosition().z != p2.getPosition().z) {
+      return false;
+    }
 		Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
 		Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
 		int margin = Math.max(p1.getMargin(), p2.getMargin());
