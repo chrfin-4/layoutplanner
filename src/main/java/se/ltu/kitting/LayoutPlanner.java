@@ -74,7 +74,7 @@ public class LayoutPlanner {
       long end = System.currentTimeMillis();
       long time = end - start;
       System.out.println(String.format("  %5d ms: %20s    (phase %2d, resolution %3d, config %s)", time, layout.getScore(), phase, conf._2, conf._1));
-      if (layout.getScore().getHardScore() == 0 && layout.getScore().getSoftScore() == 0) {
+      if (layout.isOptimalSolution()) {
         System.out.println("  Is optimal. Stopping.");
         break;
       }
