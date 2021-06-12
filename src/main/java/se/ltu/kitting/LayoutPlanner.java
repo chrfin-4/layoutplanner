@@ -1,5 +1,8 @@
 package se.ltu.kitting;
 
+import java.math.BigDecimal;
+import se.ltu.kitting.test.SearchSpace;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -52,6 +55,8 @@ public class LayoutPlanner {
   }
 
   public static Layout solve(Layout unsolved, String xml) {
+    final var searchSpace = new BigDecimal(SearchSpace.compute(unsolved));
+    System.out.println(String.format("Solving layout with search space: %e", searchSpace));
     return SolverFactory
       .<Layout>createFromXmlResource(xml)
       .buildSolver()
