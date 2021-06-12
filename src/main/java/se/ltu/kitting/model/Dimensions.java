@@ -154,4 +154,16 @@ public final class Dimensions implements Comparable<Dimensions> {
   }
 
 
+  public int getAt(final int index) {
+    if (index == 0) {
+      return x;
+    } else if (index == 1) {
+      return y;
+    } else if (index == 2) {
+      return z;
+    } else {
+      throw new IllegalArgumentException("Illegal argument: " + index);
+    }
+  }
+
 }

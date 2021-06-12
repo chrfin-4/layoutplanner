@@ -42,7 +42,7 @@ public class SoftScore {
       return true;  // Don't have a preference to violate.
     }
     // If a side is given as a hint, ignore preferred side.
-    if (part.getHint() != null && part.getHint().side().isPresent()) {
+    if (part.hasHint() && part.getHint().side().isPresent()) {
       return true;
     }
     return part.getPreferredDown() == part.getSideDown();

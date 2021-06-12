@@ -19,6 +19,7 @@ import se.ltu.kitting.model.Surface;
 import se.ltu.kitting.model.Side;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class JsonIO {
 
@@ -81,11 +82,73 @@ public class JsonIO {
     return gson.toJson(res);
   }
 
-  public static PlanningResponse response(String json) {
+  public static LayoutPlanningRequest.Part fromModel(final Part partModel) {
+    final var part = new LayoutPlanningRequest.Part();
+    part.dimensions = partModel.getSize();
+    part.id = partModel.getId();
+    part.minMargin = partModel.getMargin();
+    part.partNumber = partModel.getPartNumber();
+    //part.functionGroup = ...
+    //part.partDesc = ...
+    //part.requiredCapabilities = ...
+    //part.weight = ...
+
+    final var layoutHint = new LayoutPlanningRequest.Part.LayoutHint();
+    if (partModel.hasHint()) {
+      final var hint = partModel.getHint();
+      layoutHint.orientation = hint.side().orElse(null);
+      layoutHint.origin = hint.centerPosition();
+      layoutHint.rotation = hint.rotation().map(r -> r.z).orElse(0);
+      layoutHint.surfaceId = hint.surfaceId();
+      layoutHint.weightFactor = hint.weight();
+    }
+    final var orientation = new LayoutPlanningRequest.Part.Orientation();
+    orientation.allowedDown = new java.util.HashSet<>(partModel.getAllowedSidesDown());
+    orientation.preferredDown = partModel.getPreferredDown();
+    part.layoutHint = layoutHint;
+    part.orientation = orientation;
+    return part;
+  }
+
+  public static String toJson(final PlanningRequest req) {
+    final var layout = req.getLayout();
+    final var kit = fromModel(req.kit());
+    final var wagon = fromModel(req.wagonHint().get().wagon());
+    final var request = new LayoutPlanningRequest();
+    final var wagonHint = new LayoutPlanningRequest.WagonHint();
+    wagonHint.wagon = wagon;
+    wagonHint.weightFactor = req.wagonHint().get().weightFactor();
+    request.wagonHint = wagonHint;
+    request.parts = layout.getParts().stream()
+      .map(JsonIO::fromModel)
+      .collect(toList());
+    return gson.toJson(request);
+  }
+
+  // TODO: include messages
+  /**
+   * Construct a planning response from JSON. Needs the JSON representation of
+   * both the response and the request that the response is a reponse to,
+   * because the response itself does not carry enough information.
+   */
+  public static PlanningResponse response(String jsonRequest, String jsonResponse) {
+    final var request = request(jsonRequest);
+    final var partMap = request.parts().stream()
+      .collect(toMap(Part::getId, p -> p));
     // Convert string to intermediate representation holding all the JSON data.
-    LayoutPlanningRequest req = gson.fromJson(json, LayoutPlanningRequest.class);
+    LayoutPlanningResponse response = gson.fromJson(jsonResponse, LayoutPlanningResponse.class);
     // Then use intermediate representation to create domain model object.
-    throw new UnsupportedOperationException("Not implemented.");
+    final var wagon = toModel(response.wagon);
+    final var parts = new ArrayList<Part>();
+    for (final var part : response.parts) {
+      final Part tmp = partMap.get(part.id);
+      final var layout = part.layout;
+      tmp.setPosition(layout.origin.withZ(layout.surfaceId)); // FIXME: center to corner!
+      tmp.setRotation(Rotation.of(layout.rotation));
+      tmp.setSideDown(layout.orientation);
+      parts.add(tmp);
+    }
+    return PlanningResponse.response_(request, new Layout(wagon, parts));
   }
 
   public static LayoutPlanningResponse.Part.Layout partLayout(Part part, Optional<Layout> layout) {

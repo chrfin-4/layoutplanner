@@ -69,6 +69,14 @@ public class PlanningResponse {
       .addMessage(Message.info(String.valueOf(solution.getScore())).code("Score"));
   }
 
+  // FIXME: Needed to allow JsonIO to create a PlanningResponse from JSON. Find a cleaner solution!
+  // TODO: include messages
+  @Deprecated(forRemoval = true)
+  public static PlanningResponse response_(PlanningRequest request, Layout solution) {
+    return new PlanningResponse(request, solution);
+  }
+
+  /** A solution exists, and it is feasible. */
   public boolean hasFeasibleSolution() {
     return solution != null && solution.isFeasibleSolution();
   }

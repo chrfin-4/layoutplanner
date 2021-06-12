@@ -59,7 +59,7 @@ public class LayoutHint {
 
   /** Factory for making mandatory hint (no rotation). */
   public static LayoutHint mandatory(Dimensions centerPosition, int surfaceId) {
-    return mandatory(centerPosition, surfaceId);
+    return hint(centerPosition, surfaceId).withWeight(mandatoryWeight);
   }
 
   /** Factory for making mandatory hint (with rotation). */

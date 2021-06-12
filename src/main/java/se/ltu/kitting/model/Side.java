@@ -39,7 +39,7 @@ public enum Side {
    * Returns a set that is equivalent to the given set, but with no redundant
    * (equivalent) sides. Does not modify the set given as a parameter.
    */
-  public static EnumSet<Side> withoutRedundancy(Set<Side> sides) {
+  public static EnumSet<Side> withoutRedundancy(Collection<Side> sides) {
     EnumSet<Side> result = EnumSet.noneOf(Side.class);
     for (var side : sides) {
       if (!result.contains(side.opposite())) {

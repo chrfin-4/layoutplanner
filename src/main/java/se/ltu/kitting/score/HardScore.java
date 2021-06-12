@@ -24,43 +24,43 @@ public class HardScore {
     return -(overlap + outside + disallowedSide + misplacedParts);
   }
 
+  // TODO: first filter on fully initialized?
   // Counts the number of parts that overlap eachother
   // NOTE: Counts same overlap multiple times
   public static int countOverlappingParts(Layout layout) {
     List<Part> parts = layout.getParts();
     int count = 0;
     for (int i = 0; i < parts.size() - 1; i++) {
-			for(int j = i + 1; j < parts.size(); j++) {
-				Part p1 = parts.get(i);
-				Part p2 = parts.get(j);
-				if (p1.getPosition() != null && p2.getPosition() != null){
-					if(partsOverlap(p1, p2)) {
-						count++;
-					}
-				}
-			}
+      final Part p1 = parts.get(i);
+      if (!p1.fullyInitialized()) {
+        continue;
+      }
+      for(int j = i + 1; j < parts.size(); j++) {
+        final Part p2 = parts.get(j);
+        if (p2.fullyInitialized()) {
+          if(partsOverlap(p1, p2)) {
+            count++;
+          }
+        }
+      }
     }
     return count;
   }
 
   // Check if two parts overlap - considering maximal margin between two parts
   public static boolean partsOverlap(Part p1, Part p2) {
-		// Parts do not overlap if they are on different surfaces
+    // Parts do not overlap if they are on different surfaces
     if (p1.getPosition().z != p2.getPosition().z) {
       return false;
     }
-		Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
-		Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
-		int margin = Math.max(p1.getMargin(), p2.getMargin());
-		Dimensions startPositionP1 = currentRegionP1._1;
-		Dimensions endPositionP1 = currentRegionP1._2;
-		Dimensions startPositionP2 = currentRegionP2._1;
-		Dimensions endPositionP2 = currentRegionP2._2;
-		// Parts do not overlap if they are on different surfaces
-		if(startPositionP1.getZ() != startPositionP2.getZ()){
-			return false;
-		}
-		int rect1xLeft = startPositionP1.getX() - margin;
+    Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
+    Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
+    int margin = Math.max(p1.getMargin(), p2.getMargin());
+    Dimensions startPositionP1 = currentRegionP1._1;
+    Dimensions endPositionP1 = currentRegionP1._2;
+    Dimensions startPositionP2 = currentRegionP2._1;
+    Dimensions endPositionP2 = currentRegionP2._2;
+    int rect1xLeft = startPositionP1.getX() - margin;
     int rect1xRight = endPositionP1.getX() + margin;
     int rect1yBack = startPositionP1.getY() - margin;
     int rect1yFront = endPositionP1.getY() + margin;
@@ -94,6 +94,9 @@ public class HardScore {
     return partOutside(partEnd, surfaceEnd);
   }
 
+  // Note: given that positions are only generated from (0,0) UP TO surface
+  // dimensions, there is no point in checking the opposite case (where the
+  // part is outside top/left).
   public static boolean partOutside(Dimensions partEnd, Dimensions surfaceEnd) {
     boolean height = partEnd.z > surfaceEnd.z;
     boolean depth = partEnd.y > surfaceEnd.y;
@@ -165,6 +168,58 @@ public class HardScore {
   // Check whether part has the rotation specified in hint.
   public static boolean rotationMatchesHint(Part part) {
     return part.getHint().rotation().map(r -> part.getRotation() == r).orElse(true);
+  }
+
+  /**
+   * Compute the area of overlap between two parts.
+   * Takes margin into account.
+   */
+  public static int overlappingPartArea(Part p1, Part p2) {
+    // Parts do not overlap if they are on different surfaces
+    if (p1.getPosition().z != p2.getPosition().z) {
+      return 0;
+    }
+    Pair<Dimensions,Dimensions> currentRegionP1 = p1.currentRegion();
+    Pair<Dimensions,Dimensions> currentRegionP2 = p2.currentRegion();
+    int margin = Math.max(p1.getMargin(), p2.getMargin());
+    Dimensions startPositionP1 = currentRegionP1._1;
+    Dimensions endPositionP1 = currentRegionP1._2;
+    Dimensions startPositionP2 = currentRegionP2._1;
+    Dimensions endPositionP2 = currentRegionP2._2;
+    int rect1xLeft = startPositionP1.getX() - margin;
+    int rect1xRight = endPositionP1.getX() + margin;
+    int rect1yBack = startPositionP1.getY() - margin;
+    int rect1yFront = endPositionP1.getY() + margin;
+    int rect2xLeft = startPositionP2.getX();
+    int rect2xRight = endPositionP2.getX();
+    int rect2yBack = startPositionP2.getY();
+    int rect2yFront = endPositionP2.getY();
+
+    int left = Math.max(rect1xLeft, rect2xLeft);
+    int right = Math.min(rect1xRight, rect2xRight);
+    int back = Math.max(rect1yBack, rect2yBack);
+    int front = Math.min(rect1yFront, rect2yFront);
+    int width = right - left;
+    int depth = front - back;
+    return width*depth;
+  }
+
+  public static int partOutsideArea(Part part, Surface surface) {
+    var tmp = part.getPosition();
+    // Part position is relative to surface. So z = 0.
+    Dimensions partEnd = Dimensions.of(tmp.x, tmp.y, 0)
+      .plus(part.currentDimensions());
+    Dimensions surfaceEnd = surface.dimensions;
+    return areaOutside(partEnd, surfaceEnd);
+  }
+
+  // Note: given that positions are only generated from (0,0) UP TO surface
+  // dimensions, there is no point in checking the opposite case (where the
+  // part is outside top/left).
+  public static int areaOutside(Dimensions partEnd, Dimensions surfaceEnd) {
+    int depth = Math.min(0, partEnd.y - surfaceEnd.y);
+    int width = Math.min(0, partEnd.x - surfaceEnd.x);
+    return depth * width;
   }
 
 }

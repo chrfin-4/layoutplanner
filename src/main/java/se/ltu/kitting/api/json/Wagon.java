@@ -2,6 +2,7 @@ package se.ltu.kitting.api.json;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 import se.ltu.kitting.model.Dimensions;
 
@@ -46,14 +47,49 @@ public class Wagon {
       return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof Surface)) {
+        return false;
+      }
+      Surface other = (Surface) o;
+      return this.id == other.id
+        && Objects.equals(this.dimensions, other.dimensions)
+        && Objects.equals(this.origin, other.origin);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(id, dimensions, origin);
+    }
+
+  }
+
+  public String wagonId() {
+    return wagonId;
+  }
+
+  public Wagon wagonId(final String wagonId) {
+    this.wagonId = wagonId;
+    return this;
   }
 
   public List<Wagon.Surface> surfaces() {
     return surfaces;
   }
 
+  public Wagon surfaces(final List<Wagon.Surface> surfaces) {
+    this.surfaces = surfaces;
+    return this;
+  }
+
   public List<String> capabilities() {
     return capabilities == null ? List.of() : capabilities;
+  }
+
+  public Wagon capabilities(final List<String> capabilities) {
+    this.capabilities = capabilities;
+    return this;
   }
 
   public Dimensions dimensions() {
@@ -63,6 +99,23 @@ public class Wagon {
   public Wagon dimensions(Dimensions dimensions) {
     this.dimensions = dimensions;
     return this;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Wagon)) {
+      return false;
+    }
+    final Wagon other = (Wagon) o;
+    return Objects.equals(wagonId, other.wagonId)
+      && Objects.equals(capabilities, other.capabilities)
+      && Objects.equals(surfaces, other.surfaces)
+      && Objects.equals(dimensions, other.dimensions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(wagonId, capabilities, surfaces, dimensions);
   }
 
 }

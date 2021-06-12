@@ -32,6 +32,17 @@ public class Layout {
   /** A no-arg constructor is required by OptaPlanner. */
   public Layout() { }
 
+  /**
+   * Copy constructor.
+   * @see #copyOf(Layout)
+   */
+  public Layout(final Layout layout) {
+    this.wagon = layout.wagon;
+    this.parts = layout.parts.stream().map(Part::copyOf).collect(toList());
+    this.score = layout.score;
+    this.positionStepSize = layout.positionStepSize;
+  }
+
   /** @deprecated because there will be multiple surfaces in the future */
   @Deprecated(forRemoval = true)
   public Layout(Surface surface, List<Part> parts) {
@@ -41,6 +52,14 @@ public class Layout {
   public Layout(Wagon wagon, List<Part> parts) {
     this.wagon = wagon;
     this.parts = parts;
+  }
+
+  /**
+   * Clone this layout.
+   * @return a new layout instance that is a deep and independent copy.
+   */
+  public static Layout copyOf(final Layout layout) {
+    return new Layout(layout);
   }
 
   // --- START of OptaPlanner things ---
@@ -103,10 +122,12 @@ public class Layout {
 
   // --- END of OptaPlanner things ---
 
+  // FIXME: use Util instead.
   public boolean isOptimalSolution() {
     return isFeasibleSolution() && score.getSoftScore() == 0;
   }
 
+  /** Is this solution feasible (according to its Score)? */
   public boolean isFeasibleSolution() {
     return score.isFeasible();
   }

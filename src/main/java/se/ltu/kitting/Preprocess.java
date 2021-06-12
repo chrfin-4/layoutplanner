@@ -9,6 +9,7 @@ import se.ltu.kitting.api.Message;
 import se.ltu.kitting.api.Messages;
 import se.ltu.kitting.api.PlanningRequest;
 import java.util.Set;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 import ch.rfin.util.Pair;
+import static se.ltu.kitting.api.Message.*;
 
 /**
  * Recommended to run layout through this class before solving it to add error messages
@@ -54,6 +56,7 @@ public class Preprocess {
     }
   }
 
+  @SuppressWarnings("unchecked")
   // Divide pair and add to right list
   private static void combineMessages(List<Message> globalMessages, List<Map<Integer,List<Message>>> maps, Pair<Optional<Message>, Optional<Map<Integer,List<Message>>>> ... pairs){
     for(Pair<Optional<Message>, Optional<Map<Integer,List<Message>>>> pair : pairs){
@@ -75,7 +78,7 @@ public class Preprocess {
       totalPartVolume += part.volume();
     }
     if(totalPartVolume > totalSurfaceVolume){
-			request.messages().addMessage(Message.error("Unsolvable - volume of parts greater than volume of surfaces"));
+			request.messages().add(error("Unsolvable - volume of parts greater than volume of surfaces"));
     }
     return request;
   }
@@ -92,7 +95,7 @@ public class Preprocess {
       totalSurfaceArea += surface.width() * surface.depth();
     }
     if(totalPartArea > totalSurfaceArea){
-			request.messages().addMessage(Message.error("Unsolvable - area of parts greater than area of surfaces"));
+			request.messages().add(error("Unsolvable - area of parts greater than area of surfaces"));
     }
     return request;
   }
@@ -114,11 +117,11 @@ public class Preprocess {
       int height = part.height();
       int depth = part.depth();
       if(Math.max(width, Math.max(height, depth)) > Math.max(surfaceX, Math.max(surfaceY, surfaceZ))){
-				request.messages().addMessage(part, Message.error("Part does not fit on any surface"));
+				request.messages().add(part.getId(), error("Part does not fit on any surface"));
       }
     }
     if(!messages.isEmpty()){
-      request.messages().addMessage(Message.error("Unsolvable - part do not fit on surfaces"));
+      request.messages().add(error("Unsolvable - part do not fit on surfaces"));
     }
 		return request;
   }
@@ -130,7 +133,7 @@ public class Preprocess {
   public static PlanningRequest removeImpossibleSides(PlanningRequest request, Layout layout) {
     Map<Integer,List<Message>> messages = new HashMap<>();
     for(Part part : layout.getParts()){
-      Set<Side> allowedSides = part.getAllowedDown();
+      Collection<Side> allowedSides = part.getAllowedDown();
       int partX = part.getSize().getX();
       int partY = part.getSize().getY();
       int partZ = part.getSize().getZ();
@@ -156,19 +159,19 @@ public class Preprocess {
       }
 			// Warning if layout hint has other side down than preferred
 			if(part.getHint() != null && part.getHint().side().isPresent() && !part.getHint().side().get().equals(part.getPreferredDown())){
-				request.messages().addMessage(part, Message.warn("Preferred side does not match side in layout hint."));
+				request.messages().add(part.getId(), warn("Preferred side does not match side in layout hint."));
 			}
       // Removes preferred if removed from allowedSides.
       if(!allowedSides.contains(part.getPreferredDown())){
         part.setPreferredDown(null);
       }
       if(allowedSides.isEmpty()){
-				request.messages().addMessage(part, Message.error("No side can be placed down."));
+				request.messages().add(part.getId(), error("No side can be placed down."));
       }
       part.setAllowedDown(allowedSides);
     }
     if(!messages.isEmpty()){
-			request.messages().addMessage(Message.error("Unsolvable - no allowed side to place down for part."));
+			request.messages().add(error("Unsolvable - no allowed side to place down for part."));
     }
 		return request;
   }

@@ -6,21 +6,22 @@ import org.optaplanner.core.api.domain.solution.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import ch.rfin.util.Pair;
 import java.util.*;
+import se.ltu.kitting.algo.*;
 
 import static java.util.Comparator.comparing;
 import static se.ltu.kitting.model.Rotation.rotation;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * A part in the kit, must be assigned a position and a rotation.
- * The id identifies a particular, individual object within the current kit.
+ * A part in the kit; must be assigned a position, side, and a rotation.
+ * The ID identifies a particular, individual object within the current kit.
  * The part number identifies a kind of part of which there could be multiple
  * instances in a kit.
  * The position is the (left,back,bot) point.
  * @author Christoffer Fink
  */
-// TODO: add comparison
-@PlanningEntity
+//@PlanningEntity(difficultyWeightFactoryClass = PartWeightFactory.class) // example of using a weight factory for comparison
+@PlanningEntity(difficultyComparatorClass = VolumeComparator.class)
 public class Part {
 
   // Problem facts.
@@ -36,7 +37,7 @@ public class Part {
    */
   private Dimensions size;
   /** The part may be placed on these sides. */
-  private Set<Side> allowedDown;
+  private List<Side> allowedDown;
   /** The part should preferentially be placed on this side. */
   private Side preferredDown;
   /** Minimum free margin around all sides. */
@@ -62,6 +63,27 @@ public class Part {
   /** A no-arg constructor is required by OptaPlanner. */
   public Part() { }
 
+  /**
+   * Copy constructor.
+   * @see #copyOf(Part)
+   */
+  public Part(final Part part) {
+    // Facts
+    this.id = part.id;
+    this.partNumber = part.partNumber;
+    this.size = part.size;
+    this.preferredDown = part.preferredDown;
+    this.allowedDown = new ArrayList<>(part.allowedDown);
+    this.hint = part.hint;
+    this.margin = part.margin;
+    // Variables
+    this.position = part.position;
+    this.sideDown = part.sideDown;
+    this.rotation = part.rotation;
+    // Other
+    this.currentRegion = part.currentRegion;
+  }
+
   @Deprecated
   public Part(int id, int partNumber, Dimensions size) {
     this(id, "" + partNumber, size);
@@ -77,6 +99,14 @@ public class Part {
     this.partNumber = partNumber;
     this.size = size;
     this.position = position;
+  }
+
+  /**
+   * Clone this part.
+   * @return a new Part instance that is a deep and independent copy.
+   */
+  public static Part copyOf(final Part part) {
+    return new Part(part);
   }
 
   // --- START of OptaPlanner facts and variables ---
@@ -164,11 +194,16 @@ public class Part {
   }
 
   @ProblemFactProperty
-  public Set<Side> getAllowedDown() {
+  public List<Side> getAllowedDown() {
     return allowedDown;
   }
 
-  public void setAllowedDown(Set<Side> sides) {
+  @Deprecated
+  public void setAllowedDown(Collection<Side> sides) {
+    allowedDown = new ArrayList<>(sides);
+  }
+
+  public void setAllowedDown(List<Side> sides) {
     allowedDown = sides;
   }
 
@@ -199,33 +234,9 @@ public class Part {
     preferredDown = side;
   }
 
-  // Make sure list is ordered:
-  // - hint
-  // - preferred
-  // - allowed (normalized)
   @ValueRangeProvider(id = "sides")
   public List<Side> getAllowedSidesDown() {
-    // Assumes hinted and preferred sides are also allowed!
-    if (hasMandatoryHint() && hint.side().isPresent()) {
-      return List.of(hint.side().get());
-    }
-    final Set<Side> allowed = new HashSet<>(allowedDown);
-    final List<Side> sides = new ArrayList<>();
-    if (hint != null && hint.side().isPresent()) {
-      final var side = hint.side().get();
-      sides.add(side);  // hint goes first
-      allowed.remove(side);
-      allowed.remove(side.opposite());
-    }
-    // If the preferred side is allowed, that means it cannot be equivalent to
-    // the hinted side (if it exists).
-    if (allowed.contains(preferredDown)) {
-      sides.add(preferredDown); // then the preferred side comes second
-      allowed.remove(preferredDown);
-      allowed.remove(preferredDown.opposite());
-    }
-    sides.addAll(Side.normalize(allowed));  // remove redundant sides from remaining
-    return sides;
+    return allowedDown;
   }
 
   // --- END of OptaPlanner facts and variables ---
@@ -508,6 +519,11 @@ public class Part {
       return Optional.of(canonical);
     }
     return minSide;
+  }
+
+  @Override
+  public String toString() {
+    return "Part(id: " + id + ", dimensions: " + size + ")";
   }
 
 }

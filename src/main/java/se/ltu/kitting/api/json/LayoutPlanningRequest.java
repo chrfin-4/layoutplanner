@@ -11,7 +11,7 @@ import se.ltu.kitting.model.Dimensions;
  * Low-level representation of an incoming request, mirroring the JSON schema.
  * Intermediate representation for translation from JSON.
 <p>
-<code>
+<pre>
 // As of commit 65d402d4a8a50ee96a362bb8b7cd3abf87f0c698 (2020-07-27)
 {
   kit: {
@@ -56,7 +56,7 @@ import se.ltu.kitting.model.Dimensions;
     },
   ],
 }
-</code>
+</pre>
  * @author Christoffer Fink
  */
 public class LayoutPlanningRequest {
@@ -173,12 +173,27 @@ public class LayoutPlanningRequest {
     return kit;
   }
 
+  public LayoutPlanningRequest kit(final Kit kit) {
+    this.kit = kit;
+    return this;
+  }
+
   public List<Part> parts() {
     return parts;
   }
 
+  public LayoutPlanningRequest parts(final List<Part> parts) {
+    this.parts = parts;
+    return this;
+  }
+
   public Optional<WagonHint> wagonHint() {
     return Optional.ofNullable(wagonHint);
+  }
+
+  public LayoutPlanningRequest wagonHint(final WagonHint wagonHint) {
+    this.wagonHint = wagonHint;
+    return this;
   }
 
 }
