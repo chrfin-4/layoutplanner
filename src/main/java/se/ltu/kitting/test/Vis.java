@@ -1,12 +1,18 @@
 package se.ltu.kitting.test;
 
 import java.util.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import se.ltu.kitting.model.*;
+import se.ltu.kitting.api.json.JsonIO;
+import se.ltu.kitting.api.PlanningResponse;
 
 @SuppressWarnings("serial")
 public class Vis extends JPanel {
@@ -113,6 +119,20 @@ public class Vis extends JPanel {
     if (r == Rotation.Z90X90) { return "Z90X90"; }
     if (r == Rotation.Z90Y90) { return "Z90Y90"; }
     return String.format("(%.1f,%.1f,%.1f)", r.x, r.y, r.z);
+  }
+
+  public static void draw(Path jsonRequestFile, Path jsonResponseFile) throws IOException {
+    final String jsonRequest = Files.readString(jsonRequestFile);
+    final String jsonResponse = Files.readString(jsonResponseFile);
+    final var response = JsonIO.response(jsonRequest, jsonResponse);
+    final var layout = response.solution().get();
+    draw(layout, jsonResponseFile.getFileName().toString());
+  }
+
+  public static void main(String[] args) throws Exception {
+    final String requestFile = args[0];
+    final String responseFile = args[1];
+    draw(Paths.get(requestFile), Paths.get(responseFile));
   }
 
 }
