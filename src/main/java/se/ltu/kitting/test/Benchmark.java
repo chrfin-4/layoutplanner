@@ -254,9 +254,10 @@ public class Benchmark {
       return test(layout, defaultTestName());
     }
 
+    // XXX: concatenating the config and test name is a (temporary?) hack.
     /** Add a (named) test using this layout and the current config. */
     public Builder test(Layout layout, String testName) {
-      return test(config()._2, layout, testName);
+      return test(config()._2, layout, config()._1 + " - " + testName);
     }
 
     /** Add a (named) test using this config and the current layout. */

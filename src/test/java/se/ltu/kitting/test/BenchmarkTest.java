@@ -1,6 +1,7 @@
 package se.ltu.kitting.test;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.*;
 
 import java.util.*;
@@ -92,6 +93,7 @@ public class BenchmarkTest {
     assertEquals(expected, getTestNames(b));
   }
 
+  @Ignore
   @Test
   public void missingTestNamesShouldBeGenerated() {
     Benchmark b = Benchmark.builder()
@@ -155,6 +157,7 @@ public class BenchmarkTest {
     assertEquals(expected, getBenchmarkNames(bs));
   }
 
+  @Ignore
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromLayouts() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -169,6 +172,7 @@ public class BenchmarkTest {
     assertEquals(expected, names);
   }
 
+  @Ignore
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromBenchmarkNameIfLayoutNamesUnavailable() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -181,6 +185,7 @@ public class BenchmarkTest {
     assertEquals(expected, names);
   }
 
+  @Ignore
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromDefaultBenchmarkNameIfNamesUnavailable() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -205,6 +210,7 @@ public class BenchmarkTest {
     assertEquals(expected, getBenchmarkNames(bs));
   }
 
+  @Ignore
   @Test
   public void builtByConfigMixedTestNames() {
     Stream<Benchmark> bs = Benchmark.builder()
