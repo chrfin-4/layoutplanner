@@ -26,23 +26,14 @@ import static ch.rfin.util.Pair.pair;
 public class LayoutPlanner {
 
   public static PlanningResponse requestLayout(PlanningRequest request) {
-		try {
-			long start = System.currentTimeMillis();
-			Layout unsolved = request.getLayout();
-			// Add messages and edit layout
-			request = Preprocess.preprocess(request, unsolved);
-			if(request.messages().hasErrors()){
-				return PlanningResponse.response(request);
-			}
-      /*
-      List<Pair<String,Integer>> configs = List.of(
-          pair("firstFit5s.xml",50),
-          pair("late2s.xml",10),
-          pair("late2s.xml",5),
-          pair("late5s-thorough.xml",1)
-        );
-      Layout solved = runMultiResolution(unsolved, configs);
-      */
+    try {
+      long start = System.currentTimeMillis();
+      Layout unsolved = request.getLayout();
+      // Add messages and edit layout
+      request = Preprocess.preprocess(request, unsolved);
+      if(request.messages().hasErrors()){
+        return PlanningResponse.response(request);
+      }
       final Layout solved = solve(unsolved, "unified.xml");
       long end = System.currentTimeMillis();
       long time = end-start;
@@ -69,28 +60,6 @@ public class LayoutPlanner {
     String jsonResponse = JsonIO.toJson(requestLayout(planningRequest));
     System.out.println("Returning response: " + jsonResponse);
     return jsonResponse;
-  }
-
-  // No longer needed.
-  @Deprecated
-  public static Layout runMultiResolution(Layout layout, Iterable<Pair<String,Integer>> configs) {
-    int phase = 1;
-    for (var conf : configs) {
-      String xml = conf._1;
-      int stepSize = conf._2;
-      layout.setPositionStepSize(stepSize);
-      long start = System.currentTimeMillis();
-      layout = solve(layout, xml);
-      long end = System.currentTimeMillis();
-      long time = end - start;
-      System.out.println(String.format("  %5d ms: %20s    (phase %2d, resolution %3d, config %s)", time, layout.getScore(), phase, conf._2, conf._1));
-      if (layout.isOptimalSolution()) {
-        System.out.println("  Is optimal. Stopping.");
-        break;
-      }
-      phase++;
-    }
-    return layout;
   }
 
 }
