@@ -1,8 +1,8 @@
 package se.ltu.kitting.test;
 
-import org.junit.Test;
-import org.junit.Ignore;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -93,7 +93,7 @@ public class BenchmarkTest {
     assertEquals(expected, getTestNames(b));
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void missingTestNamesShouldBeGenerated() {
     Benchmark b = Benchmark.builder()
@@ -157,7 +157,7 @@ public class BenchmarkTest {
     assertEquals(expected, getBenchmarkNames(bs));
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromLayouts() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -172,7 +172,7 @@ public class BenchmarkTest {
     assertEquals(expected, names);
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromBenchmarkNameIfLayoutNamesUnavailable() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -185,7 +185,7 @@ public class BenchmarkTest {
     assertEquals(expected, names);
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void benchmarksBuiltByConfigShouldDeriveTestNamesFromDefaultBenchmarkNameIfNamesUnavailable() {
     Stream<Benchmark> bs = Benchmark.builder()
@@ -210,7 +210,7 @@ public class BenchmarkTest {
     assertEquals(expected, getBenchmarkNames(bs));
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void builtByConfigMixedTestNames() {
     Stream<Benchmark> bs = Benchmark.builder()
