@@ -1,14 +1,18 @@
 package se.ltu.kitting.test;
 
 import se.ltu.kitting.model.*;
+import java.util.stream.Stream;
 import java.math.BigInteger;
 
 /**
- * Compute the size of the search space.
+ * Performs an intentionally naive calculation of the search space.
+ * This is the total number of possible combinations that would have to
+ * be explored by an exhaustive search - it takes no constraints into
+ * account.
+ * Note that this version knows that only 2 rotations are possible.
  * @author Christoffer Fink
  */
 public class SearchSpace {
-
   public static BigInteger sides(final Part p) {
     return BigInteger.valueOf(p.getAllowedDown().size());
   }
@@ -30,5 +34,4 @@ public class SearchSpace {
     }
     return product;
   }
-
 }
